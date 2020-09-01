@@ -290,6 +290,18 @@
     <Compile Include="ActionFramework\ELearningLab\ELearningTaskPane\ELearningImageHandler.cs" />
     <Compile Include="ActionFramework\ELearningLab\ELearningTaskPane\ELearningLabelHandler.cs" />
     <Compile Include="ActionFramework\ELearningLab\ELearningTaskPane\ELearningSupertipHandler.cs" />
+    <Compile Include="ActionFramework\LiveCodingLab\HighlightDifference\HighlightDifferenceActionHandler.cs" />
+    <Compile Include="ActionFramework\LiveCodingLab\HighlightDifference\HighlightDifferenceEnabledHandler.cs" />
+    <Compile Include="ActionFramework\LiveCodingLab\HighlightDifference\HighlightDifferenceImageHandler.cs" />
+    <Compile Include="ActionFramework\LiveCodingLab\HighlightDifference\HighlightDifferenceLabelHandler.cs" />
+    <Compile Include="ActionFramework\LiveCodingLab\HighlightDifference\HighlightDifferenceSupertipHandler.cs" />
+    <Compile Include="ActionFramework\LiveCodingLab\LiveCodingLabMenu\LiveCodingLabMenuImageHandler.cs" />
+    <Compile Include="ActionFramework\LiveCodingLab\LiveCodingLabMenu\LiveCodingLabMenuLabelHandler.cs" />
+    <Compile Include="ActionFramework\LiveCodingLab\LiveCodingLabMenu\LiveCodingLabMenuSupertipHandler.cs" />
+    <Compile Include="ActionFramework\LiveCodingLab\LiveCodingLabSettings\LiveCodingLabSettingsActionHandler.cs" />
+    <Compile Include="ActionFramework\LiveCodingLab\LiveCodingLabSettings\LiveCodingLabSettingsImageHandler.cs" />
+    <Compile Include="ActionFramework\LiveCodingLab\LiveCodingLabSettings\LiveCodingLabSettingsLabelHandler.cs" />
+    <Compile Include="ActionFramework\LiveCodingLab\LiveCodingLabSettings\LiveCodingLabSettingsSupertipHandler.cs" />
     <Compile Include="ActionFramework\NarrationsLab\TempStorage.cs" />
     <Compile Include="ActionFramework\PictureSlidesLab\PictureSlidesEnabledHandler.cs" />
     <Compile Include="ActionFramework\ShapesLab\ShapesLabMenu\ShapesLabMenuImageHandler.cs" />
@@ -808,6 +820,12 @@
     <Compile Include="ELearningLab\Service\ELearningService.cs" />
     <Compile Include="ELearningLab\Service\FunctionService\AudioService.cs" />
     <Compile Include="ColorTheme\DesignTheme.cs" />
+    <Compile Include="LiveCodingLab\HighlightDifference.cs" />
+    <Compile Include="LiveCodingLab\LiveCodingLabSettings.cs" />
+    <Compile Include="LiveCodingLab\LiveCodingLab.cs" />
+    <Compile Include="LiveCodingLab\Views\LiveCodingLabSettingsDialogBox.xaml.cs">
+      <DependentUpon>LiveCodingLabSettingsDialogBox.xaml</DependentUpon>
+    </Compile>
     <Compile Include="ShapesLab\Views\CustomComboBoxItem.cs" />
     <Compile Include="ShapesLab\Views\CustomMenuItem.cs" />
     <Compile Include="ShapesLab\Views\ShapesLabCategoryInfoDialogBox.xaml.cs">
@@ -897,6 +915,7 @@
     <Compile Include="SyncLab\ObjectFormats\GlowTransparencyFormat.cs" />
     <Compile Include="SyncLab\ObjectFormats\ShadowEffectFormat.cs" />
     <Compile Include="SyncLab\ObjectFormats\SoftEdgeEffectFormat.cs" />
+    <Compile Include="TextCollection\LiveCodingLabText.cs" />
     <Compile Include="TextCollection\TooltipsLabText.cs" />
     <Compile Include="SyncLab\ObjectFormats\TextOrientationFormat.cs" />
     <Compile Include="SyncLab\Views\SyncFormatPanelItemStub.cs" />
@@ -1633,6 +1652,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ELearningLab\Views\AudioSettingsViews\AzureVoiceLoginPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="LiveCodingLab\Views\LiveCodingLabSettingsDialogBox.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2602,7 +2625,24 @@
   <ItemGroup>
     <None Include="Resources\Animation Zoom.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Resources\HighlightDifference.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HighlightDifference.bmp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HighlightLab1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HighlightText1.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\HighlightLab2.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\LiveCodingLab.png" />
+  </ItemGroup>
   <!-- Include the build rules for a C# project. -->
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

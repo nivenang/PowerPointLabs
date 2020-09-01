@@ -567,6 +567,47 @@
                     getSupertip="GetSupertip"
                     onAction="OnAction"/>
           </menu>
+          <menu id="LiveCodingLabMenu"
+                getLabel="GetLabel"
+                getImage="GetImage"
+                getSupertip="GetSupertip"
+                getEnabled="GetEnabled"
+                size="large">
+            <button id="HighlightDifferenceButton"
+                    tag="HighlightDifference"
+                    getLabel="GetLabel"
+                    getImage="GetImage"
+                    getSupertip="GetSupertip"
+                    getEnabled="GetEnabled"
+                    onAction="OnAction"/>
+            <button id="AnimateNewLinesButton"
+                    tag="AnimateNewLines"
+                    getLabel="GetLabel"
+                    getImage="GetImage"
+                    getSupertip="GetSupertip"
+                    getEnabled="GetEnabled"
+                    onAction="OnAction"/>
+            <button id="AnimateScrollDownButton"
+                    tag="AnimateScrollDown"
+                    getLabel="GetLabel"
+                    getImage="GetImage"
+                    getSupertip="GetSupertip"
+                    getEnabled="GetEnabled"
+                    onAction="OnAction"/>
+            <button id="AnimateScrollUpButton"
+                    tag="AnimateScrollUp"
+                    getLabel="GetLabel"
+                    getImage="GetImage"
+                    getSupertip="GetSupertip"
+                    onAction="OnAction"/>
+            <menuSeparator id="LiveCodingLabSettingsSeparator"/>
+            <button id="LiveCodingLabSettingsButton"
+                    tag="LiveCodingLabSettings"
+                    getLabel="GetLabel"
+                    getImage="GetImage"
+                    getSupertip="GetSupertip"
+                    onAction="OnAction"/>
+          </menu>
 
         </group>
         <group id="HelpGroup"
