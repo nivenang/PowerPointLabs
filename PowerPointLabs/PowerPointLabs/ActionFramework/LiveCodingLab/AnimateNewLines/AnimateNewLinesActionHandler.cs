@@ -3,8 +3,8 @@
 using PowerPointLabs.ActionFramework.Common.Attribute;
 using PowerPointLabs.ActionFramework.Common.Extension;
 using PowerPointLabs.ActionFramework.Common.Interface;
-using PowerPointLabs.TextCollection;
 using PowerPointLabs.LiveCodingLab;
+using PowerPointLabs.TextCollection;
 
 namespace PowerPointLabs.ActionFramework.LiveCodingLab
 {
@@ -13,7 +13,9 @@ namespace PowerPointLabs.ActionFramework.LiveCodingLab
     {
         protected override void ExecuteAction(string ribbonId)
         {
+            this.StartNewUndoEntry();
 
+            AnimateNewLines.AnimateNewCodeLines();
         }
     }
 }

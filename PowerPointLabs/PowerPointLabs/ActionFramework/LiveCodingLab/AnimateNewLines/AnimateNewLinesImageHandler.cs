@@ -11,7 +11,7 @@ namespace PowerPointLabs.ActionFramework.LiveCodingLab
     {
         protected override Bitmap GetImage(string ribbonId)
         {
-            return new Bitmap(Properties.Resources.AnimateNewLines);
+            return new Bitmap(Properties.Resources.HighlightDifference);
         }
     }
 }

@@ -290,6 +290,11 @@
     <Compile Include="ActionFramework\ELearningLab\ELearningTaskPane\ELearningImageHandler.cs" />
     <Compile Include="ActionFramework\ELearningLab\ELearningTaskPane\ELearningLabelHandler.cs" />
     <Compile Include="ActionFramework\ELearningLab\ELearningTaskPane\ELearningSupertipHandler.cs" />
+    <Compile Include="ActionFramework\LiveCodingLab\AnimateNewLines\AnimateNewLinesActionHandler.cs" />
+    <Compile Include="ActionFramework\LiveCodingLab\AnimateNewLines\AnimateNewLinesEnabledHandler.cs" />
+    <Compile Include="ActionFramework\LiveCodingLab\AnimateNewLines\AnimateNewLinesImageHandler.cs" />
+    <Compile Include="ActionFramework\LiveCodingLab\AnimateNewLines\AnimateNewLinesLabelHandler.cs" />
+    <Compile Include="ActionFramework\LiveCodingLab\AnimateNewLines\AnimateNewLinesSupertipHandler.cs" />
     <Compile Include="ActionFramework\LiveCodingLab\HighlightDifference\HighlightDifferenceActionHandler.cs" />
     <Compile Include="ActionFramework\LiveCodingLab\HighlightDifference\HighlightDifferenceEnabledHandler.cs" />
     <Compile Include="ActionFramework\LiveCodingLab\HighlightDifference\HighlightDifferenceImageHandler.cs" />
@@ -820,6 +825,7 @@
     <Compile Include="ELearningLab\Service\ELearningService.cs" />
     <Compile Include="ELearningLab\Service\FunctionService\AudioService.cs" />
     <Compile Include="ColorTheme\DesignTheme.cs" />
+    <Compile Include="LiveCodingLab\AnimateNewLines.cs" />
     <Compile Include="LiveCodingLab\HighlightDifference.cs" />
     <Compile Include="LiveCodingLab\LiveCodingLabSettings.cs" />
     <Compile Include="LiveCodingLab\LiveCodingLab.cs" />
