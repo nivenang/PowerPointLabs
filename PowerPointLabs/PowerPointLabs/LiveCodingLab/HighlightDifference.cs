@@ -1,10 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms;
+
 using PowerPointLabs.ActionFramework.Common.Extension;
 using PowerPointLabs.ActionFramework.Common.Log;
 using PowerPointLabs.AnimationLab;
 using PowerPointLabs.Models;
+using PowerPointLabs.TextCollection;
 using PowerPointLabs.Utils;
 using Office = Microsoft.Office.Core;
 using PowerPoint = Microsoft.Office.Interop.PowerPoint;
@@ -21,33 +24,72 @@ namespace PowerPointLabs.LiveCodingLab
         {
             try
             {
-                PowerPointSlide currentSlide = PowerPointCurrentPresentationInfo.CurrentSlide as PowerPointSlide;
-                PowerPoint.ShapeRange selectedShapes = Globals.ThisAddIn.Application.ActiveWindow.Selection.ShapeRange;
+                PowerPointSlide currentSlide = PowerPointCurrentPresentationInfo.CurrentSlide;
 
-                //Get shapes to consider for animation
-                List<PowerPoint.Shape> shapesToUse = GetShapesToUse(currentSlide, selectedShapes);
-
-                // Delete all existing animations
-                if (currentSlide.Name.Contains("PPTLabsHighlightDifferenceSlide"))
+                if (currentSlide == null || currentSlide.Index == PowerPointPresentation.Current.SlideCount)
                 {
-                    ProcessExistingHighlightSlide(currentSlide, shapesToUse);
-                }
-
-                // Check that there exists a "before" code and an "after" code to be animated
-                if (shapesToUse == null || shapesToUse.Count != 2)
-                {
+                    MessageBox.Show(LiveCodingLabText.ErrorHighlightDifferenceWrongSlide,
+                                    LiveCodingLabText.ErrorHighlightDifferenceDialogTitle);
                     return;
                 }
 
-                // Set a flag that shows that there are existing animations in the current slide
-                currentSlide.Name = "PPTLabsHighlightDifferenceSlide" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
+                PowerPointSlide nextSlide = PowerPointPresentation.Current.Slides[currentSlide.Index];
+
+                if (Globals.ThisAddIn.Application.ActiveWindow.Selection.Type != PowerPoint.PpSelectionType.ppSelectionShapes)
+                {
+                    MessageBox.Show(LiveCodingLabText.ErrorHighlightDifferenceNoSelection,
+                                    LiveCodingLabText.ErrorHighlightDifferenceDialogTitle);
+                    return;
+                }
+
+                PowerPoint.ShapeRange selectedShapesCurrentSlide = Globals.ThisAddIn.Application.ActiveWindow.Selection.ShapeRange;
+                PowerPoint.ShapeRange selectedShapesNextSlide = nextSlide.Shapes.Range();
+
+                //Get shapes to consider for animation
+                List<PowerPoint.Shape> shapesToUseCurrentSlide = GetShapesToUse(currentSlide, selectedShapesCurrentSlide);
+                List<PowerPoint.Shape> shapesToUseNextSlide = GetShapesToUse(nextSlide, selectedShapesNextSlide);
+
+                // Check that there exists a "before" code and an "after" code to be animated
+                if (shapesToUseCurrentSlide == null || shapesToUseNextSlide == null)
+                {
+                    MessageBox.Show(LiveCodingLabText.ErrorHighlightDifferenceCodeSnippet,
+                                    LiveCodingLabText.ErrorHighlightDifferenceDialogTitle);
+                    return;
+                }
+
+                if (shapesToUseCurrentSlide.Count != 1 || HasText(shapesToUseCurrentSlide[0]))
+                {
+                    MessageBox.Show(LiveCodingLabText.ErrorHighlightDifferenceNoSelection,
+                                    LiveCodingLabText.ErrorHighlightDifferenceDialogTitle);
+                    return;
+                }
+
+                List<PowerPoint.Shape> shapesToUseNext = new List<PowerPoint.Shape>();
+                foreach (PowerPoint.Shape sh in shapesToUseNextSlide)
+                {
+                    if (HasText(sh)
+                        && sh.TextFrame.TextRange.Paragraphs().Count == shapesToUseCurrentSlide[0].TextFrame.TextRange.Paragraphs().Count)
+                    {
+                        shapesToUseNext.Add(sh);
+                    }
+                }
+
+                if (shapesToUseNext.Count < 1)
+                {
+                    MessageBox.Show(LiveCodingLabText.ErrorHighlightDifferenceCodeSnippet,
+                                    LiveCodingLabText.ErrorHighlightDifferenceDialogTitle);
+                    return;
+                }
+
+                PowerPointSlide transitionSlide = currentSlide.Duplicate();
+                transitionSlide.Name = "PPTLabsHighlightDifferenceTransitionSlide" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
 
                 // Initialise an animation sequence object
-                PowerPoint.Sequence sequence = currentSlide.TimeLine.MainSequence;
+                PowerPoint.Sequence sequence = transitionSlide.TimeLine.MainSequence;
 
                 // Objects that contain the "before" and "after" code to be animated
-                PowerPoint.Shape codeShapeBeforeEdit = shapesToUse[0];
-                PowerPoint.Shape codeShapeAfterEdit = shapesToUse[1];
+                PowerPoint.Shape codeShapeBeforeEdit = GetShapesToUse(transitionSlide, transitionSlide.Shapes.Range())[0];
+                PowerPoint.Shape codeShapeAfterEdit = transitionSlide.CopyShapeToSlide(shapesToUseNext[0]);
                 PowerPoint.TextRange codeTextBeforeEdit = codeShapeBeforeEdit.TextFrame.TextRange;
                 PowerPoint.TextRange codeTextAfterEdit = codeShapeAfterEdit.TextFrame.TextRange;
 
@@ -57,21 +99,10 @@ namespace PowerPointLabs.LiveCodingLab
                     return;
                 }
 
-                // Create a duplicate code over the before to simulate animation between a "before" and "after" code
-                PowerPoint.Shape codeShapeIntermediateEdit = codeShapeAfterEdit.Duplicate()[1];
-                codeShapeIntermediateEdit.Left = codeShapeBeforeEdit.Left;
-                codeShapeIntermediateEdit.Top = codeShapeBeforeEdit.Top;
-                codeShapeIntermediateEdit.Height = codeShapeBeforeEdit.Height;
-                codeShapeIntermediateEdit.Width = codeShapeBeforeEdit.Width;
-                currentSlide.RemoveAnimationsForShape(codeShapeIntermediateEdit);
-
-                // Remove the "after" code for alignment with "before" code using the previously created duplicate.
-                PowerPoint.Effect codeShapeAfterEditDisappear = sequence.AddEffect(codeShapeAfterEdit,
-                    PowerPoint.MsoAnimEffect.msoAnimEffectFade,
-                    PowerPoint.MsoAnimateByLevel.msoAnimateLevelNone,
-                    PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
-                codeShapeAfterEditDisappear.Exit = Office.MsoTriState.msoTrue;
-                codeShapeAfterEditDisappear.Timing.Duration = 0;
+                codeShapeAfterEdit.Left = codeShapeBeforeEdit.Left;
+                codeShapeAfterEdit.Top = codeShapeBeforeEdit.Top;
+                codeShapeAfterEdit.Height = codeShapeBeforeEdit.Height;
+                codeShapeAfterEdit.Width = codeShapeBeforeEdit.Width;
                 
                 // Add Colour change effect for lines of code to be changed.
                 int currentIndex = sequence.Count;
@@ -100,13 +131,7 @@ namespace PowerPointLabs.LiveCodingLab
                     effectCount++;
                 }
 
-                for (int i = markedForRemoval.Count - 1; i >= 0; --i)
-                {
-                    // delete redundant colour change effects from back.
-                    int index = markedForRemoval[i];
-                    colourChangeEffectsBefore[index].Delete();
-                    colourChangeEffectsBefore.RemoveAt(index);
-                }
+                colourChangeEffectsBefore = DeleteRedundantEffects(markedForRemoval, colourChangeEffectsBefore);
 
                 // Changes colour of text to user-specified colour
                 FormatColourChangeEffectsBefore(colourChangeEffectsBefore);
@@ -114,19 +139,13 @@ namespace PowerPointLabs.LiveCodingLab
                 // Creates "appear" effects for "after" code to be transitioned to.
                 currentIndex = sequence.Count;
                 sequence.AddEffect(
-                    codeShapeIntermediateEdit,
+                    codeShapeAfterEdit,
                     PowerPoint.MsoAnimEffect.msoAnimEffectAppear,
                     PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
                     PowerPoint.MsoAnimTriggerType.msoAnimTriggerOnPageClick);
                 List<PowerPoint.Effect> appearEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
-
-                for (int i = markedForRemoval.Count - 1; i >= 0; --i)
-                {
-                    // delete redundant appear effects from back.
-                    int index = markedForRemoval[i];
-                    appearEffects[index].Delete();
-                    appearEffects.RemoveAt(index);
-                }
+               
+                appearEffects = DeleteRedundantEffects(markedForRemoval, appearEffects);
 
                 FormatAppearEffects(appearEffects);
 
@@ -144,31 +163,19 @@ namespace PowerPointLabs.LiveCodingLab
                     disappearEffect.Exit = Office.MsoTriState.msoTrue;
                 }
 
-                for (int i = markedForRemoval.Count - 1; i >= 0; --i)
-                {
-                    // delete redundant "disappear" effects from back.
-                    int index = markedForRemoval[i];
-                    disappearEffects[index].Delete();
-                    disappearEffects.RemoveAt(index);
-                }
+                disappearEffects = DeleteRedundantEffects(markedForRemoval, disappearEffects);
 
                 FormatDisappearEffects(disappearEffects);
 
                 // Create colour change effects for the "after" code to highlight code that was changed.
                 currentIndex = sequence.Count;
-                sequence.AddEffect(codeShapeIntermediateEdit, 
+                sequence.AddEffect(codeShapeAfterEdit, 
                     PowerPoint.MsoAnimEffect.msoAnimEffectChangeFontColor, 
                     PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel, 
                     PowerPoint.MsoAnimTriggerType.msoAnimTriggerAfterPrevious);
                 List<PowerPoint.Effect> colourChangeEffectsAfter = AsList(sequence, currentIndex + 1, sequence.Count + 1);
 
-                for (int i = markedForRemoval.Count - 1; i >= 0; --i)
-                {
-                    // delete redundant colour change effects from back.
-                    int index = markedForRemoval[i];
-                    colourChangeEffectsAfter[index].Delete();
-                    colourChangeEffectsAfter.RemoveAt(index);
-                }
+                colourChangeEffectsAfter = DeleteRedundantEffects(markedForRemoval, colourChangeEffectsAfter);
 
                 // Changes colour of text to user-specified colour
                 FormatColourChangeEffectsAfter(colourChangeEffectsAfter);
@@ -203,20 +210,6 @@ namespace PowerPointLabs.LiveCodingLab
             return list;
         }
 
-        // Delete existing animations
-        private static void ProcessExistingHighlightSlide(PowerPointSlide currentSlide, List<PowerPoint.Shape> shapesToUse)
-        {
-            currentSlide.DeleteIndicator();
-
-            foreach (PowerPoint.Shape tmp in currentSlide.Shapes)
-            {
-                if (shapesToUse.Contains(tmp))
-                {
-                    currentSlide.DeleteShapeAnimations(tmp);
-                }
-            }
-        }
-
         /// <summary>
         /// Get shapes to use for animation.
         /// If user does not select anything: Select shapes which have bullet points
@@ -229,6 +222,22 @@ namespace PowerPointLabs.LiveCodingLab
                                 .Where(HasText)
                                 .ToList();
         }
+
+        /// <summary>
+        /// Deletes all redundant effects from the sequence.
+        /// </summary>
+        private static List<PowerPoint.Effect> DeleteRedundantEffects(List<int> markedForRemoval, List<PowerPoint.Effect> effectList)
+        {
+            for (int i = markedForRemoval.Count - 1; i >= 0; --i)
+            {
+                // delete redundant colour change effects from back.
+                int index = markedForRemoval[i];
+                effectList[index].Delete();
+                effectList.RemoveAt(index);
+            }
+            return effectList;
+        }
+
 
         /// <summary>
         /// Apply colour change and timing to the lines of code that is going to disappear (i.e. code to be changed from).

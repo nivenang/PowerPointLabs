@@ -15,10 +15,7 @@ namespace PowerPointLabs.ActionFramework.LiveCodingLab
         {
             this.StartNewUndoEntry();
 
-            if (this.GetAddIn().Application.ActiveWindow.Selection.ShapeRange.Count == 2)
-            {
-                HighlightDifference.HighlightDifferences();
-            }
+            HighlightDifference.HighlightDifferences();
         }
     }
 }

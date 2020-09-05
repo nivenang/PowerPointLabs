@@ -37,6 +37,11 @@
         public const string SettingsButtonSupertip = "Configure the settings for Live Coding Lab.";
 
         public const string SettingsScrollSpeedTooltip = "The duration (in seconds) for the animation to scroll down to the desired portion in the code.";
+
+        public const string ErrorHighlightDifferenceDialogTitle = "Unable to execute action";
+        public const string ErrorHighlightDifferenceWrongSlide = "Please select the correct slide.";
+        public const string ErrorHighlightDifferenceNoSelection = "Please select the code snippet.";
+        public const string ErrorHighlightDifferenceCodeSnippet = "Missing or extra code snippet.";
         #endregion
     }
 }
