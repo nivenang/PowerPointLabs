@@ -10,7 +10,7 @@ namespace PowerPointLabs.ActionFramework.LiveCodingLab
     {
         protected override void ExecuteAction(string ribbonId)
         {
-            LiveCodingLabSettings.ShowSettingsDialog();
+            LiveCodingLabSettings.ShowAnimationSettingsDialog();
         }
     }
 }

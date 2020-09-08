@@ -14,14 +14,22 @@ using PowerPoint = Microsoft.Office.Interop.PowerPoint;
 
 namespace PowerPointLabs.LiveCodingLab
 {
-    class AnimateNewLines
+    public partial class LiveCodingLabMain
     {
 #pragma warning disable 0618
+        internal const int AnimateNewLines_MinNoOfShapesRequired = 1;
+        internal const string AnimateNewLines_FeatureName = "Animate New Lines";
+        internal const string AnimateNewLines_ShapeSupport = "code box";
+        internal static readonly string[] AnimateNewLines_ErrorParameters =
+        {
+            AnimateNewLines_FeatureName,
+            AnimateNewLines_MinNoOfShapesRequired.ToString(),
+            AnimateNewLines_ShapeSupport
+        };
 
-        public static bool IsAnimateNewLinesEnabled { get; set; } = true;
         private static float fontScale = 4.5f;
 
-        public static void AnimateNewCodeLines()
+        public void AnimateNewLines(PowerPoint.ShapeRange shapeRange)
         {
             try
             {
@@ -36,14 +44,7 @@ namespace PowerPointLabs.LiveCodingLab
 
                 PowerPointSlide nextSlide = PowerPointPresentation.Current.Slides[currentSlide.Index];
 
-                if (Globals.ThisAddIn.Application.ActiveWindow.Selection.Type != PowerPoint.PpSelectionType.ppSelectionShapes)
-                {
-                    MessageBox.Show(LiveCodingLabText.ErrorHighlightDifferenceNoSelection,
-                                    LiveCodingLabText.ErrorHighlightDifferenceDialogTitle);
-                    return;
-                }
-
-                PowerPoint.ShapeRange selectedShapesCurrentSlide = Globals.ThisAddIn.Application.ActiveWindow.Selection.ShapeRange;
+                PowerPoint.ShapeRange selectedShapesCurrentSlide = shapeRange;
                 PowerPoint.ShapeRange selectedShapesNextSlide = nextSlide.Shapes.Range();
 
                 //Get shapes to consider for animation
@@ -282,48 +283,6 @@ namespace PowerPointLabs.LiveCodingLab
             }
         }
 
-
-        /// <summary>
-        /// Takes the effects in the sequence in the range [startIndex,endIndex) and puts them into a list in the same order.
-        /// </summary>
-        private static List<PowerPoint.Effect> AsList(PowerPoint.Sequence sequence, int startIndex, int endIndex)
-        {
-            List<PowerPoint.Effect> list = new List<PowerPoint.Effect>();
-            for (int i = startIndex; i < endIndex; ++i)
-            {
-                list.Add(sequence[i]);
-            }
-            return list;
-        }
-
-        /// <summary>
-        /// Get shapes to use for animation.
-        /// If user does not select anything: Select shapes which have bullet points
-        /// If user selects some shapes: Keep shapes from user selection which have bullet points
-        /// If user selects some text: Keep shapes used to store text
-        /// </summary>
-        private static List<PowerPoint.Shape> GetShapesToUse(PowerPointSlide currentSlide, PowerPoint.ShapeRange selectedShapes)
-        {
-            return selectedShapes.Cast<PowerPoint.Shape>()
-                                .Where(HasText)
-                                .ToList();
-        }
-
-        /// <summary>
-        /// Deletes all redundant effects from the sequence.
-        /// </summary>
-        private static List<PowerPoint.Effect> DeleteRedundantEffects(List<int> markedForRemoval, List<PowerPoint.Effect> effectList)
-        {
-            for (int i = markedForRemoval.Count - 1; i >= 0; --i)
-            {
-                // delete redundant colour change effects from back.
-                int index = markedForRemoval[i];
-                effectList[index].Delete();
-                effectList.RemoveAt(index);
-            }
-            return effectList;
-        }
-
         /// <summary>
         /// Apply formatting and timing to the "appear" effects (i.e. new code to be changed to).
         /// </summary>
@@ -363,13 +322,5 @@ namespace PowerPointLabs.LiveCodingLab
             }
         }
 
-        /// <summary>
-        /// Returns true iff shape has a text frame.
-        /// </summary>
-        private static bool HasText(PowerPoint.Shape shape)
-        {
-            return shape.HasTextFrame == Office.MsoTriState.msoTrue &&
-                   shape.TextFrame2.HasText == Office.MsoTriState.msoTrue;
-        }
     }
 }

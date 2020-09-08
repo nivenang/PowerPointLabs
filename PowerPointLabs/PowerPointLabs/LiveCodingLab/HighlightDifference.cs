@@ -14,16 +14,25 @@ using PowerPoint = Microsoft.Office.Interop.PowerPoint;
 
 namespace PowerPointLabs.LiveCodingLab
 {
-    class HighlightDifference
+    public partial class LiveCodingLabMain
     {
 #pragma warning disable 0618
 
-        public static bool IsHighlightDifferenceEnabled { get; set; } = true;
+        internal const int HighlightDifference_MinNoOfShapesRequired = 1;
+        internal const string HighlightDifference_FeatureName = "Highlight Difference";
+        internal const string HighlightDifference_ShapeSupport = "code box";
+        internal static readonly string[] HighlightDifference_ErrorParameters =
+{
+            HighlightDifference_FeatureName,
+            HighlightDifference_MinNoOfShapesRequired.ToString(),
+            HighlightDifference_ShapeSupport
+        };
 
-        public static void HighlightDifferences()
+        public void HighlightDifferences(PowerPoint.ShapeRange shapeRange)
         {
             try
             {
+
                 PowerPointSlide currentSlide = PowerPointCurrentPresentationInfo.CurrentSlide;
 
                 if (currentSlide == null || currentSlide.Index == PowerPointPresentation.Current.SlideCount)
@@ -35,14 +44,7 @@ namespace PowerPointLabs.LiveCodingLab
 
                 PowerPointSlide nextSlide = PowerPointPresentation.Current.Slides[currentSlide.Index];
 
-                if (Globals.ThisAddIn.Application.ActiveWindow.Selection.Type != PowerPoint.PpSelectionType.ppSelectionShapes)
-                {
-                    MessageBox.Show(LiveCodingLabText.ErrorHighlightDifferenceNoSelection,
-                                    LiveCodingLabText.ErrorHighlightDifferenceDialogTitle);
-                    return;
-                }
-
-                PowerPoint.ShapeRange selectedShapesCurrentSlide = Globals.ThisAddIn.Application.ActiveWindow.Selection.ShapeRange;
+                PowerPoint.ShapeRange selectedShapesCurrentSlide = shapeRange;
                 PowerPoint.ShapeRange selectedShapesNextSlide = nextSlide.Shapes.Range();
 
                 //Get shapes to consider for animation
@@ -57,7 +59,7 @@ namespace PowerPointLabs.LiveCodingLab
                     return;
                 }
 
-                if (shapesToUseCurrentSlide.Count != 1 || HasText(shapesToUseCurrentSlide[0]))
+                if (shapesToUseCurrentSlide.Count != 1 || !HasText(shapesToUseCurrentSlide[0]))
                 {
                     MessageBox.Show(LiveCodingLabText.ErrorHighlightDifferenceNoSelection,
                                     LiveCodingLabText.ErrorHighlightDifferenceDialogTitle);
@@ -147,7 +149,7 @@ namespace PowerPointLabs.LiveCodingLab
                
                 appearEffects = DeleteRedundantEffects(markedForRemoval, appearEffects);
 
-                FormatAppearEffects(appearEffects);
+                FormatAppearEffectsHighlight(appearEffects);
 
                 // Creates "disappear" effects for "before" to be transitioned away from.
                 currentIndex = sequence.Count;
@@ -158,14 +160,9 @@ namespace PowerPointLabs.LiveCodingLab
                     PowerPoint.MsoAnimTriggerType.msoAnimTriggerOnPageClick);
                 List<PowerPoint.Effect> disappearEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
 
-                foreach (PowerPoint.Effect disappearEffect in disappearEffects)
-                {
-                    disappearEffect.Exit = Office.MsoTriState.msoTrue;
-                }
-
                 disappearEffects = DeleteRedundantEffects(markedForRemoval, disappearEffects);
 
-                FormatDisappearEffects(disappearEffects);
+                FormatDisappearEffectsHighlight(disappearEffects);
 
                 // Create colour change effects for the "after" code to highlight code that was changed.
                 currentIndex = sequence.Count;
@@ -196,49 +193,6 @@ namespace PowerPointLabs.LiveCodingLab
             }
         }
 
-
-        /// <summary>
-        /// Takes the effects in the sequence in the range [startIndex,endIndex) and puts them into a list in the same order.
-        /// </summary>
-        private static List<PowerPoint.Effect> AsList(PowerPoint.Sequence sequence, int startIndex, int endIndex)
-        {
-            List<PowerPoint.Effect> list = new List<PowerPoint.Effect>();
-            for (int i = startIndex; i < endIndex; ++i)
-            {
-                list.Add(sequence[i]);
-            }
-            return list;
-        }
-
-        /// <summary>
-        /// Get shapes to use for animation.
-        /// If user does not select anything: Select shapes which have bullet points
-        /// If user selects some shapes: Keep shapes from user selection which have bullet points
-        /// If user selects some text: Keep shapes used to store text
-        /// </summary>
-        private static List<PowerPoint.Shape> GetShapesToUse(PowerPointSlide currentSlide, PowerPoint.ShapeRange selectedShapes)
-        {
-            return selectedShapes.Cast<PowerPoint.Shape>()
-                                .Where(HasText)
-                                .ToList();
-        }
-
-        /// <summary>
-        /// Deletes all redundant effects from the sequence.
-        /// </summary>
-        private static List<PowerPoint.Effect> DeleteRedundantEffects(List<int> markedForRemoval, List<PowerPoint.Effect> effectList)
-        {
-            for (int i = markedForRemoval.Count - 1; i >= 0; --i)
-            {
-                // delete redundant colour change effects from back.
-                int index = markedForRemoval[i];
-                effectList[index].Delete();
-                effectList.RemoveAt(index);
-            }
-            return effectList;
-        }
-
-
         /// <summary>
         /// Apply colour change and timing to the lines of code that is going to disappear (i.e. code to be changed from).
         /// </summary>
@@ -257,7 +211,7 @@ namespace PowerPointLabs.LiveCodingLab
         /// <summary>
         /// Apply formatting and timing to the "appear" effects (i.e. new code to be changed to).
         /// </summary>
-        private static void FormatAppearEffects(List<PowerPoint.Effect> appearEffects)
+        private static void FormatAppearEffectsHighlight(List<PowerPoint.Effect> appearEffects)
         {
             foreach (PowerPoint.Effect effect in appearEffects)
             {
@@ -284,10 +238,11 @@ namespace PowerPointLabs.LiveCodingLab
         /// <summary>
         /// Apply formatting and timing to the "disappear" effects. (i.e. old code to be changed from)
         /// </summary>
-        private static void FormatDisappearEffects(List<PowerPoint.Effect> disappearEffects)
+        private static void FormatDisappearEffectsHighlight(List<PowerPoint.Effect> disappearEffects)
         {
             foreach (PowerPoint.Effect effect in disappearEffects)
             {
+                effect.Exit = Office.MsoTriState.msoTrue;
                 effect.Timing.TriggerType = PowerPoint.MsoAnimTriggerType.msoAnimTriggerOnPageClick;
                 effect.Timing.Duration = 0;
             }
@@ -316,14 +271,6 @@ namespace PowerPointLabs.LiveCodingLab
             }
         }
 
-        /// <summary>
-        /// Returns true iff shape has a text frame.
-        /// </summary>
-        private static bool HasText(PowerPoint.Shape shape)
-        {
-            return shape.HasTextFrame == Office.MsoTriState.msoTrue &&
-                   shape.TextFrame2.HasText == Office.MsoTriState.msoTrue;
 
-        }
     }
 }

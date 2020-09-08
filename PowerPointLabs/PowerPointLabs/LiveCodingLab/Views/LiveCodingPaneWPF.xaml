@@ -1,0 +1,64 @@
+﻿<UserControl x:Class="PowerPointLabs.LiveCodingLab.Views.LiveCodingPaneWPF"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:WPF="clr-namespace:PowerPointLabs.WPF"
+             xmlns:views="clr-namespace:PowerPointLabs.LiveCodingLab.Views"
+             xmlns:theme="clr-namespace:PowerPointLabs.ColorThemes"
+             xmlns:model="clr-namespace:PowerPointLabs.ELearningLab.ELearningWorkspace.Model"
+             mc:Ignorable="d" 
+             d:DesignHeight="725" d:DesignWidth="310"
+             x:Name="liveCodingPane" FocusVisualStyle="{x:Null}">
+    <UserControl.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <theme:DesignTheme Theme="Colorful"/>
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Controls.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Fonts.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Colors.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/Steel.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MahApps.Metro;component/Styles/Accents/baselight.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <Style TargetType="{x:Type ToggleButton}">
+                <Setter Property="Focusable" Value="false"/>
+            </Style>
+        </ResourceDictionary>
+    </UserControl.Resources>
+    <UserControl.Background>
+        <DynamicResource ResourceKey="Theme.PaneBackgroundBrush"/>
+    </UserControl.Background>
+    <UserControl.InputBindings>
+        <KeyBinding Key="LeftCtrl"/>
+    </UserControl.InputBindings>
+    <ScrollViewer>
+        <Grid VerticalAlignment="Top" Height="725" Width="300">
+            <GroupBox x:Name="codeBoxGroupBox" Header="Code Box" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" Height="117" Width="280">
+                <WPF:ImageButton ToolTip="Opens the settings for Code Box functions" x:Name="codeBoxSettingsButton" HorizontalAlignment="Right" Margin="0,-29,-2,0" VerticalAlignment="Top" Width="20" Height="20" Click="CodeBoxSettingsButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
+                    <Image Source="..\..\Resources\SettingsGear.png"/>
+                </WPF:ImageButton>
+            </GroupBox>
+            <WPF:ImageButton ToolTip="Inserts a Code Box object into the slides" x:Name="insertCodeBox"  HorizontalAlignment="Left" Margin="18,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="InsertCodeBoxButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
+                <Image Source="..\..\Resources\PositionsLab\AlignLeftIcon.png"/>
+            </WPF:ImageButton>
+            <TextBlock x:Name="insertCodeBoxTextBlock" HorizontalAlignment="Left" Margin="18,80,0,0" TextWrapping="Wrap" Text="Insert Code" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60"/>
+            <WPF:ImageButton ToolTip="Retrieves updated code from sources specified in code boxes" x:Name="refreshCodeButton" HorizontalAlignment="Left" Margin="85,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="RefreshCodeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
+                <Image Source="..\..\Resources\PositionsLab\AlignTopIcon.png"/>
+            </WPF:ImageButton>
+            <TextBlock x:Name="refreshCodeTextBlock" HorizontalAlignment="Left" Margin="85,80,0,0" TextWrapping="Wrap" Text="Refresh Code" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60"/>
+            <GroupBox x:Name="animationGroupBox" Header="Animation" HorizontalAlignment="Left" Margin="10,127,0,0" VerticalAlignment="Top" Height="116" Width="280">
+                <WPF:ImageButton ToolTip="Opens the settings for Animation functions" x:Name="animationSettingsButton" HorizontalAlignment="Right" Margin="0,-29,-2,0" VerticalAlignment="Top" Width="20" Height="20" Click="AnimationSettingsButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
+                    <Image Source="..\..\Resources\SettingsGear.png"/>
+                </WPF:ImageButton>
+            </GroupBox>
+            <WPF:ImageButton ToolTip="Highlight the differences between two code snippets across two separate slides" x:Name="highlightDifferenceButton" HorizontalAlignment="Left" Margin="18,157,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="HighlightDifferenceButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
+                <Image Source="..\..\Resources\PositionsLab\AlignRightIcon.png"/>
+            </WPF:ImageButton>
+            <TextBlock x:Name="highlightDifferenceTextBlock" HorizontalAlignment="Left" Margin="18,202,0,0" TextWrapping="Wrap" Text="Highlight Difference" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60"/>
+            <WPF:ImageButton ToolTip="Animates the insertion of new lines across two code snippets on two separate slides" x:Name="animateNewLinesButton" HorizontalAlignment="Left" Margin="85,157,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="AnimateNewLinesButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
+                <Image Source="..\..\Resources\PositionsLab\AlignTopIcon.png"/>
+            </WPF:ImageButton>
+            <TextBlock x:Name="animateNewLinesTextBlock" HorizontalAlignment="Left" Margin="85,202,0,0" TextWrapping="Wrap" Text="Animate New Lines" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60"/>
+        </Grid>
+    </ScrollViewer>
+</UserControl>

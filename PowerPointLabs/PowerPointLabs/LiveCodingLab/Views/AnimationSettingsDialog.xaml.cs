@@ -13,8 +13,9 @@ namespace PowerPointLabs.LiveCodingLab.Views
     /// <summary>
     /// Interaction logic for LiveCodingLabSettingsDialogBox.xaml
     /// </summary>
-    public partial class LiveCodingLabSettingsDialogBox
+    public partial class AnimationSettingsDialog
     {
+
         public delegate void DialogConfirmedDelegate(Drawing.Color highlightColor,
                                                     Drawing.Color defaultColor,
                                                     float scrollSpeed);
@@ -22,12 +23,12 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
         private float lastScrollSpeed;
 
-        public LiveCodingLabSettingsDialogBox()
+        public AnimationSettingsDialog()
         {
             InitializeComponent();
         }
 
-        public LiveCodingLabSettingsDialogBox(Drawing.Color defaultHighlightColor,
+        public AnimationSettingsDialog(Drawing.Color defaultHighlightColor,
                                             Drawing.Color defaultTextColor,
                                             float defaultScrollSpeed)
             : this()

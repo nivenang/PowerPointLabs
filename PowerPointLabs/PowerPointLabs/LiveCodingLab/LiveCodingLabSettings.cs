@@ -11,9 +11,9 @@ namespace PowerPointLabs.LiveCodingLab
         public static Color bulletsTextDefaultColor = Color.FromArgb(0, 0, 0);
         public static float scrollSpeedDefaultValue = 1.0f;
 
-        public static void ShowSettingsDialog()
+        public static void ShowAnimationSettingsDialog()
         {
-            LiveCodingLabSettingsDialogBox dialog = new LiveCodingLabSettingsDialogBox(
+            AnimationSettingsDialog dialog = new AnimationSettingsDialog(
                 bulletsTextHighlightColor, 
                 bulletsTextDefaultColor, 
                 scrollSpeedDefaultValue);
