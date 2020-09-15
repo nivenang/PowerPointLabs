@@ -19,9 +19,32 @@
         public const string CodeURLIdentifier = "CodeURL";
         public const string IsCodeURLIdentifier = "IsCodeURL";
         public const string TagNoIdentifier = "TagNo";
+        public const string CodeBoxShapeNameFormat = Identifier + Underscore + "{0}" + Underscore + CodeBoxIdentifier;
+        #endregion
+
+        #region Code Box Identifiers
+        public const string CodeBox_IsURL = "IsURL";
+        public const string CodeBox_IsFile = "IsFile";
+        public const string CodeBox_IsText = "IsText";
+        public const string CodeBox_URLText = "URLText";
+        public const string CodeBox_FileText = "FileText";
+        public const string CodeBox_UserText = "UserText";
+        public const string CodeBox_Id = "CodeBoxId";
+        public const string CodeBox_Slide = "Slide";
+        public const string CodeBox_CodeShape = "CodeShape";
+        #endregion
+
+        #region Storage Identifiers
+        public const string Identifier = "PPTL";
+        public const string Underscore = "_";
         public const string TextStorageIdentifier = "Storage";
-
-
+        public const string CodeBoxItemIdentifier = "Item";
+        public const string CodeBoxIdentifier = "CodeBox";
+        public const string CodeBoxStorageIdentifier = "CodeBoxStorage";
+        public const string LiveCodingLabTextStorageShapeName = Identifier + Underscore + TextStorageIdentifier;
+        public const string ExtractTagNoRegex = Identifier + Underscore + @"([1-9][0-9]*)" +
+            Underscore + "(" + CodeBoxIdentifier + @").*";
+        public const string CodeBoxShapeNameRegex = Identifier + Underscore + @"[1-9][0-9]*" + Underscore + CodeBoxIdentifier;
         #endregion
 
         #region GUI Text

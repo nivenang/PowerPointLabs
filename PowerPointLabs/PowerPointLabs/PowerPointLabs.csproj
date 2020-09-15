@@ -818,6 +818,13 @@
     <Compile Include="LiveCodingLab\LiveCodingLabSettings.cs" />
     <Compile Include="LiveCodingLab\LiveCodingLabMain.cs" />
     <Compile Include="LiveCodingLab\LiveCodingLabErrorHandler.cs" />
+    <Compile Include="LiveCodingLab\Model\CodeBox.cs" />
+    <Compile Include="LiveCodingLab\Service\LiveCodingLabTextStorageService.cs" />
+    <Compile Include="LiveCodingLab\Service\CodeBoxIdService.cs" />
+    <Compile Include="LiveCodingLab\Utility\ShapeUtility.cs" />
+    <Compile Include="LiveCodingLab\Views\CodeBoxSettingsDialog.xaml.cs">
+      <DependentUpon>CodeBoxSettingsDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LiveCodingLab\Views\AnimationSettingsDialog.xaml.cs">
       <DependentUpon>AnimationSettingsDialog.xaml</DependentUpon>
     </Compile>
@@ -829,6 +836,9 @@
     </Compile>
     <Compile Include="LiveCodingLab\Views\LiveCodingPaneWPF.xaml.cs">
       <DependentUpon>LiveCodingPaneWPF.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="LiveCodingLab\Views\CodeBoxPaneItem.xaml.cs">
+      <DependentUpon>CodeBoxPaneItem.xaml</DependentUpon>
     </Compile>
     <Compile Include="ShapesLab\Views\CustomComboBoxItem.cs" />
     <Compile Include="ShapesLab\Views\CustomMenuItem.cs" />
@@ -1659,6 +1669,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
+    <Page Include="LiveCodingLab\Views\CodeBoxSettingsDialog.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="LiveCodingLab\Views\AnimationSettingsDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -1666,6 +1680,10 @@
     <Page Include="LiveCodingLab\Views\LiveCodingPaneWPF.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="LiveCodingLab\Views\CodeBoxPaneItem.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
     </Page>
     <Page Include="NarrationsLab\Views\InShowRecordingControl.xaml">
       <Generator>MSBuild:Compile</Generator>
@@ -2651,11 +2669,7 @@
   <ItemGroup>
     <None Include="Resources\LiveCodingLab.png" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="LiveCodingLab\Model\" />
-    <Folder Include="LiveCodingLab\Service\" />
-    <Folder Include="LiveCodingLab\Utility\" />
-  </ItemGroup>
+  <ItemGroup />
   <!-- Include the build rules for a C# project. -->
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

@@ -43,9 +43,13 @@
             </WPF:ImageButton>
             <TextBlock x:Name="insertCodeBoxTextBlock" HorizontalAlignment="Left" Margin="18,80,0,0" TextWrapping="Wrap" Text="Insert Code" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60"/>
             <WPF:ImageButton ToolTip="Retrieves updated code from sources specified in code boxes" x:Name="refreshCodeButton" HorizontalAlignment="Left" Margin="85,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="RefreshCodeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
-                <Image Source="..\..\Resources\PositionsLab\AlignTopIcon.png"/>
+                <Image Source="..\..\Resources\icon-right_rotate.png"/>
             </WPF:ImageButton>
             <TextBlock x:Name="refreshCodeTextBlock" HorizontalAlignment="Left" Margin="85,80,0,0" TextWrapping="Wrap" Text="Refresh Code" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60"/>
+            <WPF:ImageButton ToolTip="Retrieves updated code from sources specified in code boxes" x:Name="refreshAllCodeButton" HorizontalAlignment="Left" Margin="152,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="RefreshAllCodeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
+                <Image Source="..\..\Resources\icon-right_rotate.png"/>
+            </WPF:ImageButton>
+            <TextBlock x:Name="refreshAllCodeTextBlock" HorizontalAlignment="Left" Margin="152,80,0,0" TextWrapping="Wrap" Text="Refresh All Code" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60"/>
             <GroupBox x:Name="animationGroupBox" Header="Animation" HorizontalAlignment="Left" Margin="10,127,0,0" VerticalAlignment="Top" Height="116" Width="280">
                 <WPF:ImageButton ToolTip="Opens the settings for Animation functions" x:Name="animationSettingsButton" HorizontalAlignment="Right" Margin="0,-29,-2,0" VerticalAlignment="Top" Width="20" Height="20" Click="AnimationSettingsButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
                     <Image Source="..\..\Resources\SettingsGear.png"/>
@@ -59,6 +63,10 @@
                 <Image Source="..\..\Resources\PositionsLab\AlignTopIcon.png"/>
             </WPF:ImageButton>
             <TextBlock x:Name="animateNewLinesTextBlock" HorizontalAlignment="Left" Margin="85,202,0,0" TextWrapping="Wrap" Text="Animate New Lines" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60"/>
+            <ListBox x:Name="codeListBox" 
+                 Margin="10,248,10,10" 
+                 HorizontalContentAlignment="Stretch"
+                 Background="{DynamicResource Theme.BackgroundBrush2}"/>
         </Grid>
     </ScrollViewer>
 </UserControl>
