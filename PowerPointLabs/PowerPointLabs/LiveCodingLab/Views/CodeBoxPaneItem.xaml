@@ -6,7 +6,7 @@
              xmlns:theme="clr-namespace:PowerPointLabs.ColorThemes"
              xmlns:local="clr-namespace:PowerPointLabs.LiveCodingLab.Views"
              mc:Ignorable="d" 
-             d:DesignHeight="70" d:DesignWidth="300"
+             d:DesignWidth="278"
              MouseDoubleClick="OnMouseDoubleClick">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -35,12 +35,12 @@
                                                     UpdateSourceTrigger=PropertyChanged}"
                                      x:Name="textSource" AcceptsReturn="True" TextWrapping="Wrap"
                                      Background="Transparent" BorderThickness="0" 
-                                             ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                                             ScrollViewer.HorizontalScrollBarVisibility="Auto" 
                              ScrollViewer.VerticalScrollBarVisibility="Auto"
                                      Panel.ZIndex="2" />
                                     <TextBox Text="{TemplateBinding Tag}" Background="{TemplateBinding Background}" 
                                              AcceptsReturn="True" Panel.ZIndex="1" BorderThickness="0" TextWrapping="Wrap"
-                                              ScrollViewer.HorizontalScrollBarVisibility="Disabled" 
+                                              ScrollViewer.HorizontalScrollBarVisibility="Auto" 
                              ScrollViewer.VerticalScrollBarVisibility="Auto">
                                         <TextBox.Style>
                                             <Style TargetType="{x:Type TextBox}">
@@ -72,34 +72,31 @@
             </StackPanel>
         </Grid.ToolTip>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition x:Name="col1" Width="9" MaxWidth="60"/>
-            <ColumnDefinition x:Name="col2"/>
-            <ColumnDefinition x:Name="col3" Width="35" MaxWidth="100"/>
-            <ColumnDefinition Width="35"/>
+            <ColumnDefinition x:Name="col1" Width="3" MaxWidth="5"/>
+            <ColumnDefinition x:Name="col2" Width="210" MaxWidth="210"/>
+            <ColumnDefinition x:Name="col3" Width="32" MaxWidth="32"/>
+            <ColumnDefinition Width="32" MaxWidth="32"/>
         </Grid.ColumnDefinitions>
-        <Grid x:Name="canvas" Grid.Column="1" >
+        <Grid x:Name="canvas" Grid.Column="1" MaxWidth="225">
             <Grid.RowDefinitions>
                 <RowDefinition Height="11*"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
             <TextBox x:Name="codeTextBox" Style="{StaticResource TextBoxWithPlaceHolder}" 
                              Text="{Binding Path=Text, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" Padding="2 2 2 2"
-                             TextWrapping="Wrap" FontSize="12" Tag="Enter your URL / code snippet here..."
-                             AcceptsReturn="True" Margin="0,5,0,0" MinHeight="30" Height="40" VerticalAlignment="Top"/>
+                             TextWrapping="Wrap" FontSize="12" Tag="Enter your code here..."
+                             AcceptsReturn="True" Margin="0,5,0,0" MinHeight="30" VerticalAlignment="Top"/>
+            <RadioButton x:Name="isFile" Content="File"  VerticalContentAlignment="Center" 
+                     FontSize="10" Margin="47,36,120,11" ToolTip="Check to use a file path for the code snippet."
+                     Checked="IsFile_Checked"/>
+            <RadioButton x:Name="isText" Content="Text"  VerticalContentAlignment="Center" 
+                     FontSize="10" Margin="0,36,163,11" ToolTip="Check to use a user input text for the code snippet."
+                     Checked="IsText_Checked"/>
+            <RadioButton x:Name="isURL" Content="URL"  VerticalContentAlignment="Center" 
+                     FontSize="10" Margin="90,36,73,11" ToolTip="Check to use a URL for the code snippet." 
+                     Checked="IsURL_Checked"/>
         </Grid>
-        <RadioButton x:Name="isText" GroupName="InputType" Content="Text"  VerticalContentAlignment="Center" 
-                     FontSize="10" Margin="1,47,178,0" ToolTip="Check to use a user input text for the code snippet."
-                     Checked="IsText_Checked" Grid.Column="1">
-        </RadioButton>
-        <RadioButton x:Name="isURL" GroupName="InputType" Content="URL"  VerticalContentAlignment="Center" 
-                     FontSize="10" Margin="95,47,84,0" ToolTip="Check to use a URL for the code snippet." 
-                     Checked="IsURL_Checked" Grid.Column="1">
-        </RadioButton>
-        <RadioButton x:Name="isFile" GroupName="InputType" Content="File"  VerticalContentAlignment="Center" 
-                     FontSize="10" Margin="48,47,131,0" ToolTip="Check to use a file path for the code snippet."
-                     Checked="IsFile_Checked" Grid.Column="1">
-        </RadioButton>
-        <Button x:Name="insertButton" Grid.Column="2" Margin="0,0,5,20" Click="InsertButton_Click" HorizontalAlignment="Right" MinWidth="25" MaxWidth="25" MinHeight="25" MaxHeight="25" Style="{StaticResource ImageButtonStyle}">
+        <Button x:Name="insertButton" Grid.Column="2" Margin="0,0,5,20" Click="InsertButton_Click" HorizontalAlignment="Right" MinWidth="25" MaxWidth="25" MinHeight="25" MaxHeight="25" Style="{StaticResource ImageButtonStyle}" Width="25">
             <Image x:Name="insertCode" Source="pack://siteoforigin:,,,/Resources/SyncLabEditButton.png" Stretch="Fill"/>
             <Button.ToolTip>
                 <StackPanel>
@@ -111,7 +108,7 @@
                 </StackPanel>
             </Button.ToolTip>
         </Button>
-        <Button x:Name="deleteButton" Grid.Column="3" Margin="0,0,5,20" Click="DeleteButton_Click" HorizontalAlignment="Right" MinWidth="25" MaxWidth="25" MinHeight="25" MaxHeight="25" Style="{StaticResource ImageButtonStyle}" Width="25">
+        <Button x:Name="deleteButton" Grid.Column="3" Margin="0,0,7,20" Click="DeleteButton_Click" HorizontalAlignment="Right" MinWidth="25" MaxWidth="25" MinHeight="25" MaxHeight="25" Style="{StaticResource ImageButtonStyle}" Width="25">
             <Image x:Name="deleteImage" Source="pack://siteoforigin:,,,/Resources/SyncLabDeleteButton.png" Stretch="Fill"/>
             <Button.ToolTip>
                 <StackPanel>

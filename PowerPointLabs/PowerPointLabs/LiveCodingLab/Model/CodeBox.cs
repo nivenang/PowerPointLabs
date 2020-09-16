@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
 using Microsoft.Office.Interop.PowerPoint;
+using PowerPointLabs.LiveCodingLab.Service;
 using PowerPointLabs.Models;
 using PowerPointLabs.TextCollection;
 using TestInterface;
@@ -193,7 +194,10 @@ namespace PowerPointLabs.LiveCodingLab.Model
 
         public void Delete()
         {
-            codeShape.Delete();
+            if (codeShape != null)
+            {
+                codeShape.Delete();
+            }
         }
         #endregion
 

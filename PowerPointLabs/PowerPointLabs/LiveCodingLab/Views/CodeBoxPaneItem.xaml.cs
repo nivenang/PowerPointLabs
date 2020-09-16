@@ -126,7 +126,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
             }
             else
             {
-                codeBox = ShapeUtility.ReplaceTextForShape(codeBox, codeTextBox.Text);
+                codeBox = ShapeUtility.ReplaceTextForShape(codeBox);
             }
 
             parent.SaveCodeBox();

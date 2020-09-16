@@ -5,6 +5,7 @@ using Microsoft.Office.Interop.PowerPoint;
 
 using PowerPointLabs.ActionFramework.Common.Extension;
 using PowerPointLabs.LiveCodingLab.Model;
+using PowerPointLabs.LiveCodingLab.Service;
 using PowerPointLabs.LiveCodingLab.Views;
 using PowerPointLabs.Models;
 using PowerPointLabs.TextCollection;
@@ -26,8 +27,15 @@ namespace PowerPointLabs.LiveCodingLab.Utility
         /// <returns>generated callout shape</returns>
         public static CodeBox InsertCodeBoxToSlide(PowerPointSlide slide, CodeBox codeBox)
         {
-            Shape codeShape = slide.Shapes.AddTextbox(MsoTextOrientation.msoTextOrientationHorizontal, 10, 10, 100, 50);
-            codeShape.TextFrame.TextRange.Text = codeBox.Text;
+            Shape codeShape = slide.Shapes.AddTextbox(MsoTextOrientation.msoTextOrientationHorizontal, 10, 10, 500, 250);
+            if (codeBox.IsFile)
+            {
+                codeShape.TextFrame.TextRange.Text = CodeBoxFileService.GetCodeFromFile(codeBox.Text);
+            }
+            else
+            {
+                codeShape.TextFrame.TextRange.Text = codeBox.Text;
+            }
             codeShape.TextFrame.AutoSize = PpAutoSize.ppAutoSizeShapeToFitText;
             codeShape.TextFrame.WordWrap = MsoTriState.msoTrue;
             codeShape.TextFrame.TextRange.Font.Size = LiveCodingLabSettings.codeFontSize;
@@ -68,13 +76,20 @@ namespace PowerPointLabs.LiveCodingLab.Utility
         /// <param name="shape"></param>
         /// <param name="text"></param>
         /// <returns></returns>
-        public static CodeBox ReplaceTextForShape(CodeBox codeBox, string text)
+        public static CodeBox ReplaceTextForShape(CodeBox codeBox)
         {
             Shape shapeInSlide = codeBox.Shape;
             shapeInSlide.TextFrame.TextRange.Font.Name = LiveCodingLabSettings.codeFontType;
             shapeInSlide.TextFrame.TextRange.Font.Size = LiveCodingLabSettings.codeFontSize;
             shapeInSlide.TextFrame.TextRange.Font.Color.RGB = LiveCodingLabSettings.codeTextColor.ToArgb();
-            shapeInSlide.TextFrame.TextRange.Text = text;
+            if (codeBox.IsFile)
+            {
+                shapeInSlide.TextFrame.TextRange.Text = CodeBoxFileService.GetCodeFromFile(codeBox.Text);
+            }
+            else
+            {
+                shapeInSlide.TextFrame.TextRange.Text = codeBox.Text;
+            }
             codeBox.Shape = shapeInSlide;
             return codeBox;
         }

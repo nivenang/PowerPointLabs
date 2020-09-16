@@ -32,9 +32,15 @@
         <KeyBinding Key="LeftCtrl"/>
     </UserControl.InputBindings>
     <ScrollViewer>
-        <Grid VerticalAlignment="Top" Height="725" Width="300">
-            <GroupBox x:Name="codeBoxGroupBox" Header="Code Box" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" Height="117" Width="280">
-                <WPF:ImageButton ToolTip="Opens the settings for Code Box functions" x:Name="codeBoxSettingsButton" HorizontalAlignment="Right" Margin="0,-29,-2,0" VerticalAlignment="Top" Width="20" Height="20" Click="CodeBoxSettingsButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
+        <Grid VerticalAlignment="Top" Height="725" Width="300" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <GroupBox x:Name="codeBoxGroupBox" Header="Code Box" HorizontalAlignment="Left" Margin="10,5" VerticalAlignment="Top" Height="117" Width="280">
+                <WPF:ImageButton ToolTip="Opens the settings for Code Box functions" x:Name="codeBoxSettingsButton" HorizontalAlignment="Right" Margin="0,-29,0,0" VerticalAlignment="Top" Width="20" Height="20" Click="CodeBoxSettingsButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
                     <Image Source="..\..\Resources\SettingsGear.png"/>
                 </WPF:ImageButton>
             </GroupBox>
@@ -51,7 +57,7 @@
             </WPF:ImageButton>
             <TextBlock x:Name="refreshAllCodeTextBlock" HorizontalAlignment="Left" Margin="152,80,0,0" TextWrapping="Wrap" Text="Refresh All Code" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60"/>
             <GroupBox x:Name="animationGroupBox" Header="Animation" HorizontalAlignment="Left" Margin="10,127,0,0" VerticalAlignment="Top" Height="116" Width="280">
-                <WPF:ImageButton ToolTip="Opens the settings for Animation functions" x:Name="animationSettingsButton" HorizontalAlignment="Right" Margin="0,-29,-2,0" VerticalAlignment="Top" Width="20" Height="20" Click="AnimationSettingsButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
+                <WPF:ImageButton ToolTip="Opens the settings for Animation functions" x:Name="animationSettingsButton" HorizontalAlignment="Right" Margin="0,-29,0,0" VerticalAlignment="Top" Width="20" Height="20" Click="AnimationSettingsButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
                     <Image Source="..\..\Resources\SettingsGear.png"/>
                 </WPF:ImageButton>
             </GroupBox>
@@ -64,7 +70,8 @@
             </WPF:ImageButton>
             <TextBlock x:Name="animateNewLinesTextBlock" HorizontalAlignment="Left" Margin="85,202,0,0" TextWrapping="Wrap" Text="Animate New Lines" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60"/>
             <ListBox x:Name="codeListBox" 
-                 Margin="10,248,10,10" 
+                 Margin="10,248,10,10"
+                 HorizontalAlignment="Stretch"
                  HorizontalContentAlignment="Stretch"
                  Background="{DynamicResource Theme.BackgroundBrush2}"/>
         </Grid>

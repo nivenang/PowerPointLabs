@@ -819,6 +819,7 @@
     <Compile Include="LiveCodingLab\LiveCodingLabMain.cs" />
     <Compile Include="LiveCodingLab\LiveCodingLabErrorHandler.cs" />
     <Compile Include="LiveCodingLab\Model\CodeBox.cs" />
+    <Compile Include="LiveCodingLab\Service\CodeBoxFileService.cs" />
     <Compile Include="LiveCodingLab\Service\LiveCodingLabTextStorageService.cs" />
     <Compile Include="LiveCodingLab\Service\CodeBoxIdService.cs" />
     <Compile Include="LiveCodingLab\Utility\ShapeUtility.cs" />
