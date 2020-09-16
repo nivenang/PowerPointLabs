@@ -88,6 +88,7 @@ namespace PowerPointLabs.LiveCodingLab
                 // Creates a new animation slide between the before and after code
                 PowerPointSlide transitionSlide = currentSlide.Duplicate();
                 transitionSlide.Name = "PPTLabsHighlightDifferenceTransitionSlide" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
+                AddPowerPointLabsIndicator(transitionSlide);
 
                 // Initialise an animation sequence object
                 PowerPoint.Sequence sequence = transitionSlide.TimeLine.MainSequence;

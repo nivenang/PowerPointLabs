@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 
 using Microsoft.Office.Core;
@@ -16,6 +17,7 @@ using ShapeRange = Microsoft.Office.Interop.PowerPoint.ShapeRange;
 
 namespace PowerPointLabs.LiveCodingLab
 {
+#pragma warning disable 0618
     public partial class LiveCodingLabMain
     {
         public LiveCodingLabMain()
@@ -68,11 +70,26 @@ namespace PowerPointLabs.LiveCodingLab
         /// <summary>
         /// Returns true iff shape has a text frame.
         /// </summary>
-        private static bool HasText(PowerPoint.Shape shape)
+        private static bool HasText(Shape shape)
         {
-            return shape.HasTextFrame == Office.MsoTriState.msoTrue &&
-                   shape.TextFrame2.HasText == Office.MsoTriState.msoTrue;
+            return shape.HasTextFrame == MsoTriState.msoTrue &&
+                   shape.TextFrame2.HasText == MsoTriState.msoTrue;
 
+        }
+
+        private void AddPowerPointLabsIndicator(PowerPointSlide _slide)
+        {
+            String tempFileName = Path.GetTempFileName();
+            Properties.Resources.Indicator.Save(tempFileName);
+            Shape indicatorShape = _slide.Shapes.AddPicture(tempFileName, MsoTriState.msoFalse, MsoTriState.msoTrue, PowerPointPresentation.Current.SlideWidth - 120, 0, 120, 84);
+
+            indicatorShape.Left = PowerPointPresentation.Current.SlideWidth - 120;
+            indicatorShape.Top = 0;
+            indicatorShape.Width = 120;
+            indicatorShape.Height = 84;
+            indicatorShape.Name = PowerPointSlide.PptLabsIndicatorShapeName + DateTime.Now.ToString("yyyyMMddHHmmssffff");
+
+            ShapeUtil.MakeShapeViewTimeInvisible(indicatorShape, _slide);
         }
     }
 }

@@ -85,6 +85,7 @@ namespace PowerPointLabs.LiveCodingLab
 
                 PowerPointSlide transitionSlide = currentSlide.Duplicate();
                 transitionSlide.Name = "PPTLabsHighlightDifferenceTransitionSlide" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
+                AddPowerPointLabsIndicator(transitionSlide);
 
                 // Initialise an animation sequence object
                 PowerPoint.Sequence sequence = transitionSlide.TimeLine.MainSequence;
@@ -270,6 +271,7 @@ namespace PowerPointLabs.LiveCodingLab
                 colourChangeEffectsAfter[i].MoveAfter(appearEffects[i]);
             }
         }
+
 
 
     }
