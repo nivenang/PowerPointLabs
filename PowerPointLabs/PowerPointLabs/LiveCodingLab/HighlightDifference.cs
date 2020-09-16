@@ -6,6 +6,7 @@ using System.Windows.Forms;
 using PowerPointLabs.ActionFramework.Common.Extension;
 using PowerPointLabs.ActionFramework.Common.Log;
 using PowerPointLabs.AnimationLab;
+using PowerPointLabs.ELearningLab.Extensions;
 using PowerPointLabs.Models;
 using PowerPointLabs.TextCollection;
 using PowerPointLabs.Utils;
@@ -48,8 +49,8 @@ namespace PowerPointLabs.LiveCodingLab
                 PowerPoint.ShapeRange selectedShapesNextSlide = nextSlide.Shapes.Range();
 
                 //Get shapes to consider for animation
-                List<PowerPoint.Shape> shapesToUseCurrentSlide = GetShapesToUse(currentSlide, selectedShapesCurrentSlide);
-                List<PowerPoint.Shape> shapesToUseNextSlide = GetShapesToUse(nextSlide, selectedShapesNextSlide);
+                List<PowerPoint.Shape> shapesToUseCurrentSlide = currentSlide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex);
+                List<PowerPoint.Shape> shapesToUseNextSlide = nextSlide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex);
 
                 // Check that there exists a "before" code and an "after" code to be animated
                 if (shapesToUseCurrentSlide == null || shapesToUseNextSlide == null)
@@ -91,7 +92,7 @@ namespace PowerPointLabs.LiveCodingLab
                 PowerPoint.Sequence sequence = transitionSlide.TimeLine.MainSequence;
 
                 // Objects that contain the "before" and "after" code to be animated
-                PowerPoint.Shape codeShapeBeforeEdit = GetShapesToUse(transitionSlide, transitionSlide.Shapes.Range())[0];
+                PowerPoint.Shape codeShapeBeforeEdit = transitionSlide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex)[0];
                 PowerPoint.Shape codeShapeAfterEdit = transitionSlide.CopyShapeToSlide(shapesToUseNext[0]);
                 PowerPoint.TextRange codeTextBeforeEdit = codeShapeBeforeEdit.TextFrame.TextRange;
                 PowerPoint.TextRange codeTextAfterEdit = codeShapeAfterEdit.TextFrame.TextRange;
