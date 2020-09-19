@@ -8,6 +8,7 @@ using PowerPointLabs.ActionFramework.Common.Extension;
 using PowerPointLabs.ELearningLab.Extensions;
 using PowerPointLabs.LiveCodingLab.Model;
 using PowerPointLabs.LiveCodingLab.Service;
+using PowerPointLabs.LiveCodingLab.Utility;
 using PowerPointLabs.Models;
 using PowerPointLabs.TextCollection;
 using PowerPointLabs.Views;
@@ -27,6 +28,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
         private readonly LiveCodingLabErrorHandler _errorHandler;
         private List<CodeBoxPaneItem> codeBoxList;
         private PowerPointPresentation currentPresentation;
+        private bool isSynced;
 
         #region Interface Implementation
         public void ShowErrorMessageBox(string content, Exception exception = null)
@@ -72,6 +74,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
             currentPresentation = PowerPointPresentation.Current;
             _errorHandler = LiveCodingLabErrorHandler.InitializeErrorHandler(this);
             codeBoxList = LoadCodeBoxes(currentPresentation.FirstSlide);
+            isSynced = false;
             Focusable = true;
         }
         public void RemoveCodeBox(Object codeBox)
@@ -120,41 +123,110 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
         private void InsertCodeBoxButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!isSynced)
+            {
+                PopulateCodeBoxPaneItemTextBoxes();
+                isSynced = true;
+            }
+
             AddCodeBoxToList();
             SaveCodeBox();
         }
 
         private void RefreshCodeButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!isSynced)
+            {
+                PopulateCodeBoxPaneItemTextBoxes();
+                isSynced = true;
+            }
+
+            CodeBoxPaneItem codeBoxPaneItem = (CodeBoxPaneItem) codeListBox.SelectedItem;
+            if (codeBoxPaneItem != null)
+            {
+                codeBoxPaneItem.CodeBox.Text = codeBoxPaneItem.codeTextBox.Text;
+                if (codeBoxPaneItem.CodeBox.Shape == null)
+                {
+                    codeBoxPaneItem.CodeBox = ShapeUtility.InsertCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, codeBoxPaneItem.CodeBox);
+                }
+                else
+                {
+                    codeBoxPaneItem.CodeBox = ShapeUtility.ReplaceTextForShape(codeBoxPaneItem.CodeBox);
+                }
+            }
             SaveCodeBox();
 
         }
 
         private void RefreshAllCodeButton_Click(object sender, RoutedEventArgs e)
         {
-            PopulateCodeBoxPaneItemTextBoxes();
+            if (!isSynced)
+            {
+                PopulateCodeBoxPaneItemTextBoxes();
+                isSynced = true;
+            }
+
+            foreach (CodeBoxPaneItem item in codeListBox.Items)
+            {
+                if (item != null)
+                {
+                    item.CodeBox.Text = item.codeTextBox.Text;
+                    if (item.CodeBox.Shape == null)
+                    {
+                        item.CodeBox = ShapeUtility.InsertCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, item.CodeBox);
+                    }
+                    else
+                    {
+                        item.CodeBox = ShapeUtility.ReplaceTextForShape(item.CodeBox);
+                    }
+                }
+            }
             SaveCodeBox();
         }
 
         private void HighlightDifferenceButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!isSynced)
+            {
+                PopulateCodeBoxPaneItemTextBoxes();
+                isSynced = true;
+            }
+
             Action<PowerPoint.ShapeRange> highlightDifferenceAction = shapes => _liveCodingLab.HighlightDifferences(shapes);
             ClickHandler(highlightDifferenceAction, 1, LiveCodingLabMain.HighlightDifference_ErrorParameters);
         }
 
         private void AnimateNewLinesButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!isSynced)
+            {
+                PopulateCodeBoxPaneItemTextBoxes();
+                isSynced = true;
+            }
+
             Action<PowerPoint.ShapeRange> animateNewLinesAction = shapes => _liveCodingLab.AnimateNewLines(shapes);
             ClickHandler(animateNewLinesAction, 1, LiveCodingLabMain.AnimateNewLines_ErrorParameters);
         }
 
         private void AnimationSettingsButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!isSynced)
+            {
+                PopulateCodeBoxPaneItemTextBoxes();
+                isSynced = true;
+            }
+
             LiveCodingLabSettings.ShowAnimationSettingsDialog();
         }
 
         private void CodeBoxSettingsButton_Click(object sender, RoutedEventArgs e)
         {
+            if (!isSynced)
+            {
+                PopulateCodeBoxPaneItemTextBoxes();
+                isSynced = true;
+            }
+
             LiveCodingLabSettings.ShowCodeBoxSettingsDialog();
         }
         #endregion

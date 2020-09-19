@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
-
+using System.Windows.Forms;
 using PowerPointLabs.ActionFramework.Common.Log;
 using PowerPointLabs.TextCollection;
 
@@ -14,11 +14,18 @@ namespace PowerPointLabs.LiveCodingLab.Service
         {
             if (!File.Exists(filePath))
             {
-                return "Does Not Exist";
+                MessageBox.Show(LiveCodingLabText.ErrorInvalidFileName,
+                    LiveCodingLabText.ErrorHighlightDifferenceDialogTitle);
+                return "";
             }
 
             return File.ReadAllText(filePath);
 
+        }
+
+        public static string GetCodeFromUrl(string urlPath)
+        {
+            return "";
         }
 
     }

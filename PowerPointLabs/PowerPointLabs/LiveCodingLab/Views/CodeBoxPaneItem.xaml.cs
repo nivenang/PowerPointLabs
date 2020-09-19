@@ -93,6 +93,11 @@ namespace PowerPointLabs.LiveCodingLab.Views
             {
                 return codeBox;
             }
+
+            set
+            {
+                codeBox = value;
+            }
         }
 
         #endregion

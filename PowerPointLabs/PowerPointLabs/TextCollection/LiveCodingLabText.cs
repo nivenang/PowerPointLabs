@@ -87,6 +87,7 @@
         public const string ErrorHighlightDifferenceNoSelection = "Please select the code snippet.";
         public const string ErrorHighlightDifferenceCodeSnippet = "Missing or extra code snippet.";
 
+        public const string ErrorInvalidFileName = "The file specified does not exist.";
         public const string ErrorInvalidSelection = "You need to select {1} {2} before applying '{0}'.";
         public const string ErrorValueLessThanEqualsZero = "Please enter a value greater than 0.";
         public const string ErrorValueLessThanEqualsZeroWithShape = "Please enter a value greater than 0 (Shape {0}).";

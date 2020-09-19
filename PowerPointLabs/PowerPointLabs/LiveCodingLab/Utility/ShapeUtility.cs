@@ -27,14 +27,19 @@ namespace PowerPointLabs.LiveCodingLab.Utility
         /// <returns>generated callout shape</returns>
         public static CodeBox InsertCodeBoxToSlide(PowerPointSlide slide, CodeBox codeBox)
         {
-            Shape codeShape = slide.Shapes.AddTextbox(MsoTextOrientation.msoTextOrientationHorizontal, 10, 10, 500, 250);
+            string textToInsert;
             if (codeBox.IsFile)
             {
-                codeShape.TextFrame.TextRange.Text = CodeBoxFileService.GetCodeFromFile(codeBox.Text);
+                textToInsert = CodeBoxFileService.GetCodeFromFile(codeBox.Text);
             }
             else
             {
-                codeShape.TextFrame.TextRange.Text = codeBox.Text;
+                textToInsert = codeBox.Text;
+            }
+            Shape codeShape = slide.Shapes.AddTextbox(MsoTextOrientation.msoTextOrientationHorizontal, 10, 10, 500, 250);
+            if (textToInsert != null && textToInsert != "")
+            {
+                codeShape.TextFrame.TextRange.Text = textToInsert;
             }
             codeShape.TextFrame.AutoSize = PpAutoSize.ppAutoSizeShapeToFitText;
             codeShape.TextFrame.WordWrap = MsoTriState.msoTrue;
