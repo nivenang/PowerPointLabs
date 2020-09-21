@@ -103,6 +103,61 @@ namespace PowerPointLabs.LiveCodingLab.Views
         {
             LiveCodingLabTextStorageService.StoreCodeBoxToSlide(codeBoxList, currentPresentation.FirstSlide);
         }
+
+        public void MoveUpCodeBox(CodeBoxPaneItem item)
+        {
+            for (int index = 0; index < codeBoxList.Count; index++)
+            {
+                if (codeBoxList[index] == item && index == 0)
+                {
+                    return;
+                }
+
+                if (codeBoxList[index] == item && index > 0)
+                {
+                    for (int i = index-1; i >= 0; i--)
+                    {
+                        if (codeBoxList[index].Group == codeBoxList[i].Group)
+                        {
+                            CodeBoxPaneItem temp = codeBoxList[index];
+                            codeBoxList[index] = codeBoxList[i];
+                            codeBoxList[i] = temp;
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+            }
+        }
+
+        public void MoveDownCodeBox(CodeBoxPaneItem item)
+        {
+            for (int index = 0; index < codeBoxList.Count; index++)
+            {
+                if (codeBoxList[index] == item && index == codeBoxList.Count - 1)
+                {
+                    return;
+                }
+
+                if (codeBoxList[index] == item && index < codeBoxList.Count - 1)
+                {
+                    for (int i = index + 1; i < codeBoxList.Count; i++)
+                    {
+                        if (codeBoxList[index].Group == codeBoxList[i].Group)
+                        {
+                            CodeBoxPaneItem temp = codeBoxList[index];
+                            codeBoxList[index] = codeBoxList[i];
+                            codeBoxList[i] = temp;
+                            break;
+                        }
+                    }
+
+                    break;
+                }
+            }
+        }
+
         internal void InitialiseLogic()
         {
             if (_liveCodingLab == null)
@@ -215,14 +270,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
         #endregion
 
         #region Helper Methods
-
-        private void PopulateCodeBoxPaneItemTextBoxes()
-        {
-            foreach (CodeBoxPaneItem item in codeBoxList)
-            {
-                item.PopulateTextBox();
-            }
-        }
 
         private ObservableCollection<CodeBoxPaneItem> LoadCodeBoxes(PowerPointSlide slide)
         {

@@ -163,6 +163,18 @@ namespace PowerPointLabs.LiveCodingLab.Views
             parent.SaveCodeBox();
         }
 
+        private void MoveUpButton_Click(object sender, RoutedEventArgs e)
+        {
+            parent.MoveUpCodeBox(this);
+            parent.SaveCodeBox();
+        }
+
+        private void MoveDownButton_Click(object sender, RoutedEventArgs e)
+        {
+            parent.MoveDownCodeBox(this);
+            parent.SaveCodeBox();
+        }
+
         private void OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             if (codeBox.Slide != null)
