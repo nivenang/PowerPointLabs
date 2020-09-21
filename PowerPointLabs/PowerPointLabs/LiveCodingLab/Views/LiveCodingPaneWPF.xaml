@@ -56,6 +56,10 @@
                 <Image Source="..\..\Resources\icon-right_rotate.png"/>
             </WPF:ImageButton>
             <TextBlock x:Name="refreshAllCodeTextBlock" HorizontalAlignment="Left" Margin="152,80,0,0" TextWrapping="Wrap" Text="Refresh All Code" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60"/>
+            <WPF:ImageButton ToolTip="Groups all selected code boxes" x:Name="groupCodeBoxButton" HorizontalAlignment="Left" Margin="217,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="GroupCodeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
+                <Image Source="..\..\Resources\icon-right_rotate.png"/>
+            </WPF:ImageButton>
+            <TextBlock x:Name="groupCodeBoxesTextBlock" HorizontalAlignment="Left" Margin="217,80,0,0" TextWrapping="Wrap" Text="Group Code Box" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60"/>
             <GroupBox x:Name="animationGroupBox" Header="Animation" HorizontalAlignment="Left" Margin="10,127,0,0" VerticalAlignment="Top" Height="116" Width="280">
                 <WPF:ImageButton ToolTip="Opens the settings for Animation functions" x:Name="animationSettingsButton" HorizontalAlignment="Right" Margin="0,-29,0,0" VerticalAlignment="Top" Width="20" Height="20" Click="AnimationSettingsButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
                     <Image Source="..\..\Resources\SettingsGear.png"/>
@@ -69,11 +73,37 @@
                 <Image Source="..\..\Resources\PositionsLab\AlignTopIcon.png"/>
             </WPF:ImageButton>
             <TextBlock x:Name="animateNewLinesTextBlock" HorizontalAlignment="Left" Margin="85,202,0,0" TextWrapping="Wrap" Text="Animate New Lines" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60"/>
-            <ListBox x:Name="codeListBox" 
+            <ListView Name="codeListBox"
+                 ItemsSource="{Binding CodeBoxPaneItem}"
                  Margin="10,248,10,10"
                  HorizontalAlignment="Stretch"
                  HorizontalContentAlignment="Stretch"
-                 Background="{DynamicResource Theme.BackgroundBrush2}"/>
+                 Background="{DynamicResource Theme.BackgroundBrush2}">
+                <ListView.GroupStyle>
+                    <GroupStyle>
+                        <GroupStyle.ContainerStyle>
+                            <Style TargetType="{x:Type GroupItem}">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate>
+                                            <Expander IsExpanded="True">
+                                                <Expander.Header>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="Gray" FontSize="22" VerticalAlignment="Bottom" />
+                                                        <TextBlock Text="{Binding ItemCount}" FontSize="22" Foreground="Green" FontWeight="Bold" FontStyle="Italic" Margin="10,0,0,0" VerticalAlignment="Bottom" />
+                                                        <TextBlock Text=" item(s)" FontSize="22" Foreground="Silver" FontStyle="Italic" VerticalAlignment="Bottom" />
+                                                    </StackPanel>
+                                                </Expander.Header>
+                                                <ItemsPresenter/>
+                                            </Expander>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </GroupStyle.ContainerStyle>
+                    </GroupStyle>
+                </ListView.GroupStyle>
+            </ListView> 
         </Grid>
     </ScrollViewer>
 </UserControl>

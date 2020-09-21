@@ -4,7 +4,9 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Data;
 using PowerPointLabs.ActionFramework.Common.Extension;
+using PowerPointLabs.ColorThemes.Extensions;
 using PowerPointLabs.ELearningLab.Extensions;
 using PowerPointLabs.LiveCodingLab.Model;
 using PowerPointLabs.LiveCodingLab.Service;
@@ -26,9 +28,10 @@ namespace PowerPointLabs.LiveCodingLab.Views
     {
         private LiveCodingLabMain _liveCodingLab;
         private readonly LiveCodingLabErrorHandler _errorHandler;
-        private List<CodeBoxPaneItem> codeBoxList;
+        private ObservableCollection<CodeBoxPaneItem> codeBoxList;
         private PowerPointPresentation currentPresentation;
-        private bool isSynced;
+        private CollectionView view;
+        private PropertyGroupDescription groupDescription;
 
         #region Interface Implementation
         public void ShowErrorMessageBox(string content, Exception exception = null)
@@ -74,17 +77,19 @@ namespace PowerPointLabs.LiveCodingLab.Views
             currentPresentation = PowerPointPresentation.Current;
             _errorHandler = LiveCodingLabErrorHandler.InitializeErrorHandler(this);
             codeBoxList = LoadCodeBoxes(currentPresentation.FirstSlide);
-            isSynced = false;
             Focusable = true;
+            codeListBox.ItemsSource = codeBoxList;
+            view = (CollectionView)CollectionViewSource.GetDefaultView(codeListBox.ItemsSource);
+            groupDescription = new PropertyGroupDescription("Group");
+            view.GroupDescriptions.Add(groupDescription);
         }
         public void RemoveCodeBox(Object codeBox)
         {
             int index = 0;
-            while (index < codeListBox.Items.Count)
+            while (index < codeBoxList.Count)
             {
-                if (codeListBox.Items[index] == codeBox)
+                if (codeBoxList[index] == codeBox)
                 {
-                    codeListBox.Items.RemoveAt(index);
                     codeBoxList.RemoveAt(index);
                 }
                 else
@@ -111,7 +116,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
         {
             CodeBoxPaneItem item = new CodeBoxPaneItem(this);
             codeBoxList.Insert(0, item);
-            codeListBox.Items.Insert(0, item);
             codeListBox.SelectedIndex = 0;
             return item;
         }
@@ -123,49 +127,32 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
         private void InsertCodeBoxButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!isSynced)
-            {
-                PopulateCodeBoxPaneItemTextBoxes();
-                isSynced = true;
-            }
-
             AddCodeBoxToList();
             SaveCodeBox();
         }
 
         private void RefreshCodeButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!isSynced)
+            foreach (CodeBoxPaneItem item in codeListBox.SelectedItems)
             {
-                PopulateCodeBoxPaneItemTextBoxes();
-                isSynced = true;
-            }
-
-            CodeBoxPaneItem codeBoxPaneItem = (CodeBoxPaneItem) codeListBox.SelectedItem;
-            if (codeBoxPaneItem != null)
-            {
-                codeBoxPaneItem.CodeBox.Text = codeBoxPaneItem.codeTextBox.Text;
-                if (codeBoxPaneItem.CodeBox.Shape == null)
+                if (item != null)
                 {
-                    codeBoxPaneItem.CodeBox = ShapeUtility.InsertCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, codeBoxPaneItem.CodeBox);
-                }
-                else
-                {
-                    codeBoxPaneItem.CodeBox = ShapeUtility.ReplaceTextForShape(codeBoxPaneItem.CodeBox);
+                    item.CodeBox.Text = item.codeTextBox.Text;
+                    if (item.CodeBox.Shape == null)
+                    {
+                        item.CodeBox = ShapeUtility.InsertCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, item.CodeBox);
+                    }
+                    else
+                    {
+                        item.CodeBox = ShapeUtility.ReplaceTextForShape(item.CodeBox);
+                    }
                 }
             }
             SaveCodeBox();
-
         }
 
         private void RefreshAllCodeButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!isSynced)
-            {
-                PopulateCodeBoxPaneItemTextBoxes();
-                isSynced = true;
-            }
-
             foreach (CodeBoxPaneItem item in codeListBox.Items)
             {
                 if (item != null)
@@ -184,49 +171,45 @@ namespace PowerPointLabs.LiveCodingLab.Views
             SaveCodeBox();
         }
 
+        private void GroupCodeButton_Click(object sender, RoutedEventArgs e)
+        {
+            GroupCodeBoxDialog dialog = new GroupCodeBoxDialog();
+            string defaultGroupName = "";
+            if (dialog.ShowThematicDialog() == true)
+            {
+                defaultGroupName = dialog.ResponseText;
+            }
+            foreach (CodeBoxPaneItem item in codeListBox.SelectedItems)
+            {
+                if (item != null && defaultGroupName != "")
+                {
+                    item.Group = defaultGroupName;
+                }
+            }
+            view.GroupDescriptions.Clear();
+            view.GroupDescriptions.Add(groupDescription);
+            SaveCodeBox();
+        }
+
         private void HighlightDifferenceButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!isSynced)
-            {
-                PopulateCodeBoxPaneItemTextBoxes();
-                isSynced = true;
-            }
-
             Action<PowerPoint.ShapeRange> highlightDifferenceAction = shapes => _liveCodingLab.HighlightDifferences(shapes);
             ClickHandler(highlightDifferenceAction, 1, LiveCodingLabMain.HighlightDifference_ErrorParameters);
         }
 
         private void AnimateNewLinesButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!isSynced)
-            {
-                PopulateCodeBoxPaneItemTextBoxes();
-                isSynced = true;
-            }
-
             Action<PowerPoint.ShapeRange> animateNewLinesAction = shapes => _liveCodingLab.AnimateNewLines(shapes);
             ClickHandler(animateNewLinesAction, 1, LiveCodingLabMain.AnimateNewLines_ErrorParameters);
         }
 
         private void AnimationSettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!isSynced)
-            {
-                PopulateCodeBoxPaneItemTextBoxes();
-                isSynced = true;
-            }
-
             LiveCodingLabSettings.ShowAnimationSettingsDialog();
         }
 
         private void CodeBoxSettingsButton_Click(object sender, RoutedEventArgs e)
         {
-            if (!isSynced)
-            {
-                PopulateCodeBoxPaneItemTextBoxes();
-                isSynced = true;
-            }
-
             LiveCodingLabSettings.ShowCodeBoxSettingsDialog();
         }
         #endregion
@@ -241,9 +224,9 @@ namespace PowerPointLabs.LiveCodingLab.Views
             }
         }
 
-        private List<CodeBoxPaneItem> LoadCodeBoxes(PowerPointSlide slide)
+        private ObservableCollection<CodeBoxPaneItem> LoadCodeBoxes(PowerPointSlide slide)
         {
-            List<CodeBoxPaneItem> codeBoxesList = new List<CodeBoxPaneItem>();
+            ObservableCollection<CodeBoxPaneItem> codeBoxesList = new ObservableCollection<CodeBoxPaneItem>();
             List<Dictionary<string, string>> codeBoxes =
                 LiveCodingLabTextStorageService.LoadCodeBoxesFromSlide(slide);
 
@@ -252,8 +235,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
                 CodeBoxPaneItem codeBox = CreateCodeBoxFromDictionary(codeBoxes.First());
                 codeBoxesList.Add(codeBox);
                 codeBoxes.RemoveAt(0);
-                codeListBox.Items.Insert(0, codeBox);
-                codeListBox.SelectedIndex = 0;
             }
             return codeBoxesList;
         }

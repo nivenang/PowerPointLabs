@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Drawing;
 using System.Text;
 using System.Windows;
@@ -25,11 +26,12 @@ namespace PowerPointLabs.LiveCodingLab.Views
     /// <summary>
     /// Interaction logic for SyncFormatPaneItem.xaml
     /// </summary>
-    public partial class CodeBoxPaneItem : UserControl
+    public partial class CodeBoxPaneItem : UserControl, INotifyPropertyChanged
     {
 
         private LiveCodingPaneWPF parent;
         private CodeBox codeBox;
+        private string group;
 
         #region Constructors
 
@@ -43,7 +45,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
             isText.IsChecked = true;
             isURL.IsChecked = false;
             isFile.IsChecked = false;
-
+            group = "Ungrouped";
         }
 
         public CodeBoxPaneItem(LiveCodingPaneWPF parent, CodeBox codeBox)
@@ -53,6 +55,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
             this.codeBox = codeBox;
             insertCode.Source = GraphicsUtil.BitmapToImageSource(Properties.Resources.SyncLabEditButton);
             deleteImage.Source = GraphicsUtil.BitmapToImageSource(Properties.Resources.SyncLabDeleteButton);
+            group = "Ungrouped";
             if (codeBox.IsURL)
             {
                 isText.IsChecked = false;
@@ -100,6 +103,20 @@ namespace PowerPointLabs.LiveCodingLab.Views
             }
         }
 
+        public string Group
+        {
+            get
+            {
+                return group;
+            }
+
+            set
+            {
+                group = value;
+                NotifyPropertyChanged("Group");
+            }
+        }
+
         #endregion
 
         #region Helper Functions
@@ -108,6 +125,15 @@ namespace PowerPointLabs.LiveCodingLab.Views
             codeTextBox.Text = codeBox.Text;
         }
 
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        private void NotifyPropertyChanged(String propertyName)
+        {
+            if (PropertyChanged != null)
+            {
+                PropertyChanged(this, new PropertyChangedEventArgs(propertyName));
+            }
+        }
         #endregion
 
         #region Event Handlers

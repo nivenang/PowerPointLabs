@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Xml.Linq;
 
@@ -14,7 +15,7 @@ namespace PowerPointLabs.LiveCodingLab.Service
 {
     public class LiveCodingLabTextStorageService
     {
-        public static void StoreCodeBoxToSlide(List<CodeBoxPaneItem> codeBoxItems,
+        public static void StoreCodeBoxToSlide(ObservableCollection<CodeBoxPaneItem> codeBoxItems,
             PowerPointSlide slide)
         {
             string shapeName = LiveCodingLabText.LiveCodingLabTextStorageShapeName;
@@ -58,7 +59,7 @@ namespace PowerPointLabs.LiveCodingLab.Service
             return codeBoxDict;
         }
 
-        private static List<Dictionary<string, string>> ConvertListToDictionary(List<CodeBoxPaneItem> codeBoxItems)
+        private static List<Dictionary<string, string>> ConvertListToDictionary(ObservableCollection<CodeBoxPaneItem> codeBoxItems)
         {
             List<Dictionary<string, string>> keyValuePairs =
                 new List<Dictionary<string, string>>();
