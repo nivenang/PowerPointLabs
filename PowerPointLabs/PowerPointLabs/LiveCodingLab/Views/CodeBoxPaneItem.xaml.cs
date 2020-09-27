@@ -48,14 +48,14 @@ namespace PowerPointLabs.LiveCodingLab.Views
             group = "Ungrouped";
         }
 
-        public CodeBoxPaneItem(LiveCodingPaneWPF parent, CodeBox codeBox)
+        public CodeBoxPaneItem(LiveCodingPaneWPF parent, CodeBox codeBox, string group)
         {
             InitializeComponent();
             this.parent = parent;
             this.codeBox = codeBox;
             insertCode.Source = GraphicsUtil.BitmapToImageSource(Properties.Resources.SyncLabEditButton);
             deleteImage.Source = GraphicsUtil.BitmapToImageSource(Properties.Resources.SyncLabDeleteButton);
-            group = "Ungrouped";
+            this.group = group;
             if (codeBox.IsURL)
             {
                 isText.IsChecked = false;

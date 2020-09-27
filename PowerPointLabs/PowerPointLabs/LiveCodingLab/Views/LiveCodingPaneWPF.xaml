@@ -45,19 +45,19 @@
                 </WPF:ImageButton>
             </GroupBox>
             <WPF:ImageButton ToolTip="Inserts a Code Box object into the slides" x:Name="insertCodeBox"  HorizontalAlignment="Left" Margin="18,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="InsertCodeBoxButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
-                <Image Source="..\..\Resources\PositionsLab\AlignLeftIcon.png"/>
+                <Image Source="..\..\Resources\InsertCode.png"/>
             </WPF:ImageButton>
             <TextBlock x:Name="insertCodeBoxTextBlock" HorizontalAlignment="Left" Margin="18,80,0,0" TextWrapping="Wrap" Text="Insert Code" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60"/>
             <WPF:ImageButton ToolTip="Retrieves updated code from sources specified in code boxes" x:Name="refreshCodeButton" HorizontalAlignment="Left" Margin="85,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="RefreshCodeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
-                <Image Source="..\..\Resources\icon-right_rotate.png"/>
+                <Image Source="..\..\Resources\RefreshCode.png"/>
             </WPF:ImageButton>
             <TextBlock x:Name="refreshCodeTextBlock" HorizontalAlignment="Left" Margin="85,80,0,0" TextWrapping="Wrap" Text="Refresh Code" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60"/>
             <WPF:ImageButton ToolTip="Retrieves updated code from sources specified in code boxes" x:Name="refreshAllCodeButton" HorizontalAlignment="Left" Margin="152,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="RefreshAllCodeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
-                <Image Source="..\..\Resources\icon-right_rotate.png"/>
+                <Image Source="..\..\Resources\RefreshAllCode.png"/>
             </WPF:ImageButton>
             <TextBlock x:Name="refreshAllCodeTextBlock" HorizontalAlignment="Left" Margin="152,80,0,0" TextWrapping="Wrap" Text="Refresh All Code" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60"/>
             <WPF:ImageButton ToolTip="Groups all selected code boxes" x:Name="groupCodeBoxButton" HorizontalAlignment="Left" Margin="217,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="GroupCodeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
-                <Image Source="..\..\Resources\icon-right_rotate.png"/>
+                <Image Source="..\..\Resources\GroupCode.png"/>
             </WPF:ImageButton>
             <TextBlock x:Name="groupCodeBoxesTextBlock" HorizontalAlignment="Left" Margin="217,80,0,0" TextWrapping="Wrap" Text="Group Code Box" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60"/>
             <GroupBox x:Name="animationGroupBox" Header="Animation" HorizontalAlignment="Left" Margin="10,127,0,0" VerticalAlignment="Top" Height="116" Width="280">
@@ -66,11 +66,11 @@
                 </WPF:ImageButton>
             </GroupBox>
             <WPF:ImageButton ToolTip="Highlight the differences between two code snippets across two separate slides" x:Name="highlightDifferenceButton" HorizontalAlignment="Left" Margin="18,157,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="HighlightDifferenceButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
-                <Image Source="..\..\Resources\PositionsLab\AlignRightIcon.png"/>
+                <Image Source="..\..\Resources\HighlightDifference.png"/>
             </WPF:ImageButton>
             <TextBlock x:Name="highlightDifferenceTextBlock" HorizontalAlignment="Left" Margin="18,202,0,0" TextWrapping="Wrap" Text="Highlight Difference" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60"/>
             <WPF:ImageButton ToolTip="Animates the insertion of new lines across two code snippets on two separate slides" x:Name="animateNewLinesButton" HorizontalAlignment="Left" Margin="85,157,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="AnimateNewLinesButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
-                <Image Source="..\..\Resources\PositionsLab\AlignTopIcon.png"/>
+                <Image Source="..\..\Resources\AnimateNewLines.png"/>
             </WPF:ImageButton>
             <TextBlock x:Name="animateNewLinesTextBlock" HorizontalAlignment="Left" Margin="85,202,0,0" TextWrapping="Wrap" Text="Animate New Lines" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60"/>
             <ListView Name="codeListBox"
@@ -89,9 +89,9 @@
                                             <Expander IsExpanded="True">
                                                 <Expander.Header>
                                                     <StackPanel Orientation="Horizontal">
-                                                        <TextBlock Text="{Binding Name}" FontWeight="Bold" Foreground="Gray" FontSize="22" VerticalAlignment="Bottom" />
-                                                        <TextBlock Text="{Binding ItemCount}" FontSize="22" Foreground="Green" FontWeight="Bold" FontStyle="Italic" Margin="10,0,0,0" VerticalAlignment="Bottom" />
-                                                        <TextBlock Text=" item(s)" FontSize="22" Foreground="Silver" FontStyle="Italic" VerticalAlignment="Bottom" />
+                                                        <TextBlock Text="{Binding Name}" Foreground="White" FontSize="18" VerticalAlignment="Bottom" />
+                                                        <TextBlock Text="{Binding ItemCount}" FontSize="18" Foreground="White" FontWeight="Bold" FontStyle="Italic" Margin="10,0,0,0" VerticalAlignment="Bottom" />
+                                                        <TextBlock Text=" item(s)" FontSize="18" Foreground="White" FontStyle="Italic" VerticalAlignment="Bottom" />
                                                     </StackPanel>
                                                 </Expander.Header>
                                                 <ItemsPresenter/>

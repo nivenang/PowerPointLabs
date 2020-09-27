@@ -294,6 +294,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
             bool isFile = codeBoxItemDic[LiveCodingLabText.CodeBox_IsFile] == "Y";
             bool isText = codeBoxItemDic[LiveCodingLabText.CodeBox_IsText] == "Y";
             int slideNum = int.Parse(codeBoxItemDic[LiveCodingLabText.CodeBox_Slide]);
+            string group = codeBoxItemDic[LiveCodingLabText.CodeBox_Group];
             PowerPointSlide slide = null;
             CodeBox codeBoxItem;
             Shape codeShape = null;
@@ -328,7 +329,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
                 codeBoxItem.Shape = codeShape;
             }
 
-            CodeBoxPaneItem codeBoxPaneItem = new CodeBoxPaneItem(this, codeBoxItem);
+            CodeBoxPaneItem codeBoxPaneItem = new CodeBoxPaneItem(this, codeBoxItem, group);
             return codeBoxPaneItem;
         }
 

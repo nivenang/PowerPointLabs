@@ -2660,9 +2660,6 @@
     <None Include="Resources\Animation Zoom.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\HighlightDifference.png" />
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Resources\HighlightDifference.bmp" />
   </ItemGroup>
   <ItemGroup>
@@ -2677,7 +2674,24 @@
   <ItemGroup>
     <None Include="Resources\LiveCodingLab.png" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <Resource Include="Resources\RefreshCode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\RefreshAllCode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\GroupCode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\InsertCode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\HighlightDifference.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\AnimateNewLines.png" />
+  </ItemGroup>
   <!-- Include the build rules for a C# project. -->
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

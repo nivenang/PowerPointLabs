@@ -413,6 +413,16 @@ namespace PowerPointLabs.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap AnimateNewLines {
+            get {
+                object obj = ResourceManager.GetObject("AnimateNewLines", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap Animation_Appear {
             get {
                 object obj = ResourceManager.GetObject("Animation_Appear", resourceCulture);
@@ -1133,6 +1143,16 @@ namespace PowerPointLabs.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap GroupCode {
+            get {
+                object obj = ResourceManager.GetObject("GroupCode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap HalfWidth {
             get {
                 object obj = ResourceManager.GetObject("HalfWidth", resourceCulture);
@@ -1193,6 +1213,16 @@ namespace PowerPointLabs.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap HighlightDifference1 {
+            get {
+                object obj = ResourceManager.GetObject("HighlightDifference1", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap HighlightLab {
             get {
                 object obj = ResourceManager.GetObject("HighlightLab", resourceCulture);
@@ -1236,6 +1266,16 @@ namespace PowerPointLabs.Properties {
         public static System.Drawing.Bitmap Indicator {
             get {
                 object obj = ResourceManager.GetObject("Indicator", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap InsertCode {
+            get {
+                object obj = ResourceManager.GetObject("InsertCode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1656,6 +1696,26 @@ namespace PowerPointLabs.Properties {
         public static System.Drawing.Bitmap Refresh {
             get {
                 object obj = ResourceManager.GetObject("Refresh", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap RefreshAllCode {
+            get {
+                object obj = ResourceManager.GetObject("RefreshAllCode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap RefreshCode {
+            get {
+                object obj = ResourceManager.GetObject("RefreshCode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

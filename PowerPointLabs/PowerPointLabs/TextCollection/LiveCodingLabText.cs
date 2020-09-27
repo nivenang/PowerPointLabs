@@ -32,6 +32,7 @@
         public const string CodeBox_Id = "CodeBoxId";
         public const string CodeBox_Slide = "Slide";
         public const string CodeBox_CodeShape = "CodeShape";
+        public const string CodeBox_Group = "Group";
         #endregion
 
         #region Storage Identifiers
