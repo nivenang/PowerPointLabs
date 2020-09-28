@@ -83,6 +83,10 @@ namespace PowerPointLabs.LiveCodingLab.Utility
         /// <returns></returns>
         public static CodeBox ReplaceTextForShape(CodeBox codeBox)
         {
+            if (!codeBox.Slide.HasShapeWithSameName(string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, codeBox.Id)))
+            {
+                return InsertCodeBoxToSlide(codeBox.Slide, codeBox);
+            }
             Shape shapeInSlide = codeBox.Shape;
             shapeInSlide.TextFrame.TextRange.Font.Name = LiveCodingLabSettings.codeFontType;
             shapeInSlide.TextFrame.TextRange.Font.Size = LiveCodingLabSettings.codeFontSize;
