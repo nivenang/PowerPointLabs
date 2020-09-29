@@ -177,6 +177,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
         private void OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
+            parent.RefreshCode();
             if (codeBox.Slide != null)
             {
                 Globals.ThisAddIn.Application.ActiveWindow.View.GotoSlide(codeBox.Slide.Index);

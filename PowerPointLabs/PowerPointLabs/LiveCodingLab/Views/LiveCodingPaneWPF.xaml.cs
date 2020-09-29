@@ -160,23 +160,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
             }
         }
 
-        internal void InitialiseLogic()
-        {
-            if (_liveCodingLab == null)
-            {
-                _liveCodingLab = new LiveCodingLabMain();
-            }
-        }
-
-        #region API
-        private CodeBoxPaneItem AddCodeBoxToList()
-        {
-            CodeBoxPaneItem item = new CodeBoxPaneItem(this);
-            codeBoxList.Insert(0, item);
-            codeListBox.SelectedIndex = 0;
-            return item;
-        }
-        private void RefreshCode()
+        public void RefreshCode()
         {
             foreach (PowerPointSlide slide in currentPresentation.Slides)
             {
@@ -195,6 +179,23 @@ namespace PowerPointLabs.LiveCodingLab.Views
             }
             SaveCodeBox();
         }
+        internal void InitialiseLogic()
+        {
+            if (_liveCodingLab == null)
+            {
+                _liveCodingLab = new LiveCodingLabMain();
+            }
+        }
+
+        #region API
+        private CodeBoxPaneItem AddCodeBoxToList()
+        {
+            CodeBoxPaneItem item = new CodeBoxPaneItem(this);
+            codeBoxList.Insert(0, item);
+            codeListBox.SelectedIndex = 0;
+            return item;
+        }
+
         #endregion
 
         #region XAML-Binded Event Handler
