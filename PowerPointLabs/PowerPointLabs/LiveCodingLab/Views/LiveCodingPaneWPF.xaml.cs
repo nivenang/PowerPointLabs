@@ -5,6 +5,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
+using Microsoft.Office.Core;
 using PowerPointLabs.ActionFramework.Common.Extension;
 using PowerPointLabs.ColorThemes.Extensions;
 using PowerPointLabs.ELearningLab.Extensions;
@@ -57,15 +58,15 @@ namespace PowerPointLabs.LiveCodingLab.Views
             }
         }
 
-        public void ExecuteLiveCodingAction(PowerPoint.ShapeRange selectedShapes, Action<PowerPoint.ShapeRange> liveCodingAction)
+        public void ExecuteLiveCodingAction(List<CodeBoxPaneItem> listCodeBox, Action<List<CodeBoxPaneItem>> liveCodingAction)
         {
-            if (selectedShapes == null)
+            if (listCodeBox == null || listCodeBox.Count != 2)
             {
                 return;
             }
 
             this.StartNewUndoEntry();
-            liveCodingAction.Invoke(selectedShapes);
+            liveCodingAction.Invoke(listCodeBox);
         }
 
 
@@ -82,6 +83,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
             view = (CollectionView)CollectionViewSource.GetDefaultView(codeListBox.ItemsSource);
             groupDescription = new PropertyGroupDescription("Group");
             view.GroupDescriptions.Add(groupDescription);
+            RefreshCode();
         }
         public void RemoveCodeBox(Object codeBox)
         {
@@ -174,8 +176,25 @@ namespace PowerPointLabs.LiveCodingLab.Views
             codeListBox.SelectedIndex = 0;
             return item;
         }
-
-
+        private void RefreshCode()
+        {
+            foreach (PowerPointSlide slide in currentPresentation.Slides)
+            {
+                List<Shape> shapes = slide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex);
+                foreach (Shape shape in shapes)
+                {
+                    CodeBoxPaneItem codeBox = GetCodeBoxPaneItemFromShape(shape);
+                    if (codeBox != null)
+                    {
+                        CodeBox code = codeBox.CodeBox;
+                        code.Slide = slide;
+                        code.Shape = shape;
+                        codeBox.CodeBox = code;
+                    }
+                }
+            }
+            SaveCodeBox();
+        }
         #endregion
 
         #region XAML-Binded Event Handler
@@ -188,16 +207,13 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
         private void RefreshCodeButton_Click(object sender, RoutedEventArgs e)
         {
+            RefreshCode();
             foreach (CodeBoxPaneItem item in codeListBox.SelectedItems)
             {
                 if (item != null)
                 {
                     item.CodeBox.Text = item.codeTextBox.Text;
-                    if (item.CodeBox.Shape == null)
-                    {
-                        item.CodeBox = ShapeUtility.InsertCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, item.CodeBox);
-                    }
-                    else
+                    if (item.CodeBox.Shape != null)
                     {
                         item.CodeBox = ShapeUtility.ReplaceTextForShape(item.CodeBox);
                     }
@@ -208,16 +224,13 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
         private void RefreshAllCodeButton_Click(object sender, RoutedEventArgs e)
         {
+            RefreshCode();
             foreach (CodeBoxPaneItem item in codeListBox.Items)
             {
                 if (item != null)
                 {
                     item.CodeBox.Text = item.codeTextBox.Text;
-                    if (item.CodeBox.Shape == null)
-                    {
-                        item.CodeBox = ShapeUtility.InsertCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, item.CodeBox);
-                    }
-                    else
+                    if (item.CodeBox.Shape != null)
                     {
                         item.CodeBox = ShapeUtility.ReplaceTextForShape(item.CodeBox);
                     }
@@ -248,13 +261,15 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
         private void HighlightDifferenceButton_Click(object sender, RoutedEventArgs e)
         {
-            Action<PowerPoint.ShapeRange> highlightDifferenceAction = shapes => _liveCodingLab.HighlightDifferences(shapes);
+            RefreshCode();
+            Action<List<CodeBoxPaneItem>> highlightDifferenceAction = codeBoxes => _liveCodingLab.HighlightDifferences(codeBoxes);
             ClickHandler(highlightDifferenceAction, 1, LiveCodingLabMain.HighlightDifference_ErrorParameters);
         }
 
         private void AnimateNewLinesButton_Click(object sender, RoutedEventArgs e)
         {
-            Action<PowerPoint.ShapeRange> animateNewLinesAction = shapes => _liveCodingLab.AnimateNewLines(shapes);
+            RefreshCode();
+            Action<List<CodeBoxPaneItem>> animateNewLinesAction = codeBoxes => _liveCodingLab.AnimateNewLines(codeBoxes);
             ClickHandler(animateNewLinesAction, 1, LiveCodingLabMain.AnimateNewLines_ErrorParameters);
         }
 
@@ -283,6 +298,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
                 codeBoxesList.Add(codeBox);
                 codeBoxes.RemoveAt(0);
             }
+
             return codeBoxesList;
         }
 
@@ -293,40 +309,25 @@ namespace PowerPointLabs.LiveCodingLab.Views
             bool isURL = codeBoxItemDic[LiveCodingLabText.CodeBox_IsURL] == "Y";
             bool isFile = codeBoxItemDic[LiveCodingLabText.CodeBox_IsFile] == "Y";
             bool isText = codeBoxItemDic[LiveCodingLabText.CodeBox_IsText] == "Y";
-            int slideNum = int.Parse(codeBoxItemDic[LiveCodingLabText.CodeBox_Slide]);
             string group = codeBoxItemDic[LiveCodingLabText.CodeBox_Group];
+            string shapeName = codeBoxItemDic[LiveCodingLabText.CodeBox_ShapeName];
             PowerPointSlide slide = null;
             CodeBox codeBoxItem;
-            Shape codeShape = null;
 
-            if (slideNum > 0)
-            {
-                slide = PowerPointPresentation.Current.GetSlide(slideNum);
-                List<Shape> shapes = slide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex);
-                if (shapes.Count > 0)
-                {
-                    codeShape = shapes[0];
-                }
-            }
             if (isURL)
             {
                 codeBoxItem = new CodeBox(id,
-                    codeBoxItemDic[LiveCodingLabText.CodeTextIdentifier], "", "", isURL, false, false, slide);
+                    codeBoxItemDic[LiveCodingLabText.CodeTextIdentifier], "", "", isURL, false, false, slide, shapeName);
             }
             else if (isFile)
             {
                 codeBoxItem = new CodeBox(id,
-                    "", codeBoxItemDic[LiveCodingLabText.CodeTextIdentifier], "", false, isFile, false, slide);
+                    "", codeBoxItemDic[LiveCodingLabText.CodeTextIdentifier], "", false, isFile, false, slide, shapeName);
             }
             else
             {
                 codeBoxItem = new CodeBox(id,
-                    "", "", codeBoxItemDic[LiveCodingLabText.CodeTextIdentifier], false, false, isText, slide);
-            }
-
-            if (codeShape != null)
-            {
-                codeBoxItem.Shape = codeShape;
+                    "", "", codeBoxItemDic[LiveCodingLabText.CodeTextIdentifier], false, false, isText, slide, shapeName);
             }
 
             CodeBoxPaneItem codeBoxPaneItem = new CodeBoxPaneItem(this, codeBoxItem, group);
@@ -350,19 +351,76 @@ namespace PowerPointLabs.LiveCodingLab.Views
                 return selection.ShapeRange;
             }
         }
-        private void ClickHandler(Action<PowerPoint.ShapeRange> liveCodingAction, int minNoOfSelectedShapes, string[] errorParameters)
+        private void ClickHandler(Action<List<CodeBoxPaneItem>> liveCodingAction, int minNoOfSelectedShapes, string[] errorParameters)
         {
-            PowerPoint.ShapeRange selectedShapes = GetSelectedShapes();
-
-            if (selectedShapes == null || selectedShapes.Count < minNoOfSelectedShapes)
+            List<CodeBoxPaneItem> listCodeBox = new List<CodeBoxPaneItem>();
+            PowerPointSlide currentSlide = PowerPointCurrentPresentationInfo.CurrentSlide;
+            if (currentSlide == null || currentSlide.Index == PowerPointPresentation.Current.SlideCount)
             {
-                _errorHandler.ProcessErrorCode(LiveCodingLabErrorHandler.ErrorCodeInvalidSelection, errorParameters);
+                _errorHandler.ProcessErrorCode(LiveCodingLabErrorHandler.ErrorCodeInvalidCodeBox, errorParameters);
+                return;
+            }
+            PowerPointSlide nextSlide = PowerPointPresentation.Current.Slides[currentSlide.Index];
+            List<PowerPoint.Shape> shapesToUseCurrentSlide = currentSlide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex);
+            List<PowerPoint.Shape> shapesToUseNextSlide = nextSlide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex);
+
+            if (shapesToUseCurrentSlide == null || shapesToUseNextSlide == null)
+            {
+                _errorHandler.ProcessErrorCode(LiveCodingLabErrorHandler.ErrorCodeInvalidCodeBox, errorParameters);
                 return;
             }
 
-            ExecuteLiveCodingAction(selectedShapes, liveCodingAction);
+            if (shapesToUseCurrentSlide.Count != 1 || !HasText(shapesToUseCurrentSlide[0]))
+            {
+                _errorHandler.ProcessErrorCode(LiveCodingLabErrorHandler.ErrorCodeInvalidCodeBox, errorParameters);
+                return;
+            }
+
+            if (shapesToUseNextSlide.Count != 1 || !HasText(shapesToUseNextSlide[0]))
+            {
+                _errorHandler.ProcessErrorCode(LiveCodingLabErrorHandler.ErrorCodeInvalidCodeBox, errorParameters);
+                return;
+            }
+            foreach (CodeBoxPaneItem item in codeListBox.Items)
+            {
+                if (item != null && item.CodeBox.Shape != null && (item.CodeBox.Shape.Name == shapesToUseCurrentSlide[0].Name))
+                {
+                    listCodeBox.Add(item);
+                    break;
+                }
+            }
+
+            foreach (CodeBoxPaneItem item in codeListBox.Items)
+            {
+                if (item != null && item.CodeBox.Shape != null && (item.CodeBox.Shape.Name == shapesToUseNextSlide[0].Name))
+                {
+                    listCodeBox.Add(item);
+                    break;
+                }
+            }
+            ExecuteLiveCodingAction(listCodeBox, liveCodingAction);
         }
 
+        private CodeBoxPaneItem GetCodeBoxPaneItemFromShape(Shape shape)
+        {
+            foreach (CodeBoxPaneItem codeBox in codeBoxList)
+            {
+                if (codeBox.CodeBox.ShapeName == shape.Name)
+                {
+                    return codeBox;
+                }
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Returns true iff shape has a text frame.
+        /// </summary>
+        private static bool HasText(Shape shape)
+        {
+            return shape.HasTextFrame == MsoTriState.msoTrue &&
+                   shape.TextFrame2.HasText == MsoTriState.msoTrue;
+        }
         #endregion
     }
 }

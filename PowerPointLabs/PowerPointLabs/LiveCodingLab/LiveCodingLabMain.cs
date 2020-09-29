@@ -25,6 +25,33 @@ namespace PowerPointLabs.LiveCodingLab
 
         }
 
+        private PowerPoint.Shape ConvertTextToParagraphs(PowerPoint.Shape shape)
+        {
+            PowerPoint.TextRange codeText = shape.TextFrame.TextRange;
+            string textWithParagraphs = "";
+
+            foreach (PowerPoint.TextRange line in codeText.Lines())
+            {
+                if (line.Text.Contains("\r\n") || line.Text == "")
+                {
+                    continue;
+                }
+                else if (line.Text.Contains("\r") && !line.Text.Contains("\n"))
+                {
+                    textWithParagraphs += line.Text + "\n";
+                }
+                else if (line.Text.Contains("\n") && !line.Text.Contains("\r"))
+                {
+                    textWithParagraphs += line.Text.Replace("\n", "\r\n");
+                }
+                else
+                {
+                    textWithParagraphs += line.Text + "\r\n";
+                }
+            }
+            shape.TextFrame.TextRange.Text = textWithParagraphs;
+            return shape;
+        }
 
         /// <summary>
         /// Deletes all redundant effects from the sequence.
@@ -74,7 +101,6 @@ namespace PowerPointLabs.LiveCodingLab
         {
             return shape.HasTextFrame == MsoTriState.msoTrue &&
                    shape.TextFrame2.HasText == MsoTriState.msoTrue;
-
         }
 
         private void AddPowerPointLabsIndicator(PowerPointSlide _slide)

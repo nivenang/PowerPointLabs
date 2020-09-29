@@ -13,7 +13,7 @@ using Forms = System.Windows.Forms;
 namespace PowerPointLabs.LiveCodingLab.Views
 {
     /// <summary>
-    /// Interaction logic for LiveCodingLabSettingsDialogBox.xaml
+    /// Interaction logic for GroupCodeBoxDialog.xaml
     /// </summary>
     public partial class GroupCodeBoxDialog
     {

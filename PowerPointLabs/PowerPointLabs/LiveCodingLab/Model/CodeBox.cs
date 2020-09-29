@@ -184,7 +184,18 @@ namespace PowerPointLabs.LiveCodingLab.Model
             set
             {
                 codeShape = value;
-                NotifyPropertyChanged(LiveCodingLabText.CodeBox_CodeShape);
+            }
+        }
+
+        public string ShapeName
+        {
+            get
+            {
+                return shapeName;
+            }
+            set
+            {
+                shapeName = value;
             }
         }
 
@@ -196,7 +207,14 @@ namespace PowerPointLabs.LiveCodingLab.Model
         {
             if (codeShape != null)
             {
-                codeShape.Delete();
+                try
+                {
+                    codeShape.Delete();
+                }
+                catch (System.Runtime.InteropServices.COMException)
+                {
+                    return;
+                }
             }
         }
         #endregion
@@ -216,9 +234,10 @@ namespace PowerPointLabs.LiveCodingLab.Model
 
         private PowerPoint.Shape codeShape;
 
+        private string shapeName;
         #endregion
 
-        public CodeBox(int codeBoxId, string codeURL = "", string codeFile = "", string codeText = "", bool isURL = false, bool isFile = false, bool isText = true, PowerPointSlide slide=null)
+        public CodeBox(int codeBoxId, string codeURL = "", string codeFile = "", string codeText = "", bool isURL = false, bool isFile = false, bool isText = true, PowerPointSlide slide=null, string shapeName="")
         {
             this.codeBoxId = codeBoxId;
             this.slide = slide;
@@ -228,6 +247,7 @@ namespace PowerPointLabs.LiveCodingLab.Model
             this.codeFile = codeFile;
             this.codeText = codeText;
             this.codeURL = codeURL;
+            this.shapeName = shapeName;
         }
 
         public override bool Equals(object other)

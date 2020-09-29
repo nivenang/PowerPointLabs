@@ -7,6 +7,8 @@ using PowerPointLabs.ActionFramework.Common.Extension;
 using PowerPointLabs.ActionFramework.Common.Log;
 using PowerPointLabs.AnimationLab;
 using PowerPointLabs.ELearningLab.Extensions;
+using PowerPointLabs.LiveCodingLab.Model;
+using PowerPointLabs.LiveCodingLab.Views;
 using PowerPointLabs.Models;
 using PowerPointLabs.TextCollection;
 using PowerPointLabs.Utils;
@@ -29,11 +31,10 @@ namespace PowerPointLabs.LiveCodingLab
             HighlightDifference_ShapeSupport
         };
 
-        public void HighlightDifferences(PowerPoint.ShapeRange shapeRange)
+        public void HighlightDifferences(List<CodeBoxPaneItem> listCodeBox)
         {
             try
             {
-
                 PowerPointSlide currentSlide = PowerPointCurrentPresentationInfo.CurrentSlide;
 
                 if (currentSlide == null || currentSlide.Index == PowerPointPresentation.Current.SlideCount)
@@ -45,44 +46,30 @@ namespace PowerPointLabs.LiveCodingLab
 
                 PowerPointSlide nextSlide = PowerPointPresentation.Current.Slides[currentSlide.Index];
 
-                PowerPoint.ShapeRange selectedShapesCurrentSlide = shapeRange;
-                PowerPoint.ShapeRange selectedShapesNextSlide = nextSlide.Shapes.Range();
-
                 //Get shapes to consider for animation
-                List<PowerPoint.Shape> shapesToUseCurrentSlide = currentSlide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex);
-                List<PowerPoint.Shape> shapesToUseNextSlide = nextSlide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex);
+                CodeBoxPaneItem currentSlideCodeBox = listCodeBox[0];
+                CodeBoxPaneItem nextSlideCodeBox = listCodeBox[1];
 
                 // Check that there exists a "before" code and an "after" code to be animated
-                if (shapesToUseCurrentSlide == null || shapesToUseNextSlide == null)
+                if (currentSlideCodeBox.CodeBox.Shape == null || nextSlideCodeBox.CodeBox.Shape == null)
                 {
-                    MessageBox.Show(LiveCodingLabText.ErrorHighlightDifferenceCodeSnippet,
+                    MessageBox.Show(LiveCodingLabText.ErrorHighlightDifferenceMissingCodeSnippet,
                                     LiveCodingLabText.ErrorHighlightDifferenceDialogTitle);
                     return;
                 }
 
-                if (shapesToUseCurrentSlide.Count != 1 || !HasText(shapesToUseCurrentSlide[0]))
+                // Retrieves all possible matching code snippets from the next slide
+                if (nextSlideCodeBox.CodeBox.Shape.TextFrame.TextRange.Paragraphs().Count != currentSlideCodeBox.CodeBox.Shape.TextFrame.TextRange.Paragraphs().Count)
                 {
-                    MessageBox.Show(LiveCodingLabText.ErrorHighlightDifferenceNoSelection,
+                    MessageBox.Show(LiveCodingLabText.ErrorHighlightDifferenceWrongCodeSnippet,
                                     LiveCodingLabText.ErrorHighlightDifferenceDialogTitle);
                     return;
                 }
 
-                List<PowerPoint.Shape> shapesToUseNext = new List<PowerPoint.Shape>();
-                foreach (PowerPoint.Shape sh in shapesToUseNextSlide)
-                {
-                    if (HasText(sh)
-                        && sh.TextFrame.TextRange.Paragraphs().Count == shapesToUseCurrentSlide[0].TextFrame.TextRange.Paragraphs().Count)
-                    {
-                        shapesToUseNext.Add(sh);
-                    }
-                }
-
-                if (shapesToUseNext.Count < 1)
-                {
-                    MessageBox.Show(LiveCodingLabText.ErrorHighlightDifferenceCodeSnippet,
-                                    LiveCodingLabText.ErrorHighlightDifferenceDialogTitle);
-                    return;
-                }
+                nextSlideCodeBox.CodeBox.Shape.Left = currentSlideCodeBox.CodeBox.Shape.Left;
+                nextSlideCodeBox.CodeBox.Shape.Top = currentSlideCodeBox.CodeBox.Shape.Top;
+                nextSlideCodeBox.CodeBox.Shape.Width = currentSlideCodeBox.CodeBox.Shape.Width;
+                nextSlideCodeBox.CodeBox.Shape.Height = currentSlideCodeBox.CodeBox.Shape.Height;
 
                 PowerPointSlide transitionSlide = currentSlide.Duplicate();
                 transitionSlide.Name = "PPTLabsHighlightDifferenceTransitionSlide" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
@@ -93,7 +80,11 @@ namespace PowerPointLabs.LiveCodingLab
 
                 // Objects that contain the "before" and "after" code to be animated
                 PowerPoint.Shape codeShapeBeforeEdit = transitionSlide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex)[0];
-                PowerPoint.Shape codeShapeAfterEdit = transitionSlide.CopyShapeToSlide(shapesToUseNext[0]);
+                PowerPoint.Shape codeShapeAfterEdit = transitionSlide.CopyShapeToSlide(nextSlideCodeBox.CodeBox.Shape);
+                codeShapeBeforeEdit = ConvertTextToParagraphs(codeShapeBeforeEdit);
+                codeShapeBeforeEdit.TextFrame.TextRange.Font.Color.RGB = currentSlideCodeBox.CodeBox.Shape.TextFrame.TextRange.Font.Color.RGB;
+                codeShapeAfterEdit = ConvertTextToParagraphs(codeShapeAfterEdit);
+                codeShapeAfterEdit.TextFrame.TextRange.Font.Color.RGB = nextSlideCodeBox.CodeBox.Shape.TextFrame.TextRange.Font.Color.RGB;
                 PowerPoint.TextRange codeTextBeforeEdit = codeShapeBeforeEdit.TextFrame.TextRange;
                 PowerPoint.TextRange codeTextAfterEdit = codeShapeAfterEdit.TextFrame.TextRange;
 
@@ -182,6 +173,7 @@ namespace PowerPointLabs.LiveCodingLab
                 // Re-orders the effects to create a full highlight difference animation
                 RearrangeEffects(colourChangeEffectsBefore, appearEffects, disappearEffects, colourChangeEffectsAfter);
 
+                nextSlideCodeBox.CodeBox.Slide = nextSlide;
                 if (currentSlide.HasAnimationForClick(clickNumber: 1))
                 {
                     Globals.ThisAddIn.Application.CommandBars.ExecuteMso("AnimationPreview");
@@ -272,8 +264,5 @@ namespace PowerPointLabs.LiveCodingLab
                 colourChangeEffectsAfter[i].MoveAfter(appearEffects[i]);
             }
         }
-
-
-
     }
 }

@@ -7,6 +7,7 @@ using PowerPointLabs.ActionFramework.Common.Extension;
 using PowerPointLabs.ActionFramework.Common.Log;
 using PowerPointLabs.AnimationLab;
 using PowerPointLabs.ELearningLab.Extensions;
+using PowerPointLabs.LiveCodingLab.Views;
 using PowerPointLabs.Models;
 using PowerPointLabs.TextCollection;
 using PowerPointLabs.Utils;
@@ -30,7 +31,7 @@ namespace PowerPointLabs.LiveCodingLab
 
         private static float fontScale = 4.5f;
 
-        public void AnimateNewLines(PowerPoint.ShapeRange shapeRange)
+        public void AnimateNewLines(List<CodeBoxPaneItem> listCodeBox)
         {
             try
             {
@@ -38,57 +39,41 @@ namespace PowerPointLabs.LiveCodingLab
 
                 if (currentSlide == null || currentSlide.Index == PowerPointPresentation.Current.SlideCount)
                 {
-                    MessageBox.Show(LiveCodingLabText.ErrorHighlightDifferenceWrongSlide,
-                                    LiveCodingLabText.ErrorHighlightDifferenceDialogTitle);
+                    MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesWrongSlide,
+                                    LiveCodingLabText.ErrorAnimateNewLinesDialogTitle);
                     return;
                 }
 
                 PowerPointSlide nextSlide = PowerPointPresentation.Current.Slides[currentSlide.Index];
 
-                PowerPoint.ShapeRange selectedShapesCurrentSlide = shapeRange;
-                PowerPoint.ShapeRange selectedShapesNextSlide = nextSlide.Shapes.Range();
-
                 //Get shapes to consider for animation
-                List<PowerPoint.Shape> shapesToUseCurrentSlide = currentSlide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex);
-                List<PowerPoint.Shape> shapesToUseNextSlide = nextSlide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex);
+                CodeBoxPaneItem currentSlideCodeBox = listCodeBox[0];
+                CodeBoxPaneItem nextSlideCodeBox = listCodeBox[1];
 
                 // Check that there exists a "before" code and an "after" code to be animated
-                if (shapesToUseCurrentSlide == null || shapesToUseNextSlide == null)
+                if (currentSlideCodeBox.CodeBox.Shape == null || nextSlideCodeBox.CodeBox.Shape == null)
                 {
-                    MessageBox.Show(LiveCodingLabText.ErrorHighlightDifferenceCodeSnippet,
-                                    LiveCodingLabText.ErrorHighlightDifferenceDialogTitle);
-                    return;
-                }
-
-                if (shapesToUseCurrentSlide.Count != 1 || !HasText(shapesToUseCurrentSlide[0]))
-                {
-                    MessageBox.Show(LiveCodingLabText.ErrorHighlightDifferenceNoSelection,
-                                    LiveCodingLabText.ErrorHighlightDifferenceDialogTitle);
+                    MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesMissingCodeSnippet,
+                                    LiveCodingLabText.ErrorAnimateNewLinesDialogTitle);
                     return;
                 }
 
                 // Retrieves all possible matching code snippets from the next slide
-                List<PowerPoint.Shape> shapesToUseNext = new List<PowerPoint.Shape>();
-                foreach (PowerPoint.Shape sh in shapesToUseNextSlide)
+                if (nextSlideCodeBox.CodeBox.Shape.TextFrame.TextRange.Lines().Count <= currentSlideCodeBox.CodeBox.Shape.TextFrame.TextRange.Lines().Count)
                 {
-                    if (HasText(sh)
-                        && sh.TextFrame.TextRange.Paragraphs().Count > shapesToUseCurrentSlide[0].TextFrame.TextRange.Paragraphs().Count)
-                    {
-                        shapesToUseNext.Add(sh);
-                    }
-                }
-
-                // Throws an error if there are no possible matching shapes
-                if (shapesToUseNext.Count < 1)
-                {
-                    MessageBox.Show(LiveCodingLabText.ErrorHighlightDifferenceCodeSnippet,
-                                    LiveCodingLabText.ErrorHighlightDifferenceDialogTitle);
+                    MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesWrongCodeSnippet,
+                                    LiveCodingLabText.ErrorAnimateNewLinesDialogTitle);
                     return;
                 }
 
+                nextSlideCodeBox.CodeBox.Shape.Left = currentSlideCodeBox.CodeBox.Shape.Left;
+                nextSlideCodeBox.CodeBox.Shape.Top = currentSlideCodeBox.CodeBox.Shape.Top;
+                nextSlideCodeBox.CodeBox.Shape.Width = currentSlideCodeBox.CodeBox.Shape.Width;
+                nextSlideCodeBox.CodeBox.Shape.Height = currentSlideCodeBox.CodeBox.Shape.Height;
+
                 // Creates a new animation slide between the before and after code
                 PowerPointSlide transitionSlide = currentSlide.Duplicate();
-                transitionSlide.Name = "PPTLabsHighlightDifferenceTransitionSlide" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
+                transitionSlide.Name = "PPTLabsAnimateNewLinesTransitionSlide" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
                 AddPowerPointLabsIndicator(transitionSlide);
 
                 // Initialise an animation sequence object
@@ -96,9 +81,14 @@ namespace PowerPointLabs.LiveCodingLab
 
                 // Objects that contain the "before" and "after" code to be animated
                 PowerPoint.Shape codeShapeBeforeEdit = transitionSlide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex)[0];
-                PowerPoint.Shape codeShapeAfterEdit = transitionSlide.CopyShapeToSlide(shapesToUseNext[0]);
+                PowerPoint.Shape codeShapeAfterEdit = transitionSlide.CopyShapeToSlide(nextSlideCodeBox.CodeBox.Shape);
+                codeShapeBeforeEdit = ConvertTextToParagraphs(codeShapeBeforeEdit);
+                codeShapeBeforeEdit.TextFrame.TextRange.Font.Color.RGB = currentSlideCodeBox.CodeBox.Shape.TextFrame.TextRange.Font.Color.RGB;
+                codeShapeAfterEdit = ConvertTextToParagraphs(codeShapeAfterEdit);
+                codeShapeAfterEdit.TextFrame.TextRange.Font.Color.RGB = nextSlideCodeBox.CodeBox.Shape.TextFrame.TextRange.Font.Color.RGB;
                 PowerPoint.TextRange codeTextBeforeEdit = codeShapeBeforeEdit.TextFrame.TextRange;
                 PowerPoint.TextRange codeTextAfterEdit = codeShapeAfterEdit.TextFrame.TextRange;
+                
 
                 // Stores the font size of the code snippet for animation scaling
                 float fontSize = codeTextBeforeEdit.Font.Size;
@@ -148,7 +138,10 @@ namespace PowerPointLabs.LiveCodingLab
                         {
                             if (paragraphCountAfter + 1 > codeTextAfterEdit.Paragraphs().Count)
                             {
-                                MessageBox.Show("Non-matching code snippets", LiveCodingLabText.ErrorHighlightDifferenceDialogTitle);
+                                MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesWrongCodeSnippet,
+                                                LiveCodingLabText.ErrorAnimateNewLinesDialogTitle);
+                                transitionSlide.Delete();
+                                nextSlideCodeBox.CodeBox.Slide = nextSlide;
                                 return;
                             }
                             paragraphCountAfter++;
@@ -272,6 +265,7 @@ namespace PowerPointLabs.LiveCodingLab
                     }
                 }
 
+                nextSlideCodeBox.CodeBox.Slide = nextSlide;
                 if (currentSlide.HasAnimationForClick(clickNumber: 1))
                 {
                     Globals.ThisAddIn.Application.CommandBars.ExecuteMso("AnimationPreview");
@@ -280,7 +274,7 @@ namespace PowerPointLabs.LiveCodingLab
             }
             catch (Exception e)
             {
-                Logger.LogException(e, "HighlightDifferences");
+                Logger.LogException(e, "AnimateNewLines");
                 throw;
             }
         }
@@ -323,6 +317,5 @@ namespace PowerPointLabs.LiveCodingLab
                 effect.Timing.Duration = 0;
             }
         }
-
     }
 }

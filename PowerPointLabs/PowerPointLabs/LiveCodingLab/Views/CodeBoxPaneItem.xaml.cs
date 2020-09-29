@@ -24,7 +24,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
 {
 #pragma warning disable 0618
     /// <summary>
-    /// Interaction logic for SyncFormatPaneItem.xaml
+    /// Interaction logic for CodeBoxPaneItem.xaml
     /// </summary>
     public partial class CodeBoxPaneItem : UserControl, INotifyPropertyChanged
     {

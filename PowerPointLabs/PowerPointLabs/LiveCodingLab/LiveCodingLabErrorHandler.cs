@@ -4,14 +4,14 @@ namespace PowerPointLabs.LiveCodingLab
 {
     internal class LiveCodingLabErrorHandler
     {
-        public const int ErrorCodeInvalidSelection = 0;
+        public const int ErrorCodeInvalidCodeBox = 0;
         public const int ErrorCodeNotSameShapes = 1;
         public const int ErrorCodeGroupShapeNotSupported = 2;
 
         private ILiveCodingLabPane View { get; set; }
         private static LiveCodingLabErrorHandler _errorHandler;
 
-        private const string ErrorMessageInvalidSelection = LiveCodingLabText.ErrorInvalidSelection;
+        private const string ErrorMessageInvalidCodeBox = LiveCodingLabText.ErrorInvalidCodeBox;
         private const string ErrorMessageUndefined = LiveCodingLabText.ErrorUndefined;
 
         private LiveCodingLabErrorHandler(ILiveCodingLabPane view = null)
@@ -56,8 +56,8 @@ namespace PowerPointLabs.LiveCodingLab
         {   
             switch (errorCode)
             {
-                case ErrorCodeInvalidSelection:
-                    return ErrorMessageInvalidSelection;
+                case ErrorCodeInvalidCodeBox:
+                    return ErrorMessageInvalidCodeBox;
                 default:
                     return ErrorMessageUndefined;
             }

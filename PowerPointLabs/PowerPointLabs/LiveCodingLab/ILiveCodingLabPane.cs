@@ -1,5 +1,7 @@
 ﻿using System;
+using System.Collections.Generic;
 
+using PowerPointLabs.LiveCodingLab.Views;
 using PowerPoint = Microsoft.Office.Interop.PowerPoint;
 
 namespace PowerPointLabs.LiveCodingLab
@@ -9,6 +11,6 @@ namespace PowerPointLabs.LiveCodingLab
     {
         void ShowErrorMessageBox(string content, Exception exception = null);
         void Reset();
-        void ExecuteLiveCodingAction(PowerPoint.ShapeRange selectedShapes, Action<PowerPoint.ShapeRange> liveCodingAction);
+        void ExecuteLiveCodingAction(List<CodeBoxPaneItem> listCodeBox, Action<List<CodeBoxPaneItem>> liveCodingAction);
     }
 }

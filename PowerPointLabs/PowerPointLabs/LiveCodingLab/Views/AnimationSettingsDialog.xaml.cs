@@ -11,7 +11,7 @@ using Forms = System.Windows.Forms;
 namespace PowerPointLabs.LiveCodingLab.Views
 {
     /// <summary>
-    /// Interaction logic for LiveCodingLabSettingsDialogBox.xaml
+    /// Interaction logic for AnimationSettingsDialog.xaml
     /// </summary>
     public partial class AnimationSettingsDialog
     {

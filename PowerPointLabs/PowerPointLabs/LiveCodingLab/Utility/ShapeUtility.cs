@@ -19,12 +19,12 @@ namespace PowerPointLabs.LiveCodingLab.Utility
     {
 #pragma warning disable 0618
         /// <summary>
-        /// Insert default callout box shape to slide. 
-        /// Precondition: shape with shapeName must not exist in slide before applying the method
+        /// Insert code box text to slide. 
+        /// Precondition: shape with codeBox.shapeName must not exist in slide before applying the method
         /// </summary>
         /// <param name="slide"></param>
-        /// <param name="codeText">Content in Callout Shape</param>
-        /// <returns>generated callout shape</returns>
+        /// <param name="codeBox">CodeBox object containing the code snippet</param>
+        /// <returns>generated code text box</returns>
         public static CodeBox InsertCodeBoxToSlide(PowerPointSlide slide, CodeBox codeBox)
         {
             string textToInsert;
@@ -50,7 +50,7 @@ namespace PowerPointLabs.LiveCodingLab.Utility
             codeShape.Name = string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, codeBox.Id);
             codeBox.Slide = slide;
             codeBox.Shape = codeShape;
-
+            codeBox.ShapeName = codeShape.Name;
             return codeBox;
         }
 
@@ -76,11 +76,10 @@ namespace PowerPointLabs.LiveCodingLab.Utility
         }
 
         /// <summary>
-        /// Replace original text in `shape` with `text`
+        /// Replace original text in CodeBox shape on slide with the updated CodeBox text
         /// </summary>
-        /// <param name="shape"></param>
-        /// <param name="text"></param>
-        /// <returns></returns>
+        /// <param name="codeBox"></param>
+        /// <returns>updated codeBox containing the new text</returns>
         public static CodeBox ReplaceTextForShape(CodeBox codeBox)
         {
             if (!codeBox.Slide.HasShapeWithSameName(string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, codeBox.Id)))
@@ -99,6 +98,7 @@ namespace PowerPointLabs.LiveCodingLab.Utility
             {
                 shapeInSlide.TextFrame.TextRange.Text = codeBox.Text;
             }
+            codeBox.ShapeName = shapeInSlide.Name;
             codeBox.Shape = shapeInSlide;
             return codeBox;
         }
