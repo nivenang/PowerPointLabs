@@ -53,7 +53,6 @@ namespace PowerPointLabs.LiveCodingLab.Service
                 dic.Add(LiveCodingLabText.CodeBox_IsFile, codeBox.Element(LiveCodingLabText.CodeBox_IsFile).Value);
                 dic.Add(LiveCodingLabText.CodeBox_IsText, codeBox.Element(LiveCodingLabText.CodeBox_IsText).Value);
                 dic.Add(LiveCodingLabText.CodeBox_Id, codeBox.Element(LiveCodingLabText.CodeBox_Id).Value);
-                dic.Add(LiveCodingLabText.CodeBox_Slide, codeBox.Element(LiveCodingLabText.CodeBox_Slide).Value);
                 dic.Add(LiveCodingLabText.CodeBox_Group, codeBox.Element(LiveCodingLabText.CodeBox_Group).Value);
                 dic.Add(LiveCodingLabText.CodeBox_ShapeName, codeBox.Element(LiveCodingLabText.CodeBox_ShapeName).Value);
                 codeBoxDict.Add(dic);
@@ -76,14 +75,6 @@ namespace PowerPointLabs.LiveCodingLab.Service
                 value.Add(LiveCodingLabText.CodeTextIdentifier, item.Text);
                 value.Add(LiveCodingLabText.CodeBox_Group, paneItem.Group);
                 value.Add(LiveCodingLabText.CodeBox_ShapeName, item.ShapeName);
-                if (item.Slide == null)
-                {
-                    value.Add(LiveCodingLabText.CodeBox_Slide, "-1");
-                }
-                else
-                {
-                    value.Add(LiveCodingLabText.CodeBox_Slide, item.Slide.Index.ToString());
-                }
                 keyValuePairs.Add(value);
             }
             return keyValuePairs;

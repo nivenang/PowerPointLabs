@@ -177,6 +177,24 @@ namespace PowerPointLabs.LiveCodingLab.Views
                     }
                 }
             }
+            foreach (CodeBoxPaneItem item in codeBoxList)
+            {
+                PowerPointSlide slide = item.CodeBox.Slide;
+                if (slide == null)
+                {
+                    continue;
+                }
+                try
+                {
+                    int slideID = slide.ID;
+                }
+                catch (System.Runtime.InteropServices.COMException)
+                {
+                    item.CodeBox.Slide = null;
+                    item.CodeBox.Shape = null;
+                }
+            }
+
             SaveCodeBox();
         }
         internal void InitialiseLogic()
@@ -218,6 +236,10 @@ namespace PowerPointLabs.LiveCodingLab.Views
                     {
                         item.CodeBox = ShapeUtility.ReplaceTextForShape(item.CodeBox);
                     }
+                    else
+                    {
+                        item.CodeBox = ShapeUtility.InsertCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, item.CodeBox);
+                    }
                 }
             }
             SaveCodeBox();
@@ -258,6 +280,11 @@ namespace PowerPointLabs.LiveCodingLab.Views
             view.GroupDescriptions.Clear();
             view.GroupDescriptions.Add(groupDescription);
             SaveCodeBox();
+        }
+
+        private void InsertDiffButton_Click(object sender, RoutedEventArgs e)
+        {
+            
         }
 
         private void HighlightDifferenceButton_Click(object sender, RoutedEventArgs e)
