@@ -20,9 +20,10 @@ namespace PowerPointLabs.LiveCodingLab
 #pragma warning disable 0618
     public partial class LiveCodingLabMain
     {
+        PowerPointPresentation currentPresentation;
         public LiveCodingLabMain()
         {
-
+            currentPresentation = PowerPointPresentation.Current;
         }
 
         private PowerPoint.Shape ConvertTextToParagraphs(PowerPoint.Shape shape)

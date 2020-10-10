@@ -68,7 +68,16 @@ namespace PowerPointLabs.LiveCodingLab.Views
             this.StartNewUndoEntry();
             liveCodingAction.Invoke(listCodeBox);
         }
+        public void ExecuteLiveCodingAction(List<FileDiff> diffFiles, Action<List<FileDiff>, LiveCodingPaneWPF, string> liveCodingAction, string diffGroupName)
+        {
+            if (diffFiles == null)
+            {
+                return;
+            }
 
+            this.StartNewUndoEntry();
+            liveCodingAction.Invoke(diffFiles, this, diffGroupName);
+        }
 
         #endregion
         public LiveCodingPaneWPF()
@@ -99,6 +108,13 @@ namespace PowerPointLabs.LiveCodingLab.Views
                     index++;
                 }
             }
+        }
+
+        public void AddCodeBox(CodeBoxPaneItem item)
+        {
+            codeBoxList.Insert(0, item);
+            codeListBox.SelectedIndex = 0;
+            SaveCodeBox();
         }
 
         public void SaveCodeBox()
@@ -284,7 +300,32 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
         private void InsertDiffButton_Click(object sender, RoutedEventArgs e)
         {
-            
+            RefreshCode();
+
+            InsertDiffDialog diffDialog = new InsertDiffDialog();
+            string diffPath = "";
+            string diffGroup = "Ungrouped";
+            if (diffDialog.ShowThematicDialog() == true)
+            {
+                diffPath = diffDialog.DiffFile;
+                if (diffDialog.DiffGroup != "")
+                {
+                    diffGroup = diffDialog.DiffGroup;
+                }
+            }
+            if (diffPath == "")
+            {
+                return;
+            }
+
+            string diffInput = CodeBoxFileService.GetCodeFromFile(diffPath);
+            if (diffInput == "")
+            {
+                return;
+            }
+            List<FileDiff> files = Diff.Parse(diffInput, Environment.NewLine).ToList();
+            Action<List<FileDiff>, LiveCodingPaneWPF, string> insertDiffAction = (diffFiles, liveCodingPane, diffGroupName) => _liveCodingLab.InsertDiff(diffFiles, liveCodingPane, diffGroupName);
+            ClickHandler(insertDiffAction, files, diffGroup);
         }
 
         private void HighlightDifferenceButton_Click(object sender, RoutedEventArgs e)
@@ -429,6 +470,10 @@ namespace PowerPointLabs.LiveCodingLab.Views
             ExecuteLiveCodingAction(listCodeBox, liveCodingAction);
         }
 
+        private void ClickHandler(Action<List<FileDiff>, LiveCodingPaneWPF, string> liveCodingAction, List<FileDiff> diffFiles, string diffGroupName)
+        {
+            ExecuteLiveCodingAction(diffFiles, liveCodingAction, diffGroupName);
+        }
         private CodeBoxPaneItem GetCodeBoxPaneItemFromShape(Shape shape)
         {
             foreach (CodeBoxPaneItem codeBox in codeBoxList)

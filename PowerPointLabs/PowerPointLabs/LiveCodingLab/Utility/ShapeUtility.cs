@@ -36,7 +36,7 @@ namespace PowerPointLabs.LiveCodingLab.Utility
             {
                 textToInsert = codeBox.Text;
             }
-            Shape codeShape = slide.Shapes.AddTextbox(MsoTextOrientation.msoTextOrientationHorizontal, 10, 10, 500, 250);
+            Shape codeShape = slide.Shapes.AddTextbox(MsoTextOrientation.msoTextOrientationHorizontal, 15, 15, 700, 250);
             if (textToInsert != null && textToInsert != "")
             {
                 codeShape.TextFrame.TextRange.Text = textToInsert;

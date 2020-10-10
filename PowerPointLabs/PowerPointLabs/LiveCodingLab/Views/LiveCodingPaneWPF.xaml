@@ -73,6 +73,10 @@
                 <Image Source="..\..\Resources\AnimateNewLines.png"/>
             </WPF:ImageButton>
             <TextBlock x:Name="animateNewLinesTextBlock" HorizontalAlignment="Left" Margin="85,166.5,0,0" TextWrapping="Wrap" Text="Animate New Lines" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
+            <WPF:ImageButton ToolTip="Creates animations to highlight the differences and animate new lines between two code snippets based on a diff file" x:Name="insertDiffButton" HorizontalAlignment="Left" Margin="152,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="InsertDiffButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
+                <Image Source="..\..\Resources\InsertDiff.png"/>
+            </WPF:ImageButton>
+            <TextBlock x:Name="insertDiffTextBlock" HorizontalAlignment="Left" Margin="152,166.5,0,0" TextWrapping="Wrap" Text="Insert Diff Files" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
             <ListView Name="codeListBox"
                  ItemsSource="{Binding CodeBoxPaneItem}"
                  Margin="10,212.5,10,10"

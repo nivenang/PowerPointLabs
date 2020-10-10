@@ -812,6 +812,14 @@
     <Compile Include="ELearningLab\Service\ELearningService.cs" />
     <Compile Include="ELearningLab\Service\FunctionService\AudioService.cs" />
     <Compile Include="ColorTheme\DesignTheme.cs" />
+    <Compile Include="LiveCodingLab\DiffParser\ChunkDiff.cs" />
+    <Compile Include="LiveCodingLab\DiffParser\Diff.cs" />
+    <Compile Include="LiveCodingLab\DiffParser\DiffParser.cs" />
+    <Compile Include="LiveCodingLab\DiffParser\FileChangeType.cs" />
+    <Compile Include="LiveCodingLab\DiffParser\FileDiff.cs" />
+    <Compile Include="LiveCodingLab\DiffParser\LineChangeType.cs" />
+    <Compile Include="LiveCodingLab\DiffParser\LineDiff.cs" />
+    <Compile Include="LiveCodingLab\InsertDiff.cs" />
     <Compile Include="LiveCodingLab\AnimateNewLines.cs" />
     <Compile Include="LiveCodingLab\HighlightDifference.cs" />
     <Compile Include="LiveCodingLab\ILiveCodingLabPane.cs" />
@@ -823,6 +831,9 @@
     <Compile Include="LiveCodingLab\Service\LiveCodingLabTextStorageService.cs" />
     <Compile Include="LiveCodingLab\Service\CodeBoxIdService.cs" />
     <Compile Include="LiveCodingLab\Utility\ShapeUtility.cs" />
+    <Compile Include="LiveCodingLab\Views\InsertDiffDialog.xaml.cs">
+      <DependentUpon>InsertDiffDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LiveCodingLab\Views\GroupCodeBoxDialog.xaml.cs">
       <DependentUpon>GroupCodeBoxDialog.xaml</DependentUpon>
     </Compile>
@@ -1670,6 +1681,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ELearningLab\Views\AudioSettingsViews\AzureVoiceLoginPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="LiveCodingLab\Views\InsertDiffDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2697,6 +2712,9 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\up_arrow.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\InsertDiff.png" />
   </ItemGroup>
   <!-- Include the build rules for a C# project. -->
   <PropertyGroup>
