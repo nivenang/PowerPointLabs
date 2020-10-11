@@ -54,6 +54,34 @@ namespace PowerPointLabs.LiveCodingLab.Utility
             return codeBox;
         }
 
+        /// <summary>
+        /// Insert code box text to slide. 
+        /// Precondition: shape with codeBox.shapeName must not exist in slide before applying the method
+        /// </summary>
+        /// <param name="slide"></param>
+        /// <param name="codeBox">CodeBox object containing the code snippet</param>
+        /// <returns>generated code text box</returns>
+        public static CodeBox InsertDiffCodeBoxToSlide(PowerPointSlide slide, CodeBox codeBox, FileDiff diff)
+        {
+            string textToInsert = CodeBoxFileService.ConvertFileDiffToString(diff)[codeBox.DiffIndex];
+            Shape codeShape = slide.Shapes.AddTextbox(MsoTextOrientation.msoTextOrientationHorizontal, 15, 15, 700, 250);
+            if (textToInsert != null && textToInsert != "")
+            {
+                codeShape.TextFrame.TextRange.Text = textToInsert;
+            }
+            codeShape.TextFrame.AutoSize = PpAutoSize.ppAutoSizeShapeToFitText;
+            codeShape.TextFrame.WordWrap = MsoTriState.msoTrue;
+            codeShape.TextFrame.TextRange.Font.Size = LiveCodingLabSettings.codeFontSize;
+            codeShape.TextFrame.TextRange.Font.Name = LiveCodingLabSettings.codeFontType;
+            codeShape.TextFrame.TextRange.Font.Color.RGB = LiveCodingLabSettings.codeTextColor.ToArgb();
+            codeShape.TextEffect.Alignment = MsoTextEffectAlignment.msoTextEffectAlignmentLeft;
+            codeShape.Name = string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, codeBox.Id);
+            codeBox.Slide = slide;
+            codeBox.Shape = codeShape;
+            codeBox.ShapeName = codeShape.Name;
+            return codeBox;
+        }
+
         public static Shape InsertStorageCodeBoxToSlide(PowerPointSlide slide, string shapeName, string text)
         {
             float slideWidth = PowerPointPresentation.Current.SlideWidth;
@@ -84,6 +112,10 @@ namespace PowerPointLabs.LiveCodingLab.Utility
         {
             if (!codeBox.Slide.HasShapeWithSameName(string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, codeBox.Id)))
             {
+                if (codeBox.IsDiff && codeBox.DiffIndex >= 0)
+                {
+                    return InsertDiffCodeBoxToSlide(codeBox.Slide, codeBox, CodeBoxFileService.ParseDiff(codeBox.Text)[0]);
+                }
                 return InsertCodeBoxToSlide(codeBox.Slide, codeBox);
             }
             Shape shapeInSlide = codeBox.Shape;
@@ -93,6 +125,10 @@ namespace PowerPointLabs.LiveCodingLab.Utility
             if (codeBox.IsFile)
             {
                 shapeInSlide.TextFrame.TextRange.Text = CodeBoxFileService.GetCodeFromFile(codeBox.Text);
+            }
+            else if (codeBox.IsDiff)
+            {
+                shapeInSlide.TextFrame.TextRange.Text = CodeBoxFileService.ConvertFileDiffToString(CodeBoxFileService.ParseDiff(codeBox.Text)[0])[codeBox.DiffIndex];
             }
             else
             {

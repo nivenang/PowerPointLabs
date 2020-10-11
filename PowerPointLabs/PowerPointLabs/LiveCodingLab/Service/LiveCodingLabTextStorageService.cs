@@ -52,9 +52,11 @@ namespace PowerPointLabs.LiveCodingLab.Service
                 dic.Add(LiveCodingLabText.CodeBox_IsURL, codeBox.Element(LiveCodingLabText.CodeBox_IsURL).Value);
                 dic.Add(LiveCodingLabText.CodeBox_IsFile, codeBox.Element(LiveCodingLabText.CodeBox_IsFile).Value);
                 dic.Add(LiveCodingLabText.CodeBox_IsText, codeBox.Element(LiveCodingLabText.CodeBox_IsText).Value);
+                dic.Add(LiveCodingLabText.CodeBox_IsDiff, codeBox.Element(LiveCodingLabText.CodeBox_IsDiff).Value);
                 dic.Add(LiveCodingLabText.CodeBox_Id, codeBox.Element(LiveCodingLabText.CodeBox_Id).Value);
                 dic.Add(LiveCodingLabText.CodeBox_Group, codeBox.Element(LiveCodingLabText.CodeBox_Group).Value);
                 dic.Add(LiveCodingLabText.CodeBox_ShapeName, codeBox.Element(LiveCodingLabText.CodeBox_ShapeName).Value);
+                dic.Add(LiveCodingLabText.CodeBox_DiffIndex, codeBox.Element(LiveCodingLabText.CodeBox_DiffIndex).Value);
                 codeBoxDict.Add(dic);
             }
             return codeBoxDict;
@@ -71,10 +73,12 @@ namespace PowerPointLabs.LiveCodingLab.Service
                 value.Add(LiveCodingLabText.CodeBox_IsURL, item.IsURL ? "Y" : "N");
                 value.Add(LiveCodingLabText.CodeBox_IsFile, item.IsFile ? "Y" : "N");
                 value.Add(LiveCodingLabText.CodeBox_IsText, item.IsText ? "Y" : "N");
+                value.Add(LiveCodingLabText.CodeBox_IsDiff, item.IsDiff ? "Y" : "N");
                 value.Add(LiveCodingLabText.CodeBox_Id, item.Id.ToString());
                 value.Add(LiveCodingLabText.CodeTextIdentifier, item.Text);
                 value.Add(LiveCodingLabText.CodeBox_Group, paneItem.Group);
                 value.Add(LiveCodingLabText.CodeBox_ShapeName, item.ShapeName);
+                value.Add(LiveCodingLabText.CodeBox_DiffIndex, item.DiffIndex.ToString());
                 keyValuePairs.Add(value);
             }
             return keyValuePairs;

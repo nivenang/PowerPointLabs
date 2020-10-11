@@ -819,6 +819,7 @@
     <Compile Include="LiveCodingLab\DiffParser\FileDiff.cs" />
     <Compile Include="LiveCodingLab\DiffParser\LineChangeType.cs" />
     <Compile Include="LiveCodingLab\DiffParser\LineDiff.cs" />
+    <Compile Include="LiveCodingLab\AnimateDiff.cs" />
     <Compile Include="LiveCodingLab\InsertDiff.cs" />
     <Compile Include="LiveCodingLab\AnimateNewLines.cs" />
     <Compile Include="LiveCodingLab\HighlightDifference.cs" />

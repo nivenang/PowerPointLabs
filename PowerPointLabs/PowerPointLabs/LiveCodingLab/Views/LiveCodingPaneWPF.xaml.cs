@@ -68,15 +68,15 @@ namespace PowerPointLabs.LiveCodingLab.Views
             this.StartNewUndoEntry();
             liveCodingAction.Invoke(listCodeBox);
         }
-        public void ExecuteLiveCodingAction(List<FileDiff> diffFiles, Action<List<FileDiff>, LiveCodingPaneWPF, string> liveCodingAction, string diffGroupName)
+        public void ExecuteLiveCodingAction(string diffPath, Action<string, LiveCodingPaneWPF, string> liveCodingAction, string diffGroupName)
         {
-            if (diffFiles == null)
+            if (diffPath == null || diffPath.Trim() == "")
             {
                 return;
             }
 
             this.StartNewUndoEntry();
-            liveCodingAction.Invoke(diffFiles, this, diffGroupName);
+            liveCodingAction.Invoke(diffPath, this, diffGroupName);
         }
 
         #endregion
@@ -252,10 +252,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
                     {
                         item.CodeBox = ShapeUtility.ReplaceTextForShape(item.CodeBox);
                     }
-                    else
-                    {
-                        item.CodeBox = ShapeUtility.InsertCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, item.CodeBox);
-                    }
                 }
             }
             SaveCodeBox();
@@ -318,14 +314,8 @@ namespace PowerPointLabs.LiveCodingLab.Views
                 return;
             }
 
-            string diffInput = CodeBoxFileService.GetCodeFromFile(diffPath);
-            if (diffInput == "")
-            {
-                return;
-            }
-            List<FileDiff> files = Diff.Parse(diffInput, Environment.NewLine).ToList();
-            Action<List<FileDiff>, LiveCodingPaneWPF, string> insertDiffAction = (diffFiles, liveCodingPane, diffGroupName) => _liveCodingLab.InsertDiff(diffFiles, liveCodingPane, diffGroupName);
-            ClickHandler(insertDiffAction, files, diffGroup);
+            Action<string, LiveCodingPaneWPF, string> insertDiffAction = (diffFilePath, liveCodingPane, diffGroupName) => _liveCodingLab.InsertDiff(diffFilePath, liveCodingPane, diffGroupName);
+            ClickHandler(insertDiffAction, diffPath, diffGroup);
         }
 
         private void HighlightDifferenceButton_Click(object sender, RoutedEventArgs e)
@@ -340,6 +330,12 @@ namespace PowerPointLabs.LiveCodingLab.Views
             RefreshCode();
             Action<List<CodeBoxPaneItem>> animateNewLinesAction = codeBoxes => _liveCodingLab.AnimateNewLines(codeBoxes);
             ClickHandler(animateNewLinesAction, 1, LiveCodingLabMain.AnimateNewLines_ErrorParameters);
+        }
+        private void AnimateDiffButton_Click(object sender, RoutedEventArgs e)
+        {
+            RefreshCode();
+            Action<List<CodeBoxPaneItem>> animateDiffAction = codeBoxes => _liveCodingLab.AnimateDiff(codeBoxes);
+            ClickHandler(animateDiffAction, LiveCodingLabMain.AnimateDiff_ErrorParameters);
         }
 
         private void AnimationSettingsButton_Click(object sender, RoutedEventArgs e)
@@ -378,6 +374,8 @@ namespace PowerPointLabs.LiveCodingLab.Views
             bool isURL = codeBoxItemDic[LiveCodingLabText.CodeBox_IsURL] == "Y";
             bool isFile = codeBoxItemDic[LiveCodingLabText.CodeBox_IsFile] == "Y";
             bool isText = codeBoxItemDic[LiveCodingLabText.CodeBox_IsText] == "Y";
+            bool isDiff = codeBoxItemDic[LiveCodingLabText.CodeBox_IsDiff] == "Y";
+            int diffIndex = int.Parse(codeBoxItemDic[LiveCodingLabText.CodeBox_DiffIndex]);
             string group = codeBoxItemDic[LiveCodingLabText.CodeBox_Group];
             string shapeName = codeBoxItemDic[LiveCodingLabText.CodeBox_ShapeName];
             PowerPointSlide slide = null;
@@ -386,17 +384,22 @@ namespace PowerPointLabs.LiveCodingLab.Views
             if (isURL)
             {
                 codeBoxItem = new CodeBox(id,
-                    codeBoxItemDic[LiveCodingLabText.CodeTextIdentifier], "", "", isURL, false, false, slide, shapeName);
+                    codeBoxItemDic[LiveCodingLabText.CodeTextIdentifier], "", "", "", isURL, false, false, false, slide, shapeName);
             }
             else if (isFile)
             {
                 codeBoxItem = new CodeBox(id,
-                    "", codeBoxItemDic[LiveCodingLabText.CodeTextIdentifier], "", false, isFile, false, slide, shapeName);
+                    "", codeBoxItemDic[LiveCodingLabText.CodeTextIdentifier], "", "", false, isFile, false, false, slide, shapeName);
+            }
+            else if (isText)
+            {
+                codeBoxItem = new CodeBox(id,
+                    "", "", codeBoxItemDic[LiveCodingLabText.CodeTextIdentifier], "", false, false, isText, false, slide, shapeName);
             }
             else
             {
                 codeBoxItem = new CodeBox(id,
-                    "", "", codeBoxItemDic[LiveCodingLabText.CodeTextIdentifier], false, false, isText, slide, shapeName);
+                    "", "", "", codeBoxItemDic[LiveCodingLabText.CodeTextIdentifier], false, false, false, isDiff, slide, shapeName, diffIndex);
             }
 
             CodeBoxPaneItem codeBoxPaneItem = new CodeBoxPaneItem(this, codeBoxItem, group);
@@ -469,10 +472,69 @@ namespace PowerPointLabs.LiveCodingLab.Views
             }
             ExecuteLiveCodingAction(listCodeBox, liveCodingAction);
         }
-
-        private void ClickHandler(Action<List<FileDiff>, LiveCodingPaneWPF, string> liveCodingAction, List<FileDiff> diffFiles, string diffGroupName)
+        private void ClickHandler(Action<List<CodeBoxPaneItem>> liveCodingAction, string[] errorParameters)
         {
-            ExecuteLiveCodingAction(diffFiles, liveCodingAction, diffGroupName);
+            List<CodeBoxPaneItem> listCodeBox = new List<CodeBoxPaneItem>();
+            PowerPointSlide currentSlide = PowerPointCurrentPresentationInfo.CurrentSlide;
+            if (currentSlide == null || currentSlide.Index == PowerPointPresentation.Current.SlideCount)
+            {
+                _errorHandler.ProcessErrorCode(LiveCodingLabErrorHandler.ErrorCodeInvalidCodeBox, errorParameters);
+                return;
+            }
+            PowerPointSlide nextSlide = PowerPointPresentation.Current.Slides[currentSlide.Index];
+
+            List<PowerPoint.Shape> shapesToUseCurrentSlide = currentSlide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex);
+            List<PowerPoint.Shape> shapesToUseNextSlide = nextSlide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex);
+
+            if (shapesToUseCurrentSlide == null || shapesToUseNextSlide == null)
+            {
+                _errorHandler.ProcessErrorCode(LiveCodingLabErrorHandler.ErrorCodeInvalidCodeBox, errorParameters);
+                return;
+            }
+
+            if (shapesToUseCurrentSlide.Count != 1 || !HasText(shapesToUseCurrentSlide[0]))
+            {
+                _errorHandler.ProcessErrorCode(LiveCodingLabErrorHandler.ErrorCodeInvalidCodeBox, errorParameters);
+                return;
+            }
+
+            if (shapesToUseNextSlide.Count != 1 || !HasText(shapesToUseNextSlide[0]))
+            {
+                _errorHandler.ProcessErrorCode(LiveCodingLabErrorHandler.ErrorCodeInvalidCodeBox, errorParameters);
+                return;
+            }
+            foreach (CodeBoxPaneItem item in codeListBox.Items)
+            {
+                if (item != null && item.CodeBox.Shape != null && (item.CodeBox.Shape.Name == shapesToUseCurrentSlide[0].Name))
+                {
+                    listCodeBox.Add(item);
+                    break;
+                }
+            }
+
+            foreach (CodeBoxPaneItem item in codeListBox.Items)
+            {
+                if (item != null && item.CodeBox.Shape != null && (item.CodeBox.Shape.Name == shapesToUseNextSlide[0].Name))
+                {
+                    listCodeBox.Add(item);
+                    break;
+                }
+            }
+
+            foreach (CodeBoxPaneItem item in listCodeBox)
+            {
+                if (!item.CodeBox.IsDiff)
+                {
+                    _errorHandler.ProcessErrorCode(LiveCodingLabErrorHandler.ErrorCodeInvalidCodeBox, errorParameters);
+                    return;
+                }
+            }
+            ExecuteLiveCodingAction(listCodeBox, liveCodingAction);
+        }
+
+        private void ClickHandler(Action<string, LiveCodingPaneWPF, string> liveCodingAction, string diffPath, string diffGroupName)
+        {
+            ExecuteLiveCodingAction(diffPath, liveCodingAction, diffGroupName);
         }
         private CodeBoxPaneItem GetCodeBoxPaneItemFromShape(Shape shape)
         {

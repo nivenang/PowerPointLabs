@@ -45,6 +45,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
             isText.IsChecked = true;
             isURL.IsChecked = false;
             isFile.IsChecked = false;
+            isDiff.IsChecked = false;
             group = "Ungrouped";
         }
 
@@ -61,18 +62,28 @@ namespace PowerPointLabs.LiveCodingLab.Views
                 isText.IsChecked = false;
                 isURL.IsChecked = true;
                 isFile.IsChecked = false;
+                isDiff.IsChecked = false;
             }
             else if (codeBox.IsFile)
             {
                 isText.IsChecked = false;
                 isURL.IsChecked = false;
                 isFile.IsChecked = true;
+                isDiff.IsChecked = false;
             }
-            else
+            else if (codeBox.IsText)
             {
                 isText.IsChecked = true;
                 isURL.IsChecked = false;
                 isFile.IsChecked = false;
+                isDiff.IsChecked = false;
+            }
+            else
+            {
+                isText.IsChecked = false;
+                isURL.IsChecked = false;
+                isFile.IsChecked = false;
+                isDiff.IsChecked = true;
             }
         }
         #endregion
@@ -120,6 +131,17 @@ namespace PowerPointLabs.LiveCodingLab.Views
         #endregion
 
         #region Helper Functions
+        public void SetDiff()
+        {
+            codeBox.IsURL = false;
+            codeBox.IsText = false;
+            codeBox.IsFile = false;
+            codeBox.IsDiff = true;
+            isText.IsChecked = false;
+            isURL.IsChecked = false;
+            isFile.IsChecked = false;
+            isDiff.IsChecked = true;
+        }
         public void PopulateTextBox()
         {
             codeTextBox.Text = codeBox.Text;
@@ -153,7 +175,20 @@ namespace PowerPointLabs.LiveCodingLab.Views
             codeBox.Text = codeTextBox.Text;
             if (codeBox.Shape == null)
             {
-                codeBox = ShapeUtility.InsertCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, codeBox);
+                if (codeBox.IsDiff && codeBox.DiffIndex < 0)
+                {
+                    MessageBox.Show("Diff file is uninitialised. Please use Insert Diff feature to insert a Diff file",
+                                    "Unable to execute action");
+                    return;
+                }
+                else if (codeBox.IsDiff && codeBox.DiffIndex >= 0)
+                {
+                    codeBox = ShapeUtility.InsertDiffCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, codeBox, CodeBoxFileService.ParseDiff(codeBox.Text)[0]);
+                }
+                else
+                {
+                    codeBox = ShapeUtility.InsertCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, codeBox);
+                }
             }
             else
             {
@@ -189,6 +224,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
             codeBox.IsURL = true;
             codeBox.IsText = false;
             codeBox.IsFile = false;
+            codeBox.IsDiff = false;
         }
 
         private void IsFile_Checked(object sender, RoutedEventArgs e)
@@ -196,13 +232,23 @@ namespace PowerPointLabs.LiveCodingLab.Views
             codeBox.IsURL = false;
             codeBox.IsText = false;
             codeBox.IsFile = true;
+            codeBox.IsDiff = false;
         }
         private void IsText_Checked(object sender, RoutedEventArgs e)
         {
             codeBox.IsURL = false;
             codeBox.IsText = true;
             codeBox.IsFile = false;
+            codeBox.IsDiff = false;
         }
+        private void IsDiff_Checked(object sender, RoutedEventArgs e)
+        {
+            codeBox.IsURL = false;
+            codeBox.IsText = false;
+            codeBox.IsFile = false;
+            codeBox.IsDiff = true;
+        }
+
         #endregion
     }
 }
