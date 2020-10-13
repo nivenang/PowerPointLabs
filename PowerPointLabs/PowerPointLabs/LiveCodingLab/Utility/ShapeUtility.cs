@@ -1,5 +1,5 @@
 ﻿using System;
-
+using System.Runtime.InteropServices;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
 
@@ -110,14 +110,26 @@ namespace PowerPointLabs.LiveCodingLab.Utility
         /// <returns>updated codeBox containing the new text</returns>
         public static CodeBox ReplaceTextForShape(CodeBox codeBox)
         {
-            if (!codeBox.Slide.HasShapeWithSameName(string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, codeBox.Id)))
+            try
+            {
+                if (!codeBox.Slide.HasShapeWithSameName(string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, codeBox.Id)))
+                {
+                    if (codeBox.IsDiff && codeBox.DiffIndex >= 0)
+                    {
+                        return InsertDiffCodeBoxToSlide(codeBox.Slide, codeBox, CodeBoxFileService.ParseDiff(codeBox.Text)[0]);
+                    }
+                    return InsertCodeBoxToSlide(codeBox.Slide, codeBox);
+                }
+            } 
+            catch (COMException)
             {
                 if (codeBox.IsDiff && codeBox.DiffIndex >= 0)
                 {
-                    return InsertDiffCodeBoxToSlide(codeBox.Slide, codeBox, CodeBoxFileService.ParseDiff(codeBox.Text)[0]);
+                    return InsertDiffCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, codeBox, CodeBoxFileService.ParseDiff(codeBox.Text)[0]);
                 }
-                return InsertCodeBoxToSlide(codeBox.Slide, codeBox);
+                return InsertCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, codeBox);
             }
+
             Shape shapeInSlide = codeBox.Shape;
             shapeInSlide.TextFrame.TextRange.Font.Name = LiveCodingLabSettings.codeFontType;
             shapeInSlide.TextFrame.TextRange.Font.Size = LiveCodingLabSettings.codeFontSize;
