@@ -39,37 +39,39 @@ namespace PowerPointLabs.LiveCodingLab
                                     LiveCodingLabText.ErrorAnimateNewLinesDialogTitle);
                     return;
                 }
-                
-                FileDiff diff = diffList[0];
+                int currentSlideIndex = currentSlide.Index;
+                foreach (FileDiff diff in diffList) 
+                {
+                    PowerPointSlide diffSlideBefore = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, "PPTDiffBeforeSlide" + diffPath, index: currentSlideIndex + 1);
+                    // INSERT LOGIC FOR INSERTING SHAPE INTO SLIDE
+                    // CREATE CODEBOXPANEITEM FROM DIFF
 
-                PowerPointSlide diffSlideBefore = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, "PPTDiffBeforeSlide" + diffPath, index: currentSlide.Index+1);
-                // INSERT LOGIC FOR INSERTING SHAPE INTO SLIDE
-                // CREATE CODEBOXPANEITEM FROM DIFF
+                    CodeBoxPaneItem codeBoxPaneItemBefore = new CodeBoxPaneItem(parent);
+                    CodeBoxPaneItem codeBoxPaneItemAfter = new CodeBoxPaneItem(parent);
 
-                CodeBoxPaneItem codeBoxPaneItemBefore = new CodeBoxPaneItem(parent);
-                CodeBoxPaneItem codeBoxPaneItemAfter = new CodeBoxPaneItem(parent);
+                    // UPDATE CODEBOX TO HAVE NEW TEXT
+                    codeBoxPaneItemBefore.SetDiff();
+                    codeBoxPaneItemAfter.SetDiff();
+                    codeBoxPaneItemBefore.CodeBox.Text = diffPath;
+                    codeBoxPaneItemBefore.Group = diffGroup;
+                    codeBoxPaneItemAfter.CodeBox.Text = diffPath;
+                    codeBoxPaneItemAfter.Group = diffGroup;
+                    codeBoxPaneItemBefore.CodeBox.DiffIndex = 0;
+                    codeBoxPaneItemAfter.CodeBox.DiffIndex = 1;
 
-                // UPDATE CODEBOX TO HAVE NEW TEXT
-                codeBoxPaneItemBefore.SetDiff();
-                codeBoxPaneItemAfter.SetDiff();
-                codeBoxPaneItemBefore.CodeBox.Text = diffPath;
-                codeBoxPaneItemBefore.Group = diffGroup;
-                codeBoxPaneItemAfter.CodeBox.Text = diffPath;
-                codeBoxPaneItemAfter.Group = diffGroup;
-                codeBoxPaneItemBefore.CodeBox.DiffIndex = 0;
-                codeBoxPaneItemAfter.CodeBox.DiffIndex = 1;
+                    parent.AddCodeBox(codeBoxPaneItemBefore);
+                    parent.AddCodeBox(codeBoxPaneItemAfter);
 
-                parent.AddCodeBox(codeBoxPaneItemBefore);
-                parent.AddCodeBox(codeBoxPaneItemAfter);
+                    CodeBox diffCodeBoxBefore = ShapeUtility.InsertDiffCodeBoxToSlide(diffSlideBefore, codeBoxPaneItemBefore.CodeBox, diff);
 
-                CodeBox diffCodeBoxBefore = ShapeUtility.InsertDiffCodeBoxToSlide(diffSlideBefore, codeBoxPaneItemBefore.CodeBox, diff);
+                    PowerPointSlide diffSlideAfter = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, "PPTDiffAfterSlide" + diffPath, currentSlideIndex + 2);
+                    // INSERT LOGIC FOR INSERTING SHAPE INTO SLIDE
+                    CodeBox diffCodeBoxAfter = ShapeUtility.InsertDiffCodeBoxToSlide(diffSlideAfter, codeBoxPaneItemAfter.CodeBox, diff);
 
-                PowerPointSlide diffSlideAfter = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, "PPTDiffAfterSlide" + diffPath, currentSlide.Index + 2);
-                // INSERT LOGIC FOR INSERTING SHAPE INTO SLIDE
-                CodeBox diffCodeBoxAfter = ShapeUtility.InsertDiffCodeBoxToSlide(diffSlideAfter, codeBoxPaneItemAfter.CodeBox, diff);
-
-                codeBoxPaneItemBefore.CodeBox = diffCodeBoxBefore;
-                codeBoxPaneItemAfter.CodeBox = diffCodeBoxAfter;
+                    codeBoxPaneItemBefore.CodeBox = diffCodeBoxBefore;
+                    codeBoxPaneItemAfter.CodeBox = diffCodeBoxAfter;
+                    currentSlideIndex += 2;
+                }
 
                 if (currentSlide.HasAnimationForClick(clickNumber: 1))
                 {
