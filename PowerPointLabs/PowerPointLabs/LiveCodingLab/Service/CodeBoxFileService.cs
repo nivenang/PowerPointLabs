@@ -59,8 +59,8 @@ namespace PowerPointLabs.LiveCodingLab.Service
                     }
                     else
                     {
-                        codeTextBefore += AppendLineEnd(line.Content);
-                        codeTextAfter += AppendLineEnd(line.Content);
+                        codeTextBefore += AppendLineEnd(line.Content.Substring(1));
+                        codeTextAfter += AppendLineEnd(line.Content.Substring(1));
                     }
                 }
                 codeTextBefore += "...\r\n";

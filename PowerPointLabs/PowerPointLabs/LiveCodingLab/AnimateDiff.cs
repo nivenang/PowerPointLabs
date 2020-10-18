@@ -215,6 +215,15 @@ namespace PowerPointLabs.LiveCodingLab
                     {
                         currentIndex = sequence.Count;
                         sequence.AddEffect(codeShapeBeforeEdit,
+                            PowerPoint.MsoAnimEffect.msoAnimEffectChangeFontColor,
+                            PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
+                            PowerPoint.MsoAnimTriggerType.msoAnimTriggerOnPageClick);
+                        List<PowerPoint.Effect> colourChangeEffectsBefore = AsList(sequence, currentIndex + 1, sequence.Count + 1);
+
+                        colourChangeEffectsBefore = FormatDisappearColourChangeEffects(beforeLineToEffectLine[beforeCount], colourChangeEffectsBefore);
+
+                        currentIndex = sequence.Count;
+                        sequence.AddEffect(codeShapeBeforeEdit,
                             PowerPoint.MsoAnimEffect.msoAnimEffectFade,
                             PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
                             PowerPoint.MsoAnimTriggerType.msoAnimTriggerOnPageClick);
@@ -253,6 +262,15 @@ namespace PowerPointLabs.LiveCodingLab
                         List<PowerPoint.Effect> insertEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
 
                         insertEffects = FormatInsertEffects(afterLineToEffectLine[afterCount], insertEffects);
+
+                        currentIndex = sequence.Count;
+                        sequence.AddEffect(codeShapeAfterEdit,
+                            PowerPoint.MsoAnimEffect.msoAnimEffectChangeFontColor,
+                            PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
+                            PowerPoint.MsoAnimTriggerType.msoAnimTriggerOnPageClick);
+                        List<PowerPoint.Effect> colourChangeEffectsAfter = AsList(sequence, currentIndex + 1, sequence.Count + 1);
+
+                        colourChangeEffectsAfter = FormatAppearColourChangeEffects(afterLineToEffectLine[afterCount], colourChangeEffectsAfter);
 
                         currentMultiplier++;
                         afterCount++;
@@ -437,6 +455,50 @@ namespace PowerPointLabs.LiveCodingLab
             {
                 effect.Timing.Duration = 0.5f;
                 effect.Timing.TriggerType = PowerPoint.MsoAnimTriggerType.msoAnimTriggerAfterPrevious;
+            }
+            return effectList;
+        }
+        /// <summary>
+        /// Deletes all redundant effects from the sequence.
+        /// </summary>
+        private List<PowerPoint.Effect> FormatDisappearColourChangeEffects(int lineToKeep, List<PowerPoint.Effect> effectList)
+        {
+            for (int i = effectList.Count - 1; i >= 0; --i)
+            {
+                // delete redundant colour change effects from back.
+                if (i != lineToKeep)
+                {
+                    effectList[i].Delete();
+                    effectList.RemoveAt(i);
+                }
+            }
+            foreach (PowerPoint.Effect effect in effectList)
+            {
+                effect.Timing.Duration = 0.5f;
+                effect.EffectParameters.Color2.RGB = Utils.GraphicsUtil.ConvertColorToRgb(LiveCodingLabSettings.bulletsTextHighlightColor);
+                effect.Timing.TriggerType = PowerPoint.MsoAnimTriggerType.msoAnimTriggerOnPageClick;
+            }
+            return effectList;
+        }
+        /// <summary>
+        /// Deletes all redundant effects from the sequence.
+        /// </summary>
+        private List<PowerPoint.Effect> FormatAppearColourChangeEffects(int lineToKeep, List<PowerPoint.Effect> effectList)
+        {
+            for (int i = effectList.Count - 1; i >= 0; --i)
+            {
+                // delete redundant colour change effects from back.
+                if (i != lineToKeep)
+                {
+                    effectList[i].Delete();
+                    effectList.RemoveAt(i);
+                }
+            }
+            foreach (PowerPoint.Effect effect in effectList)
+            {
+                effect.Timing.Duration = 0.1f;
+                effect.EffectParameters.Color2.RGB = Utils.GraphicsUtil.ConvertColorToRgb(LiveCodingLabSettings.bulletsTextHighlightColor);
+                effect.Timing.TriggerType = PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious;
             }
             return effectList;
         }
