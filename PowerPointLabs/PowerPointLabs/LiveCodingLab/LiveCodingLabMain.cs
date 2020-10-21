@@ -2,9 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-
+using System.Text.RegularExpressions;
 using Microsoft.Office.Core;
+using Microsoft.Office.Interop.PowerPoint;
 using PowerPointLabs.ActionFramework.Common.Extension;
+using PowerPointLabs.ELearningLab.Extensions;
 using PowerPointLabs.Models;
 using PowerPointLabs.TextCollection;
 using PowerPointLabs.Utils;
@@ -24,34 +26,6 @@ namespace PowerPointLabs.LiveCodingLab
         public LiveCodingLabMain()
         {
             currentPresentation = PowerPointPresentation.Current;
-        }
-
-        private PowerPoint.Shape ConvertTextToParagraphs(PowerPoint.Shape shape)
-        {
-            PowerPoint.TextRange codeText = shape.TextFrame.TextRange;
-            string textWithParagraphs = "";
-
-            foreach (PowerPoint.TextRange line in codeText.Lines())
-            {
-                if (line.Text.Contains("\r\n") || line.Text == "")
-                {
-                    continue;
-                }
-                else if (line.Text.Contains("\r") && !line.Text.Contains("\n"))
-                {
-                    textWithParagraphs += line.Text + "\n";
-                }
-                else if (line.Text.Contains("\n") && !line.Text.Contains("\r"))
-                {
-                    textWithParagraphs += line.Text.Replace("\n", "\r\n");
-                }
-                else
-                {
-                    textWithParagraphs += line.Text + "\r\n";
-                }
-            }
-            shape.TextFrame.TextRange.Text = textWithParagraphs;
-            return shape;
         }
 
         /// <summary>

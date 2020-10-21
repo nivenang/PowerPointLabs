@@ -117,8 +117,7 @@ namespace PowerPointLabs.LiveCodingLab
 
                 PowerPoint.Shape codeShapeBeforeEdit = transitionSlide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex)[0];
                 PowerPoint.Shape codeShapeAfterEdit = transitionSlide.CopyShapeToSlide(diffCodeBoxAfter.CodeBox.Shape);
-                codeShapeBeforeEdit = ConvertTextToParagraphs(codeShapeBeforeEdit);
-                codeShapeAfterEdit = ConvertTextToParagraphs(codeShapeAfterEdit);
+
                 PowerPoint.TextRange codeTextBeforeEdit = codeShapeBeforeEdit.TextFrame.TextRange;
                 PowerPoint.TextRange codeTextAfterEdit = codeShapeAfterEdit.TextFrame.TextRange;
                 

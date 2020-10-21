@@ -1,16 +1,20 @@
 ﻿using System;
 using System.Runtime.InteropServices;
+using System.Text.RegularExpressions;
+using System.Windows;
+using Highlight;
+using Highlight.Engines;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
 
 using PowerPointLabs.ActionFramework.Common.Extension;
+using PowerPointLabs.ELearningLab.Extensions;
 using PowerPointLabs.LiveCodingLab.Model;
 using PowerPointLabs.LiveCodingLab.Service;
 using PowerPointLabs.LiveCodingLab.Views;
 using PowerPointLabs.Models;
 using PowerPointLabs.TextCollection;
 using PowerPointLabs.Utils;
-
 using Shape = Microsoft.Office.Interop.PowerPoint.Shape;
 
 namespace PowerPointLabs.LiveCodingLab.Utility
@@ -49,7 +53,7 @@ namespace PowerPointLabs.LiveCodingLab.Utility
             codeShape.TextEffect.Alignment = MsoTextEffectAlignment.msoTextEffectAlignmentLeft;
             codeShape.Name = string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, codeBox.Id);
             codeBox.Slide = slide;
-            codeBox.Shape = codeShape;
+            codeBox.Shape = HighlightSyntax(codeShape, slide);
             codeBox.ShapeName = codeShape.Name;
             return codeBox;
         }
@@ -77,7 +81,7 @@ namespace PowerPointLabs.LiveCodingLab.Utility
             codeShape.TextEffect.Alignment = MsoTextEffectAlignment.msoTextEffectAlignmentLeft;
             codeShape.Name = string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, codeBox.Id);
             codeBox.Slide = slide;
-            codeBox.Shape = codeShape;
+            codeBox.Shape = HighlightSyntax(codeShape, slide);
             codeBox.ShapeName = codeShape.Name;
             return codeBox;
         }
@@ -147,8 +151,57 @@ namespace PowerPointLabs.LiveCodingLab.Utility
                 shapeInSlide.TextFrame.TextRange.Text = codeBox.Text;
             }
             codeBox.ShapeName = shapeInSlide.Name;
-            codeBox.Shape = shapeInSlide;
+            codeBox.Shape = HighlightSyntax(shapeInSlide, codeBox.Slide);
             return codeBox;
+        }
+
+        private static Shape HighlightSyntax(Shape shape, PowerPointSlide slide)
+        {
+            string keyWords = "(abstract|as|base|bool|break|byte|case|catch|char|checked|class|const|continue|decimal|default|delegate|do|double|else|enum|event|explicit|extern|false|finally|fixed|float|for|" +
+                "foreach|goto|if|implicit|in|int|interface|internal|is|lock|long|namespace|new|null|object|operator|out|override|params|private|protected|public|readonly|ref|return|sbyte|sealed|short|sizeof|stackalloc|static|" +
+                "string|struct|switch|this|throw|true|try|typeof|uint|ulong|unchecked|unsafe|ushort|using|virtual|volatile|void|while)";
+
+            Shape shapeToProcess = ConvertTextToParagraphs(shape);
+
+            TextRange textRange = shapeToProcess.TextFrame.TextRange;
+            
+            foreach (TextRange paragraph in textRange.Paragraphs())
+            {
+                foreach (Match match in Regex.Matches(paragraph.Text, @"\b" + keyWords + @"\b"))
+                {
+                    paragraph.Characters(match.Index + 1, match.Length).Font.Color.RGB = System.Drawing.Color.Red.ToArgb();
+                }
+            }
+            
+            return shapeToProcess;
+        }
+
+        private static Shape ConvertTextToParagraphs(Shape shape)
+        {
+            TextRange codeText = shape.TextFrame.TextRange;
+            string textWithParagraphs = "";
+
+            foreach (TextRange line in codeText.Lines())
+            {
+                if (line.Text.Contains("\r\n") || line.Text == "")
+                {
+                    continue;
+                }
+                else if (line.Text.Contains("\r") && !line.Text.Contains("\n"))
+                {
+                    textWithParagraphs += line.Text + "\n";
+                }
+                else if (line.Text.Contains("\n") && !line.Text.Contains("\r"))
+                {
+                    textWithParagraphs += line.Text.Replace("\n", "\r\n");
+                }
+                else
+                {
+                    textWithParagraphs += line.Text + "\r\n";
+                }
+            }
+            shape.TextFrame.TextRange.Text = textWithParagraphs;
+            return shape;
         }
     }
 }

@@ -297,7 +297,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
         private void InsertDiffButton_Click(object sender, RoutedEventArgs e)
         {
             RefreshCode();
-
             InsertDiffDialog diffDialog = new InsertDiffDialog();
             string diffPath = "";
             string diffGroup = "Ungrouped";

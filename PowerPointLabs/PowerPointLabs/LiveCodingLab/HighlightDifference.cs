@@ -81,9 +81,7 @@ namespace PowerPointLabs.LiveCodingLab
                 // Objects that contain the "before" and "after" code to be animated
                 PowerPoint.Shape codeShapeBeforeEdit = transitionSlide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex)[0];
                 PowerPoint.Shape codeShapeAfterEdit = transitionSlide.CopyShapeToSlide(nextSlideCodeBox.CodeBox.Shape);
-                codeShapeBeforeEdit = ConvertTextToParagraphs(codeShapeBeforeEdit);
                 codeShapeBeforeEdit.TextFrame.TextRange.Font.Color.RGB = currentSlideCodeBox.CodeBox.Shape.TextFrame.TextRange.Font.Color.RGB;
-                codeShapeAfterEdit = ConvertTextToParagraphs(codeShapeAfterEdit);
                 codeShapeAfterEdit.TextFrame.TextRange.Font.Color.RGB = nextSlideCodeBox.CodeBox.Shape.TextFrame.TextRange.Font.Color.RGB;
                 PowerPoint.TextRange codeTextBeforeEdit = codeShapeBeforeEdit.TextFrame.TextRange;
                 PowerPoint.TextRange codeTextAfterEdit = codeShapeAfterEdit.TextFrame.TextRange;

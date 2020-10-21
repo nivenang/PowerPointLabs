@@ -42,13 +42,13 @@ namespace PowerPointLabs.LiveCodingLab
                 int currentSlideIndex = currentSlide.Index;
                 foreach (FileDiff diff in diffList) 
                 {
-                    PowerPointSlide diffSlideBefore = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, "PPTDiffBeforeSlide" + diffPath, index: currentSlideIndex + 1);
+                    PowerPointSlide diffSlideBefore = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, index: currentSlideIndex + 1);
+                    PowerPointSlide diffSlideAfter = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, index: currentSlideIndex + 2);
                     // INSERT LOGIC FOR INSERTING SHAPE INTO SLIDE
                     // CREATE CODEBOXPANEITEM FROM DIFF
 
                     CodeBoxPaneItem codeBoxPaneItemBefore = new CodeBoxPaneItem(parent);
                     CodeBoxPaneItem codeBoxPaneItemAfter = new CodeBoxPaneItem(parent);
-
                     // UPDATE CODEBOX TO HAVE NEW TEXT
                     codeBoxPaneItemBefore.SetDiff();
                     codeBoxPaneItemAfter.SetDiff();
@@ -63,8 +63,6 @@ namespace PowerPointLabs.LiveCodingLab
                     parent.AddCodeBox(codeBoxPaneItemAfter);
 
                     CodeBox diffCodeBoxBefore = ShapeUtility.InsertDiffCodeBoxToSlide(diffSlideBefore, codeBoxPaneItemBefore.CodeBox, diff);
-
-                    PowerPointSlide diffSlideAfter = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, "PPTDiffAfterSlide" + diffPath, currentSlideIndex + 2);
                     // INSERT LOGIC FOR INSERTING SHAPE INTO SLIDE
                     CodeBox diffCodeBoxAfter = ShapeUtility.InsertDiffCodeBoxToSlide(diffSlideAfter, codeBoxPaneItemAfter.CodeBox, diff);
 
