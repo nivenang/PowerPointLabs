@@ -2,8 +2,6 @@
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Windows;
-using Highlight;
-using Highlight.Engines;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
 
