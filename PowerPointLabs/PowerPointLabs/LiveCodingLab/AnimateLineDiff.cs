@@ -21,16 +21,16 @@ namespace PowerPointLabs.LiveCodingLab
     public partial class LiveCodingLabMain
     {
 #pragma warning disable 0618
-        internal const int AnimateDiff_MinNoOfShapesRequired = 1;
-        internal const string AnimateDiff_FeatureName = "Animate Diff";
-        internal const string AnimateDiff_ShapeSupport = "code box";
-        internal static readonly string[] AnimateDiff_ErrorParameters =
+        internal const int AnimateLineDiff_MinNoOfShapesRequired = 1;
+        internal const string AnimateLineDiff_FeatureName = "Animate Line Diff";
+        internal const string AnimateLineDiff_ShapeSupport = "code box";
+        internal static readonly string[] AnimateLineDiff_ErrorParameters =
         {
-            AnimateDiff_FeatureName,
-            AnimateDiff_MinNoOfShapesRequired.ToString(),
-            AnimateDiff_ShapeSupport
+            AnimateLineDiff_FeatureName,
+            AnimateLineDiff_MinNoOfShapesRequired.ToString(),
+            AnimateLineDiff_ShapeSupport
         };
-        public void AnimateDiff(List<CodeBoxPaneItem> codeListBox)
+        public void AnimateLineDiff(List<CodeBoxPaneItem> codeListBox)
         {
             try
             {

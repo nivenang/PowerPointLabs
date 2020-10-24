@@ -77,10 +77,14 @@
                 <Image Source="..\..\Resources\AnimateNewLines.png"/>
             </WPF:ImageButton>
             <TextBlock x:Name="animateNewLinesTextBlock" HorizontalAlignment="Left" Margin="83.5,166.5,0,0" TextWrapping="Wrap" Text="Animate New Lines" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
-            <WPF:ImageButton ToolTip="Animates the changes across two code snippets on two separate slides" x:Name="animateDiffButton" HorizontalAlignment="Left" Margin="149,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="AnimateDiffButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
+            <WPF:ImageButton ToolTip="Animates the changes line by line across two code snippets on two separate slides" x:Name="animateLineDiffButton" HorizontalAlignment="Left" Margin="149,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="AnimateLineDiffButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
                 <Image Source="..\..\Resources\AnimateNewLines.png"/>
             </WPF:ImageButton>
-            <TextBlock x:Name="animateDiffTextBlock" HorizontalAlignment="Left" Margin="149,166.5,0,0" TextWrapping="Wrap" Text="Animate Diff" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
+            <TextBlock x:Name="animateLineDiffTextBlock" HorizontalAlignment="Left" Margin="149,166.5,0,0" TextWrapping="Wrap" Text="Animate Line Diff" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
+            <WPF:ImageButton ToolTip="Animates the changes block by block across two code snippets on two separate slides" x:Name="animateBlockDiffButton" HorizontalAlignment="Left" Margin="214,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="AnimateBlockDiffButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
+                <Image Source="..\..\Resources\AnimateNewLines.png"/>
+            </WPF:ImageButton>
+            <TextBlock x:Name="animateBlockDiffTextBlock" HorizontalAlignment="Left" Margin="214,166,0,0" TextWrapping="Wrap" Text="Animate Block Diff" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
             <ListView Name="codeListBox"
                  ItemsSource="{Binding CodeBoxPaneItem}"
                  Margin="10,212,5,10"

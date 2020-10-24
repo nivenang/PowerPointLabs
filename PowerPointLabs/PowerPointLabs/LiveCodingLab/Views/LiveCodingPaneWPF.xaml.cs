@@ -334,13 +334,16 @@ namespace PowerPointLabs.LiveCodingLab.Views
             Action<List<CodeBoxPaneItem>> animateNewLinesAction = codeBoxes => _liveCodingLab.AnimateNewLines(codeBoxes);
             ClickHandler(animateNewLinesAction, 1, LiveCodingLabMain.AnimateNewLines_ErrorParameters);
         }
-        private void AnimateDiffButton_Click(object sender, RoutedEventArgs e)
+        private void AnimateLineDiffButton_Click(object sender, RoutedEventArgs e)
         {
             RefreshCode();
-            Action<List<CodeBoxPaneItem>> animateDiffAction = codeBoxes => _liveCodingLab.AnimateDiff(codeBoxes);
-            ClickHandler(animateDiffAction, LiveCodingLabMain.AnimateDiff_ErrorParameters);
+            Action<List<CodeBoxPaneItem>> animateDiffAction = codeBoxes => _liveCodingLab.AnimateLineDiff(codeBoxes);
+            ClickHandler(animateDiffAction, LiveCodingLabMain.AnimateLineDiff_ErrorParameters);
         }
-
+        private void AnimateBlockDiffButton_Click(object sender, RoutedEventArgs e)
+        {
+            RefreshCode();
+        }
         private void AnimationSettingsButton_Click(object sender, RoutedEventArgs e)
         {
             LiveCodingLabSettings.ShowAnimationSettingsDialog();
