@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 
@@ -74,7 +75,7 @@ namespace PowerPointLabs.LiveCodingLab
                 nextSlideCodeBox.CodeBox.Shape.Height = currentSlideCodeBox.CodeBox.Shape.Height;
 
                 PowerPointSlide transitionSlide = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, index: currentSlide.Index + 1);
-                transitionSlide.Name = "PPTLabsHighlightDifferenceTransitionSlide" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
+                transitionSlide.Name = LiveCodingLabText.TransitionSlideIdentifier + DateTime.Now.ToString("yyyyMMddHHmmssffff");
                 AddPowerPointLabsIndicator(transitionSlide);
 
                 // Initialise an animation sequence object
@@ -174,6 +175,7 @@ namespace PowerPointLabs.LiveCodingLab
                 currentSlideCodeBox.CodeBox.Slide = currentSlide;
                 currentSlideCodeBox.CodeBox.Shape = currentSlideShape;
                 nextSlideCodeBox.CodeBox.Slide = nextSlide;
+
                 if (currentSlide.HasAnimationForClick(clickNumber: 1))
                 {
                     Globals.ThisAddIn.Application.CommandBars.ExecuteMso("AnimationPreview");

@@ -75,7 +75,7 @@ namespace PowerPointLabs.LiveCodingLab
 
                 // Creates a new animation slide between the before and after code
                 PowerPointSlide transitionSlide = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, index: currentSlide.Index + 1);
-                transitionSlide.Name = "PPTLabsAnimateNewLinesTransitionSlide" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
+                transitionSlide.Name = LiveCodingLabText.TransitionSlideIdentifier + DateTime.Now.ToString("yyyyMMddHHmmssffff");
                 AddPowerPointLabsIndicator(transitionSlide);
 
                 // Initialise an animation sequence object

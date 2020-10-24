@@ -180,6 +180,10 @@ namespace PowerPointLabs.LiveCodingLab.Views
         {
             foreach (PowerPointSlide slide in currentPresentation.Slides)
             {
+                if (slide.Name.Contains(LiveCodingLabText.TransitionSlideIdentifier))
+                {
+                    continue;
+                }
                 List<Shape> shapes = slide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex);
                 foreach (Shape shape in shapes)
                 {

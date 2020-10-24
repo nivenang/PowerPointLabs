@@ -50,6 +50,7 @@
         public const string ExtractTagNoRegex = Identifier + Underscore + @"([1-9][0-9]*)" +
             Underscore + "(" + CodeBoxIdentifier + @").*";
         public const string CodeBoxShapeNameRegex = Identifier + Underscore + @"[1-9][0-9]*" + Underscore + CodeBoxIdentifier;
+        public const string TransitionSlideIdentifier = Identifier + Underscore + "LiveCodingTransitionSlide";
         #endregion
 
         #region GUI Text
