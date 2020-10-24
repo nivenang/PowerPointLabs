@@ -50,6 +50,8 @@ namespace PowerPointLabs.LiveCodingLab
                 CodeBoxPaneItem currentSlideCodeBox = listCodeBox[0];
                 CodeBoxPaneItem nextSlideCodeBox = listCodeBox[1];
 
+                PowerPoint.Shape currentSlideShape = currentSlideCodeBox.CodeBox.Shape;
+
                 // Check that there exists a "before" code and an "after" code to be animated
                 if (currentSlideCodeBox.CodeBox.Shape == null || nextSlideCodeBox.CodeBox.Shape == null)
                 {
@@ -72,7 +74,7 @@ namespace PowerPointLabs.LiveCodingLab
                 nextSlideCodeBox.CodeBox.Shape.Height = currentSlideCodeBox.CodeBox.Shape.Height;
 
                 // Creates a new animation slide between the before and after code
-                PowerPointSlide transitionSlide = currentSlide.Duplicate();
+                PowerPointSlide transitionSlide = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, index: currentSlide.Index + 1);
                 transitionSlide.Name = "PPTLabsAnimateNewLinesTransitionSlide" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
                 AddPowerPointLabsIndicator(transitionSlide);
 
@@ -80,10 +82,8 @@ namespace PowerPointLabs.LiveCodingLab
                 PowerPoint.Sequence sequence = transitionSlide.TimeLine.MainSequence;
 
                 // Objects that contain the "before" and "after" code to be animated
-                PowerPoint.Shape codeShapeBeforeEdit = transitionSlide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex)[0];
+                PowerPoint.Shape codeShapeBeforeEdit = transitionSlide.CopyShapeToSlide(currentSlideCodeBox.CodeBox.Shape);
                 PowerPoint.Shape codeShapeAfterEdit = transitionSlide.CopyShapeToSlide(nextSlideCodeBox.CodeBox.Shape);
-                codeShapeBeforeEdit.TextFrame.TextRange.Font.Color.RGB = currentSlideCodeBox.CodeBox.Shape.TextFrame.TextRange.Font.Color.RGB;
-                codeShapeAfterEdit.TextFrame.TextRange.Font.Color.RGB = nextSlideCodeBox.CodeBox.Shape.TextFrame.TextRange.Font.Color.RGB;
                 PowerPoint.TextRange codeTextBeforeEdit = codeShapeBeforeEdit.TextFrame.TextRange;
                 PowerPoint.TextRange codeTextAfterEdit = codeShapeAfterEdit.TextFrame.TextRange;
                 

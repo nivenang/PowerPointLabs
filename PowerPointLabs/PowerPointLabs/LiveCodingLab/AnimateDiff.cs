@@ -106,16 +106,16 @@ namespace PowerPointLabs.LiveCodingLab
                     beforeCounter++;
                     afterCounter++;
                 }
-                
+
                 // Creates a new animation slide between the before and after code
-                PowerPointSlide transitionSlide = currentSlide.Duplicate();
+                PowerPointSlide transitionSlide = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, index: currentSlide.Index + 1);
                 transitionSlide.Name = "PPTLabsInsertDiffTransitionSlide" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
                 AddPowerPointLabsIndicator(transitionSlide);
 
                 // Initialise an animation sequence object
                 PowerPoint.Sequence sequence = transitionSlide.TimeLine.MainSequence;
 
-                PowerPoint.Shape codeShapeBeforeEdit = transitionSlide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex)[0];
+                PowerPoint.Shape codeShapeBeforeEdit = transitionSlide.CopyShapeToSlide(diffCodeBoxBefore.CodeBox.Shape);
                 PowerPoint.Shape codeShapeAfterEdit = transitionSlide.CopyShapeToSlide(diffCodeBoxAfter.CodeBox.Shape);
 
                 PowerPoint.TextRange codeTextBeforeEdit = codeShapeBeforeEdit.TextFrame.TextRange;

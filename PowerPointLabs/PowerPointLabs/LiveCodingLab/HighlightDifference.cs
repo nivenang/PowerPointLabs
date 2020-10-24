@@ -58,6 +58,8 @@ namespace PowerPointLabs.LiveCodingLab
                     return;
                 }
 
+                PowerPoint.Shape currentSlideShape = currentSlideCodeBox.CodeBox.Shape;
+
                 // Retrieves all possible matching code snippets from the next slide
                 if (nextSlideCodeBox.CodeBox.Shape.TextFrame.TextRange.Paragraphs().Count != currentSlideCodeBox.CodeBox.Shape.TextFrame.TextRange.Paragraphs().Count)
                 {
@@ -71,7 +73,7 @@ namespace PowerPointLabs.LiveCodingLab
                 nextSlideCodeBox.CodeBox.Shape.Width = currentSlideCodeBox.CodeBox.Shape.Width;
                 nextSlideCodeBox.CodeBox.Shape.Height = currentSlideCodeBox.CodeBox.Shape.Height;
 
-                PowerPointSlide transitionSlide = currentSlide.Duplicate();
+                PowerPointSlide transitionSlide = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, index: currentSlide.Index + 1);
                 transitionSlide.Name = "PPTLabsHighlightDifferenceTransitionSlide" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
                 AddPowerPointLabsIndicator(transitionSlide);
 
@@ -79,10 +81,8 @@ namespace PowerPointLabs.LiveCodingLab
                 PowerPoint.Sequence sequence = transitionSlide.TimeLine.MainSequence;
 
                 // Objects that contain the "before" and "after" code to be animated
-                PowerPoint.Shape codeShapeBeforeEdit = transitionSlide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex)[0];
+                PowerPoint.Shape codeShapeBeforeEdit = transitionSlide.CopyShapeToSlide(currentSlideCodeBox.CodeBox.Shape);
                 PowerPoint.Shape codeShapeAfterEdit = transitionSlide.CopyShapeToSlide(nextSlideCodeBox.CodeBox.Shape);
-                codeShapeBeforeEdit.TextFrame.TextRange.Font.Color.RGB = currentSlideCodeBox.CodeBox.Shape.TextFrame.TextRange.Font.Color.RGB;
-                codeShapeAfterEdit.TextFrame.TextRange.Font.Color.RGB = nextSlideCodeBox.CodeBox.Shape.TextFrame.TextRange.Font.Color.RGB;
                 PowerPoint.TextRange codeTextBeforeEdit = codeShapeBeforeEdit.TextFrame.TextRange;
                 PowerPoint.TextRange codeTextAfterEdit = codeShapeAfterEdit.TextFrame.TextRange;
 
@@ -171,6 +171,8 @@ namespace PowerPointLabs.LiveCodingLab
                 // Re-orders the effects to create a full highlight difference animation
                 RearrangeEffects(colourChangeEffectsBefore, appearEffects, disappearEffects, colourChangeEffectsAfter);
 
+                currentSlideCodeBox.CodeBox.Slide = currentSlide;
+                currentSlideCodeBox.CodeBox.Shape = currentSlideShape;
                 nextSlideCodeBox.CodeBox.Slide = nextSlide;
                 if (currentSlide.HasAnimationForClick(clickNumber: 1))
                 {
