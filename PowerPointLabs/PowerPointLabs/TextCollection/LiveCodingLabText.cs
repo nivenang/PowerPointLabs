@@ -42,7 +42,7 @@
         #region Storage Identifiers
         public const string Identifier = "PPTL";
         public const string Underscore = "_";
-        public const string TextStorageIdentifier = "Storage";
+        public const string TextStorageIdentifier = "LiveCodingStorage";
         public const string CodeBoxItemIdentifier = "Item";
         public const string CodeBoxIdentifier = "CodeBox";
         public const string CodeBoxStorageIdentifier = "CodeBoxStorage";
