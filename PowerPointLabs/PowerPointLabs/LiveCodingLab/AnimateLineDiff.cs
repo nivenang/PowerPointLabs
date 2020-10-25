@@ -76,33 +76,41 @@ namespace PowerPointLabs.LiveCodingLab
                 FileDiff diff = diffList[0];
 
                 List<ChunkDiff> diffChunks = diff.Chunks.ToList();
+                Dictionary<int, DiffType> fullDiff = new Dictionary<int, DiffType>();
 
                 List<int> markedForDisappear = new List<int>();
                 List<int> markedForAppear = new List<int>();
                 int beforeCounter = 0;
                 int afterCounter = 0;
+                int lineCounter = 0;
                 foreach (ChunkDiff chunk in diffChunks)
                 {
                     List<LineDiff> diffLines = chunk.Changes.ToList();
                     foreach (LineDiff line in diffLines)
                     {
+
                         if (line.Add)
                         {
                             markedForAppear.Add(afterCounter);
                             afterCounter++;
+                            fullDiff.Add(lineCounter, DiffType.Add);
                         }
                         else if (line.Delete)
                         {
                             markedForDisappear.Add(beforeCounter);
                             beforeCounter++;
+                            fullDiff.Add(lineCounter, DiffType.Delete);
                         }
                         else
                         {
-
+                            fullDiff.Add(lineCounter, DiffType.Normal);
                             beforeCounter++;
                             afterCounter++;
                         }
+                        lineCounter++;
                     }
+                    fullDiff.Add(lineCounter, DiffType.Normal);
+                    lineCounter++;
                     beforeCounter++;
                     afterCounter++;
                 }
@@ -169,49 +177,30 @@ namespace PowerPointLabs.LiveCodingLab
                 int beforeCount = 0;
                 int afterCount = 0;
                 int currentMultiplier = 0;
+                int lineCount = 0;
                 while (beforeCount < codeTextBeforeEdit.Paragraphs().Count && afterCount < codeTextAfterEdit.Paragraphs().Count)
                 {
-                    if (codeTextBeforeEdit.Paragraphs(beforeCount+1).TrimText().Text == "")
+                    if (fullDiff[lineCount] == DiffType.Delete)
                     {
-                        if (markedForDisappear.Contains(beforeCount))
+                        if (codeTextBeforeEdit.Paragraphs(beforeCount + 1).TrimText().Text == "")
                         {
-                            currentIndex = sequence.Count;
-                            sequence.AddEffect(codeShapeBeforeEdit,
-                                PowerPoint.MsoAnimEffect.msoAnimEffectPathUp,
-                                PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
-                                PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
-                            List<PowerPoint.Effect> moveUpEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
+                            if (lineCount + 1 >= fullDiff.Count || (lineCount + 1 < fullDiff.Count && fullDiff[lineCount + 1] != DiffType.Add))
+                            {
+                                currentIndex = sequence.Count;
+                                sequence.AddEffect(codeShapeBeforeEdit,
+                                    PowerPoint.MsoAnimEffect.msoAnimEffectPathUp,
+                                    PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
+                                    PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
+                                List<PowerPoint.Effect> moveUpEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
 
-                            moveUpEffects = FormatMoveUpWhitespaceEffects(beforeLineToEffectLine[beforeCount], moveUpEffects, currentMultiplier, fontSize);
+                                moveUpEffects = FormatMoveUpWhitespaceEffects(beforeLineToEffectLine[beforeCount], moveUpEffects, currentMultiplier, fontSize);
 
-                            currentMultiplier--;
+                                currentMultiplier--;
+                            }
+                            beforeCount++;
+                            lineCount++;
+                            continue;
                         }
-
-                        beforeCount++;
-                        continue;
-                    }
-                    
-                    if (codeTextAfterEdit.Paragraphs(afterCount+1).TrimText().Text == "")
-                    {
-                        if (markedForAppear.Contains(afterCount))
-                        {
-                            currentIndex = sequence.Count;
-                            sequence.AddEffect(codeShapeBeforeEdit,
-                                PowerPoint.MsoAnimEffect.msoAnimEffectPathDown,
-                                PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
-                                PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
-                            List<PowerPoint.Effect> moveDownEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
-
-                            moveDownEffects = FormatMoveDownWhitespaceEffects(beforeLineToEffectLine[beforeCount], moveDownEffects, currentMultiplier, fontSize);
-
-                            currentMultiplier++;
-                        }
-                        afterCount++;
-                        continue;
-                    }
-                    
-                    if (markedForDisappear.Contains(beforeCount))
-                    {
                         currentIndex = sequence.Count;
                         sequence.AddEffect(codeShapeBeforeEdit,
                             PowerPoint.MsoAnimEffect.msoAnimEffectChangeFontColor,
@@ -230,28 +219,57 @@ namespace PowerPointLabs.LiveCodingLab
 
                         deleteEffects = FormatDeleteEffects(beforeLineToEffectLine[beforeCount], deleteEffects);
 
-                        currentIndex = sequence.Count;
-                        sequence.AddEffect(codeShapeBeforeEdit,
-                            PowerPoint.MsoAnimEffect.msoAnimEffectPathUp,
-                            PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
-                            PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
-                        List<PowerPoint.Effect> moveUpEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
+                        if (lineCount + 1 >= fullDiff.Count || (lineCount + 1 < fullDiff.Count && fullDiff[lineCount + 1] != DiffType.Add))
+                        {
+                            currentIndex = sequence.Count;
+                            sequence.AddEffect(codeShapeBeforeEdit,
+                                PowerPoint.MsoAnimEffect.msoAnimEffectPathUp,
+                                PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
+                                PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
+                            List<PowerPoint.Effect> moveUpEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
 
-                        moveUpEffects = FormatMoveUpEffects(beforeLineToEffectLine[beforeCount], moveUpEffects, currentMultiplier, fontSize);
-                        
-                        currentMultiplier--;
+                            moveUpEffects = FormatMoveUpEffects(beforeLineToEffectLine[beforeCount], moveUpEffects, currentMultiplier, fontSize);
+                            
+                            currentMultiplier--;
+                        }
+
                         beforeCount++;
+                        lineCount++;
                     }
-                    else if (markedForAppear.Contains(afterCount))
+                    else if (fullDiff[lineCount] == DiffType.Add)
                     {
-                        currentIndex = sequence.Count;
-                        sequence.AddEffect(codeShapeBeforeEdit,
-                            PowerPoint.MsoAnimEffect.msoAnimEffectPathDown,
-                            PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
-                            PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
-                        List<PowerPoint.Effect> moveDownEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
+                        if (codeTextAfterEdit.Paragraphs(afterCount + 1).TrimText().Text == "")
+                        {
+                            if (lineCount == 0 || (lineCount - 1 >= 0 && fullDiff[lineCount - 1] != DiffType.Delete))
+                            {
+                                currentIndex = sequence.Count;
+                                sequence.AddEffect(codeShapeBeforeEdit,
+                                    PowerPoint.MsoAnimEffect.msoAnimEffectPathDown,
+                                    PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
+                                    PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
+                                List<PowerPoint.Effect> moveDownEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
 
-                        moveDownEffects = FormatMoveDownEffects(beforeLineToEffectLine[beforeCount], moveDownEffects, currentMultiplier, fontSize);
+                                moveDownEffects = FormatMoveDownWhitespaceEffects(beforeLineToEffectLine[beforeCount], moveDownEffects, currentMultiplier, fontSize);
+
+                                currentMultiplier++;
+                            }
+                            afterCount++;
+                            lineCount++;
+                            continue;
+                        }
+
+                        if (lineCount == 0 || (lineCount - 1 >= 0 && fullDiff[lineCount - 1] != DiffType.Delete))
+                        {
+                            currentIndex = sequence.Count;
+                            sequence.AddEffect(codeShapeBeforeEdit,
+                                PowerPoint.MsoAnimEffect.msoAnimEffectPathDown,
+                                PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
+                                PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
+                            List<PowerPoint.Effect> moveDownEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
+
+                            moveDownEffects = FormatMoveDownEffects(beforeLineToEffectLine[beforeCount], moveDownEffects, currentMultiplier, fontSize);
+                            currentMultiplier++;
+                        }
 
                         currentIndex = sequence.Count;
                         sequence.AddEffect(codeShapeAfterEdit,
@@ -271,13 +289,14 @@ namespace PowerPointLabs.LiveCodingLab
 
                         colourChangeEffectsAfter = FormatAppearColourChangeEffects(afterLineToEffectLine[afterCount], colourChangeEffectsAfter);
 
-                        currentMultiplier++;
                         afterCount++;
+                        lineCount++;
                     }
                     else
                     {
                         beforeCount++;
                         afterCount++;
+                        lineCount++;
                     }
                 }
                 

@@ -23,6 +23,13 @@ namespace PowerPointLabs.LiveCodingLab
     public partial class LiveCodingLabMain
     {
         PowerPointPresentation currentPresentation;
+        enum DiffType
+        {
+            Add,
+            Delete,
+            Normal
+        }
+
         public LiveCodingLabMain()
         {
             currentPresentation = PowerPointPresentation.Current;
@@ -91,6 +98,26 @@ namespace PowerPointLabs.LiveCodingLab
             indicatorShape.Name = PowerPointSlide.PptLabsIndicatorShapeName + DateTime.Now.ToString("yyyyMMddHHmmssffff");
 
             ShapeUtil.MakeShapeViewTimeInvisible(indicatorShape, _slide);
+        }
+        private static string AppendLineEnd(string line)
+        {
+            if (line.Contains("\r\n"))
+            {
+                return line;
+            }
+
+            if (line.Contains("\r") && !line.Contains("\n"))
+            {
+                return line + "\n";
+            }
+
+            if (line.Contains("\n") && !line.Contains("\r"))
+            {
+                line = line.Replace("\n", "\r\n");
+                return line;
+            }
+
+            return line + "\r\n";
         }
     }
 }
