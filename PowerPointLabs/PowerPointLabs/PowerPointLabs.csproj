@@ -183,6 +183,9 @@
   -->
   <ItemGroup>
     <Reference Include="Accessibility" />
+    <Reference Include="DiffPlex, Version=1.6.3.0, Culture=neutral, PublicKeyToken=1d35e91d1bd7bc0f, processorArchitecture=MSIL">
+      <HintPath>..\packages\DiffPlex.1.6.3\lib\net40\DiffPlex.dll</HintPath>
+    </Reference>
     <Reference Include="EyeOpen.Imaging.Processing">
       <HintPath>..\Test\Dependency\EyeOpen.Imaging.Processing.dll</HintPath>
     </Reference>
@@ -812,6 +815,7 @@
     <Compile Include="ELearningLab\Service\ELearningService.cs" />
     <Compile Include="ELearningLab\Service\FunctionService\AudioService.cs" />
     <Compile Include="ColorTheme\DesignTheme.cs" />
+    <Compile Include="LiveCodingLab\AnimateBlockDiff.cs" />
     <Compile Include="LiveCodingLab\DiffParser\ChunkDiff.cs" />
     <Compile Include="LiveCodingLab\DiffParser\Diff.cs" />
     <Compile Include="LiveCodingLab\DiffParser\DiffParser.cs" />

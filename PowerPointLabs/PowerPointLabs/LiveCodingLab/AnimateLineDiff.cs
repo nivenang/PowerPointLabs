@@ -72,8 +72,21 @@ namespace PowerPointLabs.LiveCodingLab
                                     LiveCodingLabText.ErrorAnimateNewLinesDialogTitle);
                     return;
                 }
+            }
+            catch (Exception e)
+            {
+                Logger.LogException(e, "InsertDiff");
+                throw;
+            }
+        }
+        public void AnimateDiff (List<CodeBoxPaneItem> listCodeBox, FileDiff diff)
+        {
+            try
+            {
+                PowerPointSlide currentSlide = PowerPointCurrentPresentationInfo.CurrentSlide;
 
-                FileDiff diff = diffList[0];
+                CodeBoxPaneItem diffCodeBoxBefore = listCodeBox[0];
+                CodeBoxPaneItem diffCodeBoxAfter = listCodeBox[1];
 
                 List<ChunkDiff> diffChunks = diff.Chunks.ToList();
                 Dictionary<int, DiffType> fullDiff = new Dictionary<int, DiffType>();
