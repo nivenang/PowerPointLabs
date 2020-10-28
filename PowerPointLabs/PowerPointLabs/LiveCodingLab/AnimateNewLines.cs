@@ -77,7 +77,7 @@ namespace PowerPointLabs.LiveCodingLab
 
                 var diff = InlineDiffBuilder.Diff(currentSlideCodeBox.CodeBox.Text, nextSlideCodeBox.CodeBox.Text);
                 FileDiff diffFile = BuildDiffFromText(currentSlideCodeBox.CodeBox.Text, nextSlideCodeBox.CodeBox.Text);
-                AnimateDiffByLine(listCodeBox, diffFile);
+                AnimateDiff(listCodeBox, diffFile, false);
 
                 currentSlideCodeBox.CodeBox.Slide = currentSlide;
                 currentSlideCodeBox.CodeBox.Shape = currentSlideShape;

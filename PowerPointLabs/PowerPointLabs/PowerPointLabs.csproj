@@ -816,6 +816,7 @@
     <Compile Include="ELearningLab\Service\FunctionService\AudioService.cs" />
     <Compile Include="ColorTheme\DesignTheme.cs" />
     <Compile Include="LiveCodingLab\AnimateBlockDiff.cs" />
+    <Compile Include="LiveCodingLab\AnimateDiff.cs" />
     <Compile Include="LiveCodingLab\DiffParser\ChunkDiff.cs" />
     <Compile Include="LiveCodingLab\DiffParser\Diff.cs" />
     <Compile Include="LiveCodingLab\DiffParser\DiffParser.cs" />
