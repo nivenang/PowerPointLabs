@@ -72,14 +72,16 @@ namespace PowerPointLabs.LiveCodingLab
                                     LiveCodingLabText.ErrorAnimateNewLinesDialogTitle);
                     return;
                 }
+
+                AnimateDiffByLine(codeListBox, diffList[0]);
             }
             catch (Exception e)
             {
-                Logger.LogException(e, "InsertDiff");
+                Logger.LogException(e, "AnimateLineDiff");
                 throw;
             }
         }
-        public void AnimateDiff (List<CodeBoxPaneItem> listCodeBox, FileDiff diff)
+        private void AnimateDiffByLine (List<CodeBoxPaneItem> listCodeBox, FileDiff diff)
         {
             try
             {
@@ -321,7 +323,7 @@ namespace PowerPointLabs.LiveCodingLab
             }
             catch (Exception e)
             {
-                Logger.LogException(e, "InsertDiff");
+                Logger.LogException(e, "AnimateDiffByLine");
                 throw;
             }
         }
@@ -532,6 +534,19 @@ namespace PowerPointLabs.LiveCodingLab
                 effect.Timing.TriggerType = PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious;
             }
             return effectList;
+        }
+
+        /// <summary>
+        /// Apply formatting and timing to the "disappear" effects (i.e. repetitive code).
+        /// </summary>
+        private static void FormatDisappearEffects(List<PowerPoint.Effect> disappearEffects)
+        {
+            foreach (PowerPoint.Effect effect in disappearEffects)
+            {
+                effect.Exit = Office.MsoTriState.msoTrue;
+                effect.Timing.Duration = 0;
+                effect.Timing.TriggerType = PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious;
+            }
         }
     }
 }
