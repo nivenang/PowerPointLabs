@@ -62,51 +62,26 @@ namespace PowerPointLabs.LiveCodingLab
                     return;
                 }
 
-                /*
-                // Retrieves all possible matching code snippets from the next slide
-                if (nextSlideCodeBox.CodeBox.Shape.TextFrame.TextRange.Lines().Count <= currentSlideCodeBox.CodeBox.Shape.TextFrame.TextRange.Lines().Count)
+                if (currentSlideCodeBox.CodeBox.Shape.HasTextFrame == Office.MsoTriState.msoFalse ||
+                    nextSlideCodeBox.CodeBox.Shape.HasTextFrame == Office.MsoTriState.msoFalse)
                 {
-                    MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesWrongCodeSnippet,
+                    MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesMissingCodeSnippet,
                                     LiveCodingLabText.ErrorAnimateNewLinesDialogTitle);
                     return;
                 }
-                */
+
                 nextSlideCodeBox.CodeBox.Shape.Left = currentSlideCodeBox.CodeBox.Shape.Left;
                 nextSlideCodeBox.CodeBox.Shape.Top = currentSlideCodeBox.CodeBox.Shape.Top;
                 nextSlideCodeBox.CodeBox.Shape.Width = currentSlideCodeBox.CodeBox.Shape.Width;
                 nextSlideCodeBox.CodeBox.Shape.Height = currentSlideCodeBox.CodeBox.Shape.Height;
 
                 var diff = InlineDiffBuilder.Diff(currentSlideCodeBox.CodeBox.Text, nextSlideCodeBox.CodeBox.Text);
-                string diffFile = "--- /path/to/file1	2020-09-28 23:30:39.942229878 -0800\r\n" + 
-                    "+++ /path/to/file2  2020-09-28 23:30:50.442260588 -0800\r\n" +
-                    "@@ -1,9 +1,10 @@\r\n";
-                foreach (var line in diff.Lines)
-                {
-                    switch (line.Type)
-                    {
-                        case ChangeType.Inserted:
-                            diffFile += AppendLineEnd("+" + line.Text);
-                            break;
-                        case ChangeType.Deleted:
-                            diffFile += AppendLineEnd("-" + line.Text);
-                            break;
-                        default:
-                            diffFile += AppendLineEnd(" " + line.Text);
-                            break;
-                    }
-                }
-
-                List<FileDiff> diffList = Diff.Parse(diffFile, Environment.NewLine).ToList();
-                AnimateDiff(listCodeBox, diffList[0]);
+                FileDiff diffFile = BuildDiffFromText(currentSlideCodeBox.CodeBox.Text, nextSlideCodeBox.CodeBox.Text);
+                AnimateDiffByLine(listCodeBox, diffFile);
 
                 currentSlideCodeBox.CodeBox.Slide = currentSlide;
                 currentSlideCodeBox.CodeBox.Shape = currentSlideShape;
                 nextSlideCodeBox.CodeBox.Slide = nextSlide;
-                if (currentSlide.HasAnimationForClick(clickNumber: 1))
-                {
-                    Globals.ThisAddIn.Application.CommandBars.ExecuteMso("AnimationPreview");
-                }
-                PowerPointPresentation.Current.AddAckSlide();
             }
             catch (Exception e)
             {
@@ -115,57 +90,31 @@ namespace PowerPointLabs.LiveCodingLab
             }
         }
 
-        /// <summary>
-        /// Apply formatting and timing to the "appear" effects (i.e. new code to be changed to).
-        /// </summary>
-        private static void FormatAppearEffects(List<PowerPoint.Effect> appearEffects)
+        private static FileDiff BuildDiffFromText(string text1, string text2)
         {
-            foreach (PowerPoint.Effect effect in appearEffects)
-            {
-                effect.Timing.TriggerType = PowerPoint.MsoAnimTriggerType.msoAnimTriggerAfterPrevious;
-                effect.Timing.Duration = 0.5f;
-            }
-        }
+            var diff = InlineDiffBuilder.Diff(text1, text2);
+            string diffFile = "--- /path/to/file1	2020-09-28 23:30:39.942229878 -0800\r\n" +
+                "+++ /path/to/file2  2020-09-28 23:30:50.442260588 -0800\r\n" +
+                "@@ -1,1 +1,1 @@\r\n";
 
-        /// <summary>
-        /// Apply formatting and timing to the "disappear" effects (i.e. repetitive code).
-        /// </summary>
-        private static void FormatDisappearEffects(List<PowerPoint.Effect> disappearEffects)
-        {
-            foreach (PowerPoint.Effect effect in disappearEffects)
+            foreach (var line in diff.Lines)
             {
-                effect.Exit = Office.MsoTriState.msoTrue;
-                effect.Timing.Duration = 0;
-                effect.Timing.TriggerType = PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious;
+                switch (line.Type)
+                {
+                    case ChangeType.Inserted:
+                        diffFile += AppendLineEnd("+" + line.Text);
+                        break;
+                    case ChangeType.Deleted:
+                        diffFile += AppendLineEnd("-" + line.Text);
+                        break;
+                    default:
+                        diffFile += AppendLineEnd(" " + line.Text);
+                        break;
+                }
             }
-        }
 
-        /// <summary>
-        /// Apply colour change and timing to the lines of code that is going to appear (i.e. code to be changed to).
-        /// </summary>
-        private static void FormatColourChangeEffects(List<PowerPoint.Effect> colourChangeEffects)
-        {
-            foreach (PowerPoint.Effect effect in colourChangeEffects)
-            {
-                effect.Timing.TriggerType = PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious;
-                // TODO: Orange text bug occurs on this line. effect.EffectParameters.Color2.RGB is not changed for some reason.
-                effect.EffectParameters.Color2.RGB = Utils.GraphicsUtil.ConvertColorToRgb(LiveCodingLabSettings.bulletsTextHighlightColor);
-                effect.Timing.Duration = 0;
-            }
+            List<FileDiff> diffList = Diff.Parse(diffFile, Environment.NewLine).ToList();
+            return diffList[0];
         }
-
-        /// <summary>
-        /// Apply formatting and timing to the "disappear" effects (i.e. repetitive code).
-        /// </summary>
-        private static void FormatDisappearEffectsOldLines(List<PowerPoint.Effect> disappearEffects)
-        {
-            foreach (PowerPoint.Effect effect in disappearEffects)
-            {
-                effect.Exit = Office.MsoTriState.msoTrue;
-                effect.Timing.Duration = 0.5f;
-                effect.Timing.TriggerType = PowerPoint.MsoAnimTriggerType.msoAnimTriggerOnPageClick;
-            }
-        }
-
     }
 }
