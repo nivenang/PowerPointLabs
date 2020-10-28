@@ -32,6 +32,7 @@ namespace PowerPointLabs.LiveCodingLab
             HighlightDifference_ShapeSupport
         };
 
+        [Obsolete("DO NOT use this animation! Use AnimateDiff instead")]
         public void HighlightDifferences(List<CodeBoxPaneItem> listCodeBox)
         {
             try
