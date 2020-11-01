@@ -49,7 +49,6 @@ namespace PowerPointLabs.LiveCodingLab.Service
             {
                 Dictionary<string, string> dic = new Dictionary<string, string>();
                 dic.Add(LiveCodingLabText.CodeTextIdentifier, codeBox.Element(LiveCodingLabText.CodeTextIdentifier).Value);
-                dic.Add(LiveCodingLabText.CodeBox_IsURL, codeBox.Element(LiveCodingLabText.CodeBox_IsURL).Value);
                 dic.Add(LiveCodingLabText.CodeBox_IsFile, codeBox.Element(LiveCodingLabText.CodeBox_IsFile).Value);
                 dic.Add(LiveCodingLabText.CodeBox_IsText, codeBox.Element(LiveCodingLabText.CodeBox_IsText).Value);
                 dic.Add(LiveCodingLabText.CodeBox_IsDiff, codeBox.Element(LiveCodingLabText.CodeBox_IsDiff).Value);
@@ -70,7 +69,6 @@ namespace PowerPointLabs.LiveCodingLab.Service
             {
                 CodeBox item = paneItem.CodeBox;
                 Dictionary<string, string> value = new Dictionary<string, string>();
-                value.Add(LiveCodingLabText.CodeBox_IsURL, item.IsURL ? "Y" : "N");
                 value.Add(LiveCodingLabText.CodeBox_IsFile, item.IsFile ? "Y" : "N");
                 value.Add(LiveCodingLabText.CodeBox_IsText, item.IsText ? "Y" : "N");
                 value.Add(LiveCodingLabText.CodeBox_IsDiff, item.IsDiff ? "Y" : "N");

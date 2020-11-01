@@ -379,7 +379,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
         {
             int id = int.Parse(codeBoxItemDic[LiveCodingLabText.CodeBox_Id]);
             CodeBoxIdService.PopulateCodeBoxIds(id);
-            bool isURL = codeBoxItemDic[LiveCodingLabText.CodeBox_IsURL] == "Y";
             bool isFile = codeBoxItemDic[LiveCodingLabText.CodeBox_IsFile] == "Y";
             bool isText = codeBoxItemDic[LiveCodingLabText.CodeBox_IsText] == "Y";
             bool isDiff = codeBoxItemDic[LiveCodingLabText.CodeBox_IsDiff] == "Y";
@@ -389,25 +388,20 @@ namespace PowerPointLabs.LiveCodingLab.Views
             PowerPointSlide slide = null;
             CodeBox codeBoxItem;
 
-            if (isURL)
+            if (isFile)
             {
                 codeBoxItem = new CodeBox(id,
-                    codeBoxItemDic[LiveCodingLabText.CodeTextIdentifier], "", "", "", isURL, false, false, false, slide, shapeName);
-            }
-            else if (isFile)
-            {
-                codeBoxItem = new CodeBox(id,
-                    "", codeBoxItemDic[LiveCodingLabText.CodeTextIdentifier], "", "", false, isFile, false, false, slide, shapeName);
+                    codeBoxItemDic[LiveCodingLabText.CodeTextIdentifier], "", "", isFile, false, false, slide, shapeName);
             }
             else if (isText)
             {
                 codeBoxItem = new CodeBox(id,
-                    "", "", codeBoxItemDic[LiveCodingLabText.CodeTextIdentifier], "", false, false, isText, false, slide, shapeName);
+                    "", codeBoxItemDic[LiveCodingLabText.CodeTextIdentifier], "", false, isText, false, slide, shapeName);
             }
             else
             {
                 codeBoxItem = new CodeBox(id,
-                    "", "", "", codeBoxItemDic[LiveCodingLabText.CodeTextIdentifier], false, false, false, isDiff, slide, shapeName, diffIndex);
+                    "", "", codeBoxItemDic[LiveCodingLabText.CodeTextIdentifier], false, false, isDiff, slide, shapeName, diffIndex);
             }
 
             CodeBoxPaneItem codeBoxPaneItem = new CodeBoxPaneItem(this, codeBoxItem, group);

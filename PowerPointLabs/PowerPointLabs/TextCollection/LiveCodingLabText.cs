@@ -23,11 +23,9 @@
         #endregion
 
         #region Code Box Identifiers
-        public const string CodeBox_IsURL = "IsURL";
         public const string CodeBox_IsFile = "IsFile";
         public const string CodeBox_IsText = "IsText";
         public const string CodeBox_IsDiff = "IsDiff";
-        public const string CodeBox_URLText = "URLText";
         public const string CodeBox_FileText = "FileText";
         public const string CodeBox_UserText = "UserText";
         public const string CodeBox_DiffText = "DiffText";

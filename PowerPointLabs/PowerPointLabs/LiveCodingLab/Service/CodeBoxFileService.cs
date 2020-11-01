@@ -72,11 +72,6 @@ namespace PowerPointLabs.LiveCodingLab.Service
             return diffList;
         }
 
-        public static string GetCodeFromUrl(string urlPath)
-        {
-            return "";
-        }
-
         private static string AppendLineEnd(string line)
         {
             if (line.Contains("\r\n"))

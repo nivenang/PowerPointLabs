@@ -43,7 +43,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
             insertCode.Source = GraphicsUtil.BitmapToImageSource(Properties.Resources.SyncLabEditButton);
             deleteImage.Source = GraphicsUtil.BitmapToImageSource(Properties.Resources.SyncLabDeleteButton);
             isText.IsChecked = true;
-            isURL.IsChecked = false;
             isFile.IsChecked = false;
             isDiff.IsChecked = false;
             group = "Ungrouped";
@@ -57,31 +56,21 @@ namespace PowerPointLabs.LiveCodingLab.Views
             insertCode.Source = GraphicsUtil.BitmapToImageSource(Properties.Resources.SyncLabEditButton);
             deleteImage.Source = GraphicsUtil.BitmapToImageSource(Properties.Resources.SyncLabDeleteButton);
             this.group = group;
-            if (codeBox.IsURL)
+            if (codeBox.IsFile)
             {
                 isText.IsChecked = false;
-                isURL.IsChecked = true;
-                isFile.IsChecked = false;
-                isDiff.IsChecked = false;
-            }
-            else if (codeBox.IsFile)
-            {
-                isText.IsChecked = false;
-                isURL.IsChecked = false;
                 isFile.IsChecked = true;
                 isDiff.IsChecked = false;
             }
             else if (codeBox.IsText)
             {
                 isText.IsChecked = true;
-                isURL.IsChecked = false;
                 isFile.IsChecked = false;
                 isDiff.IsChecked = false;
             }
             else
             {
                 isText.IsChecked = false;
-                isURL.IsChecked = false;
                 isFile.IsChecked = false;
                 isDiff.IsChecked = true;
             }
@@ -133,12 +122,10 @@ namespace PowerPointLabs.LiveCodingLab.Views
         #region Helper Functions
         public void SetDiff()
         {
-            codeBox.IsURL = false;
             codeBox.IsText = false;
             codeBox.IsFile = false;
             codeBox.IsDiff = true;
             isText.IsChecked = false;
-            isURL.IsChecked = false;
             isFile.IsChecked = false;
             isDiff.IsChecked = true;
         }
@@ -219,31 +206,20 @@ namespace PowerPointLabs.LiveCodingLab.Views
             }
         }
 
-        private void IsURL_Checked(object sender, RoutedEventArgs e)
-        {
-            codeBox.IsURL = true;
-            codeBox.IsText = false;
-            codeBox.IsFile = false;
-            codeBox.IsDiff = false;
-        }
-
         private void IsFile_Checked(object sender, RoutedEventArgs e)
         {
-            codeBox.IsURL = false;
             codeBox.IsText = false;
             codeBox.IsFile = true;
             codeBox.IsDiff = false;
         }
         private void IsText_Checked(object sender, RoutedEventArgs e)
         {
-            codeBox.IsURL = false;
             codeBox.IsText = true;
             codeBox.IsFile = false;
             codeBox.IsDiff = false;
         }
         private void IsDiff_Checked(object sender, RoutedEventArgs e)
         {
-            codeBox.IsURL = false;
             codeBox.IsText = false;
             codeBox.IsFile = false;
             codeBox.IsDiff = true;

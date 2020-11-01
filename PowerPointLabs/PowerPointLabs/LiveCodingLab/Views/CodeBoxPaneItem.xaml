@@ -85,11 +85,8 @@
             <RadioButton x:Name="isText" Content="Text"  VerticalContentAlignment="Center" 
                      FontSize="10" Margin="0,74,151,0" ToolTip="Check to use a user input text for the code snippet."
                      Checked="IsText_Checked"/>
-            <RadioButton x:Name="isURL" Content="URL"  VerticalContentAlignment="Center" 
-                     FontSize="10" Margin="100,74,73,0" ToolTip="Check to use a URL for the code snippet." 
-                     Checked="IsURL_Checked"/>
             <RadioButton x:Name="isDiff" Content="Diff"  VerticalContentAlignment="Center" 
-                     FontSize="10" Margin="157,74,13,0" ToolTip="Check to use a diff for the code snippet." 
+                     FontSize="10" Margin="98,74,67,0" ToolTip="Check to use a diff for the code snippet." 
                      Checked="IsDiff_Checked"/>
         </Grid>
         <Button x:Name="insertButton" Grid.Column="2" Margin="0,3,6,60" Click="InsertButton_Click" HorizontalAlignment="Right" MinWidth="25" MaxWidth="25" MinHeight="25" MaxHeight="25" Style="{StaticResource ImageButtonStyle}" Width="25">

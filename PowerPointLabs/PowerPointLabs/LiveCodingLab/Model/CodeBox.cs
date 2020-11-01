@@ -19,18 +19,6 @@ namespace PowerPointLabs.LiveCodingLab.Model
         public event PropertyChangedEventHandler PropertyChanged;
 
         #region Public properties
-        public bool IsURL
-        {
-            get
-            {
-                return isURL;
-            }
-            set
-            {
-                isURL = (bool)value;
-                NotifyPropertyChanged(LiveCodingLabText.CodeBox_IsURL);
-            }
-        }
 
         public bool IsFile
         {
@@ -68,19 +56,6 @@ namespace PowerPointLabs.LiveCodingLab.Model
             {
                 isDiff = (bool)value;
                 NotifyPropertyChanged(LiveCodingLabText.CodeBox_IsDiff);
-            }
-        }
-
-        public string URLText
-        {
-            get
-            {
-                return codeURL;
-            }
-            set
-            {
-                codeURL = value;
-                NotifyPropertyChanged(LiveCodingLabText.CodeBox_URLText);
             }
         }
         public string FileText
@@ -139,11 +114,7 @@ namespace PowerPointLabs.LiveCodingLab.Model
         {
             get
             {
-                if (isURL)
-                {
-                    return codeURL;
-                }
-                else if (isFile)
+                if (isFile)
                 {
                     return codeFile;
                 }
@@ -163,11 +134,7 @@ namespace PowerPointLabs.LiveCodingLab.Model
 
             set
             {
-                if (isURL)
-                {
-                    codeURL = value;
-                }
-                else if (isFile)
+                if (isFile)
                 {
                     codeFile = value;
                 }
@@ -190,8 +157,7 @@ namespace PowerPointLabs.LiveCodingLab.Model
         {
             get
             {
-                return string.IsNullOrEmpty(URLText.Trim())
-                    && string.IsNullOrEmpty(FileText.Trim())
+                return string.IsNullOrEmpty(FileText.Trim())
                     && string.IsNullOrEmpty(UserText.Trim())
                     && string.IsNullOrEmpty(DiffText.Trim());
             }
@@ -273,12 +239,10 @@ namespace PowerPointLabs.LiveCodingLab.Model
         private PowerPointSlide slide;
         private int diffIndex;
 
-        private bool isURL;
         private bool isFile;
         private bool isText;
         private bool isDiff;
 
-        private string codeURL;
         private string codeFile;
         private string codeText;
         private string codeDiff;
@@ -288,17 +252,15 @@ namespace PowerPointLabs.LiveCodingLab.Model
         private string shapeName;
         #endregion
 
-        public CodeBox(int codeBoxId, string codeURL = "", string codeFile = "", string codeText = "", string codeDiff = "", bool isURL = false, bool isFile = false, bool isText = true, bool isDiff = false, PowerPointSlide slide = null, string shapeName = "", int diffIndex = -1)
+        public CodeBox(int codeBoxId, string codeFile = "", string codeText = "", string codeDiff = "", bool isFile = false, bool isText = true, bool isDiff = false, PowerPointSlide slide = null, string shapeName = "", int diffIndex = -1)
         {
             this.codeBoxId = codeBoxId;
             this.slide = slide;
-            this.isURL = isURL;
             this.isFile = isFile;
             this.isText = isText;
             this.isDiff = isDiff;
             this.codeFile = codeFile;
             this.codeText = codeText;
-            this.codeURL = codeURL;
             this.codeDiff = codeDiff;
             this.diffIndex = diffIndex;
             this.shapeName = shapeName;
@@ -321,12 +283,10 @@ namespace PowerPointLabs.LiveCodingLab.Model
         public bool Equals(CodeBox other)
         {
             return codeBoxId == other.Id
-                && isURL == other.IsURL
                 && isFile == other.IsFile
                 && isText == other.IsText
                 && isDiff == other.IsDiff
                 && diffIndex == other.diffIndex
-                && codeURL.Equals(other.URLText)
                 && codeText.Equals(other.UserText)
                 && codeFile.Equals(other.FileText)
                 && codeDiff.Equals(other.DiffText);
@@ -336,14 +296,12 @@ namespace PowerPointLabs.LiveCodingLab.Model
         {
             var hashCode = -1571720738;
             hashCode = hashCode * -1521134295 + codeBoxId.GetHashCode();
-            hashCode = hashCode * -1521134295 + isURL.GetHashCode();
             hashCode = hashCode * -1521134295 + isFile.GetHashCode();
             hashCode = hashCode * -1521134295 + isText.GetHashCode();
             hashCode = hashCode * -1521134295 + isDiff.GetHashCode();
             hashCode = hashCode * -1521134295 + diffIndex.GetHashCode();
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(codeFile);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(codeText);
-            hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(codeURL);
             hashCode = hashCode * -1521134295 + EqualityComparer<string>.Default.GetHashCode(codeDiff);
             return hashCode;
         }
