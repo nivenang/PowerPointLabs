@@ -320,7 +320,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
             Action<string, LiveCodingPaneWPF, string> insertDiffAction = (diffFilePath, liveCodingPane, diffGroupName) => _liveCodingLab.InsertDiff(diffFilePath, liveCodingPane, diffGroupName);
             ClickHandler(insertDiffAction, diffPath, diffGroup);
         }
-
         private void AnimateLineDiffButton_Click(object sender, RoutedEventArgs e)
         {
             RefreshCode();
@@ -332,6 +331,12 @@ namespace PowerPointLabs.LiveCodingLab.Views
             RefreshCode();
             Action<List<CodeBoxPaneItem>> animateBlockDiffAction = codeBoxes => _liveCodingLab.AnimateBlockDiff(codeBoxes);
             ClickHandler(animateBlockDiffAction, LiveCodingLabMain.AnimateBlockDiff_ErrorParameters);
+        }
+        private void AnimateWordDiffButton_Click(object sender, RoutedEventArgs e)
+        {
+            RefreshCode();
+            // Action<List<CodeBoxPaneItem>> animateWordDiffAction = codeBoxes => _liveCodingLab.AnimateWordDiff(codeBoxes);
+            // ClickHandler(animateWordDiffAction, LiveCodingLabMain.AnimateWordDiff_ErrorParameters);
         }
         private void AnimationSettingsButton_Click(object sender, RoutedEventArgs e)
         {
