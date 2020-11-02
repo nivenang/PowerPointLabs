@@ -89,32 +89,5 @@ namespace PowerPointLabs.LiveCodingLab
                 throw;
             }
         }
-
-        private static FileDiff BuildDiffFromText(string text1, string text2)
-        {
-            var diff = InlineDiffBuilder.Diff(text1, text2);
-            string diffFile = "--- /path/to/file1	2020-09-28 23:30:39.942229878 -0800\r\n" +
-                "+++ /path/to/file2  2020-09-28 23:30:50.442260588 -0800\r\n" +
-                "@@ -1,1 +1,1 @@\r\n";
-
-            foreach (var line in diff.Lines)
-            {
-                switch (line.Type)
-                {
-                    case ChangeType.Inserted:
-                        diffFile += AppendLineEnd("+" + line.Text);
-                        break;
-                    case ChangeType.Deleted:
-                        diffFile += AppendLineEnd("-" + line.Text);
-                        break;
-                    default:
-                        diffFile += AppendLineEnd(" " + line.Text);
-                        break;
-                }
-            }
-
-            List<FileDiff> diffList = Diff.Parse(diffFile, Environment.NewLine).ToList();
-            return diffList[0];
-        }
     }
 }

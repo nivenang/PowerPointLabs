@@ -321,19 +321,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
             ClickHandler(insertDiffAction, diffPath, diffGroup);
         }
 
-        private void HighlightDifferenceButton_Click(object sender, RoutedEventArgs e)
-        {
-            RefreshCode();
-            Action<List<CodeBoxPaneItem>> highlightDifferenceAction = codeBoxes => _liveCodingLab.HighlightDifferences(codeBoxes);
-            ClickHandler(highlightDifferenceAction, 1, LiveCodingLabMain.HighlightDifference_ErrorParameters);
-        }
-
-        private void AnimateNewLinesButton_Click(object sender, RoutedEventArgs e)
-        {
-            RefreshCode();
-            Action<List<CodeBoxPaneItem>> animateNewLinesAction = codeBoxes => _liveCodingLab.AnimateNewLines(codeBoxes);
-            ClickHandler(animateNewLinesAction, 1, LiveCodingLabMain.AnimateNewLines_ErrorParameters);
-        }
         private void AnimateLineDiffButton_Click(object sender, RoutedEventArgs e)
         {
             RefreshCode();
@@ -425,55 +412,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
                 return selection.ShapeRange;
             }
         }
-        private void ClickHandler(Action<List<CodeBoxPaneItem>> liveCodingAction, int minNoOfSelectedShapes, string[] errorParameters)
-        {
-            List<CodeBoxPaneItem> listCodeBox = new List<CodeBoxPaneItem>();
-            PowerPointSlide currentSlide = PowerPointCurrentPresentationInfo.CurrentSlide;
-            if (currentSlide == null || currentSlide.Index == PowerPointPresentation.Current.SlideCount)
-            {
-                _errorHandler.ProcessErrorCode(LiveCodingLabErrorHandler.ErrorCodeInvalidCodeBox, errorParameters);
-                return;
-            }
-            PowerPointSlide nextSlide = PowerPointPresentation.Current.Slides[currentSlide.Index];
-            List<PowerPoint.Shape> shapesToUseCurrentSlide = currentSlide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex);
-            List<PowerPoint.Shape> shapesToUseNextSlide = nextSlide.GetShapesWithNameRegex(LiveCodingLabText.CodeBoxShapeNameRegex);
 
-            if (shapesToUseCurrentSlide == null || shapesToUseNextSlide == null)
-            {
-                _errorHandler.ProcessErrorCode(LiveCodingLabErrorHandler.ErrorCodeInvalidCodeBox, errorParameters);
-                return;
-            }
-
-            if (shapesToUseCurrentSlide.Count != 1 || !HasText(shapesToUseCurrentSlide[0]))
-            {
-                _errorHandler.ProcessErrorCode(LiveCodingLabErrorHandler.ErrorCodeInvalidCodeBox, errorParameters);
-                return;
-            }
-
-            if (shapesToUseNextSlide.Count != 1 || !HasText(shapesToUseNextSlide[0]))
-            {
-                _errorHandler.ProcessErrorCode(LiveCodingLabErrorHandler.ErrorCodeInvalidCodeBox, errorParameters);
-                return;
-            }
-            foreach (CodeBoxPaneItem item in codeListBox.Items)
-            {
-                if (item != null && item.CodeBox.Shape != null && (item.CodeBox.Shape.Name == shapesToUseCurrentSlide[0].Name))
-                {
-                    listCodeBox.Add(item);
-                    break;
-                }
-            }
-
-            foreach (CodeBoxPaneItem item in codeListBox.Items)
-            {
-                if (item != null && item.CodeBox.Shape != null && (item.CodeBox.Shape.Name == shapesToUseNextSlide[0].Name))
-                {
-                    listCodeBox.Add(item);
-                    break;
-                }
-            }
-            ExecuteLiveCodingAction(listCodeBox, liveCodingAction);
-        }
         private void ClickHandler(Action<List<CodeBoxPaneItem>> liveCodingAction, string[] errorParameters)
         {
             List<CodeBoxPaneItem> listCodeBox = new List<CodeBoxPaneItem>();
@@ -523,14 +462,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
                 }
             }
 
-            foreach (CodeBoxPaneItem item in listCodeBox)
-            {
-                if (!item.CodeBox.IsDiff)
-                {
-                    _errorHandler.ProcessErrorCode(LiveCodingLabErrorHandler.ErrorCodeInvalidCodeBox, errorParameters);
-                    return;
-                }
-            }
             ExecuteLiveCodingAction(listCodeBox, liveCodingAction);
         }
 
