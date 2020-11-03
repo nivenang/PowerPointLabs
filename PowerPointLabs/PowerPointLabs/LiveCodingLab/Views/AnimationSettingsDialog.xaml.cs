@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using System.Collections.Generic;
+using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -17,11 +18,8 @@ namespace PowerPointLabs.LiveCodingLab.Views
     {
 
         public delegate void DialogConfirmedDelegate(Drawing.Color highlightColor,
-                                                    Drawing.Color defaultColor,
-                                                    float scrollSpeed);
+                                                    Drawing.Color defaultColor);
         public DialogConfirmedDelegate DialogConfirmedHandler { get; set; }
-
-        private float lastScrollSpeed;
 
         public AnimationSettingsDialog()
         {
@@ -29,25 +27,18 @@ namespace PowerPointLabs.LiveCodingLab.Views
         }
 
         public AnimationSettingsDialog(Drawing.Color defaultHighlightColor,
-                                            Drawing.Color defaultTextColor,
-                                            float defaultScrollSpeed)
+                                            Drawing.Color defaultTextColor)
             : this()
         {
             textHighlightColorRect.Fill = new SolidColorBrush(GraphicsUtil.MediaColorFromDrawingColor(defaultHighlightColor));
             textDefaultColorRect.Fill = new SolidColorBrush(GraphicsUtil.MediaColorFromDrawingColor(defaultTextColor));
-            scrollSpeedInput.Text = defaultScrollSpeed.ToString("f");
-            scrollSpeedInput.ToolTip = LiveCodingLabText.SettingsScrollSpeedTooltip;
-            scrollSpeedInput.SelectAll();
-
-            lastScrollSpeed = defaultScrollSpeed;
         }
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
             Drawing.Color textHighlightColor = GraphicsUtil.DrawingColorFromBrush(textHighlightColorRect.Fill);
             Drawing.Color textDefaultColor = GraphicsUtil.DrawingColorFromBrush(textDefaultColorRect.Fill);
-            ValidateScrollSpeed();
-            DialogConfirmedHandler(textHighlightColor, textDefaultColor, float.Parse(scrollSpeedInput.Text));
+            DialogConfirmedHandler(textHighlightColor, textDefaultColor);
             Close();
         }
 
@@ -73,33 +64,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
             {
                 textDefaultColorRect.Fill = GraphicsUtil.MediaBrushFromDrawingColor(colorDialog.Color);
             }
-        }
-
-        private void ScrollSpeedInput_LostFocus(object sender, RoutedEventArgs e)
-        {
-            ValidateScrollSpeed();
-        }
-
-        private void ValidateScrollSpeed ()
-        {
-            float enteredValue;
-            if (float.TryParse(scrollSpeedInput.Text, out enteredValue))
-            {
-                if (enteredValue < 0.01)
-                {
-                    enteredValue = 0.01f;
-                }
-                else if (enteredValue > 59.0)
-                {
-                    enteredValue = 59.0f;
-                }
-            }
-            else
-            {
-                enteredValue = lastScrollSpeed;
-            }
-            scrollSpeedInput.Text = enteredValue.ToString("f");
-            lastScrollSpeed = enteredValue;
         }
     }
 }

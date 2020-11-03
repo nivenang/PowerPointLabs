@@ -4,8 +4,8 @@
                       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
                       xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
                       xmlns:controls="clr-namespace:MahApps.Metro.Controls;assembly=MahApps.Metro"
-                      mc:Ignorable="d" d:DesignHeight="300" d:DesignWidth="300"
-                      Height="195"
+                      mc:Ignorable="d" d:DesignWidth="300"
+                      Height="234.782"
                       Width="350"
                       BorderThickness="1"
                       BorderBrush="#0070c0"
@@ -54,9 +54,11 @@
                 Margin="0,55,20,0" Grid.Column="1">
             <ComboBox Grid.Column="1" x:Name="fontComboBox" Margin="-1,-1,-1,3" SelectedIndex="0"/>
         </Border>
-        <TextBlock x:Name="fontSizeLabel" FontSize="12" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20,90,0,0"><Run Text="Font Size"/><LineBreak/><Run/></TextBlock>
+        <TextBlock x:Name="fontSizeLabel" FontSize="12" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20,94,0,0"><Run Text="Font Size"/><LineBreak/><Run/></TextBlock>
         <TextBox x:Name="fontSizeInput" VerticalAlignment="Top" HorizontalAlignment="Right" Height="9" TextWrapping="NoWrap" TextAlignment="Center" Text="" Width="60" Margin="0,90,20,0" LostFocus="FontSizeInput_LostFocus" Grid.Column="1"/>
         <Button x:Name="okButton" Content="OK" HorizontalAlignment="Right" Margin="0,0,100,10" VerticalAlignment="Bottom" Width="80" IsDefault="True" Click="OkButton_Click" Grid.Column="1"/>
         <Button x:Name="cancelButton" Content="Cancel" HorizontalAlignment="Right" Margin="0,0,10,10" VerticalAlignment="Bottom" Width="80" IsCancel="True" Grid.Column="1"/>
+        <TextBlock x:Name="languageLabel" FontSize="12" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="20,127,0,0"><Run Text="Language"/><LineBreak/><Run/></TextBlock>
+        <ComboBox x:Name="languageComboBox" VerticalAlignment="Top" HorizontalAlignment="Right" Height="9" Width="182" Margin="0,126,20,0" Grid.Column="1"/>
     </Grid>
 </controls:MetroWindow>

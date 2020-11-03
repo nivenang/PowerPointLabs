@@ -20,7 +20,8 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
         public delegate void DialogConfirmedDelegate(Drawing.Color textColor,
                                                     string fontType,
-                                                    string fontSize);
+                                                    string fontSize,
+                                                    string defaultLanguage);
         public DialogConfirmedDelegate DialogConfirmedHandler { get; set; }
 
         private int lastFontSize;
@@ -29,22 +30,30 @@ namespace PowerPointLabs.LiveCodingLab.Views
         {
             InitializeComponent();
             List<string> fonts = new List<string>();
+            List<string> languages = new List<string>();
 
             foreach (Drawing.FontFamily font in Drawing.FontFamily.Families)
             {
                 fonts.Add(font.Name);
             }
             fontComboBox.ItemsSource = fonts;
+
+            languages.Add("Java");
+            languages.Add("Python");
+            languages.Add("None");
+            languageComboBox.ItemsSource = languages;
         }
 
         public CodeBoxSettingsDialog(Drawing.Color defaultTextColor,
                                             string defaultFontType,
-                                            string defaultFontSize)
+                                            string defaultFontSize,
+                                            string defaultLanguage)
             : this()
         {
             textColorRect.Fill = new SolidColorBrush(GraphicsUtil.MediaColorFromDrawingColor(defaultTextColor));
             fontComboBox.Text = defaultFontType;
             fontSizeInput.Text = defaultFontSize;
+            languageComboBox.Text = defaultLanguage;
         }
 
         private void OkButton_Click(object sender, RoutedEventArgs e)
@@ -52,8 +61,9 @@ namespace PowerPointLabs.LiveCodingLab.Views
             Drawing.Color textColor = GraphicsUtil.DrawingColorFromBrush(textColorRect.Fill);
             string fontType = fontComboBox.Text;
             string fontSize = fontSizeInput.Text;
+            string language = languageComboBox.Text;
             ValidateFontSize();
-            DialogConfirmedHandler(textColor, fontType, fontSize);
+            DialogConfirmedHandler(textColor, fontType, fontSize, language);
             Close();
         }
 

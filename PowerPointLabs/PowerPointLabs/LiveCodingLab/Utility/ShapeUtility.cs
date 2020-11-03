@@ -1,7 +1,12 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Drawing;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Windows;
+using Highlight;
+using Highlight.Engines;
+using Lexer;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
 
@@ -155,22 +160,47 @@ namespace PowerPointLabs.LiveCodingLab.Utility
 
         private static Shape HighlightSyntax(Shape shape, PowerPointSlide slide)
         {
-            string keyWords = "(abstract|as|base|bool|break|byte|case|catch|char|checked|class|const|continue|decimal|default|delegate|do|double|else|enum|event|explicit|extern|false|finally|fixed|float|for|" +
-                "foreach|goto|if|implicit|import|int|in|interface|internal|is|lock|long|namespace|new|null|object|operator|out|override|params|private|protected|public|readonly|ref|return|sbyte|sealed|short|sizeof|stackalloc|static|" +
-                "string|struct|switch|this|throw|true|try|typeof|uint|ulong|unchecked|unsafe|ushort|using|virtual|volatile|void|while)";
-
             Shape shapeToProcess = ConvertTextToParagraphs(shape);
+            IGrammar grammar;
 
-            TextRange textRange = shapeToProcess.TextFrame.TextRange;
-            
-            foreach (TextRange paragraph in textRange.Paragraphs())
+            if (LiveCodingLabSettings.language.Equals("None"))
             {
-                foreach (Match match in Regex.Matches(paragraph.Text, @"\b" + keyWords + @"\b"))
+                string keyWords = "(abstract|as|base|bool|break|byte|case|catch|char|checked|class|const|continue|decimal|default|delegate|do|double|else|enum|event|explicit|extern|false|finally|fixed|float|for|" +
+                    "foreach|goto|if|implicit|import|int|in|interface|internal|is|lock|long|namespace|new|null|object|operator|out|override|params|private|protected|public|readonly|ref|return|sbyte|sealed|short|sizeof|stackalloc|static|" +
+                    "string|struct|switch|this|throw|true|try|typeof|uint|ulong|unchecked|unsafe|ushort|using|virtual|volatile|void|while)";
+
+                TextRange textRange = shapeToProcess.TextFrame.TextRange;
+
+                foreach (TextRange paragraph in textRange.Paragraphs())
                 {
-                    paragraph.Characters(match.Index + 1, match.Length).Font.Color.RGB = System.Drawing.Color.Red.ToArgb();
+                    foreach (Match match in Regex.Matches(paragraph.Text, @"\b" + keyWords + @"\b"))
+                    {
+                        paragraph.Characters(match.Index + 1, match.Length).Font.Color.RGB = Color.Red.ToArgb();
+                    }
+                }
+                return shapeToProcess;
+            }
+            else if (LiveCodingLabSettings.language.Equals("Python"))
+            {
+                grammar = new Lexer.Grammars.PythonGrammar();
+
+            }
+            else
+            {
+                grammar = new Lexer.Grammars.JavaGrammar();
+            }
+
+            Tokenizer lexer = new Tokenizer(grammar);
+
+            foreach (TextRange paragraph in shapeToProcess.TextFrame.TextRange.Paragraphs())
+            {
+                foreach (var token in lexer.Tokenize(paragraph.Text))
+                {
+                    Color color = grammar.ColorDict[token.Type];
+                    paragraph.Characters(token.StartIndex + 1, token.Length).Font.Color.RGB = color.ToArgb();
                 }
             }
-            
+
             return shapeToProcess;
         }
 

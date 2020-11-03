@@ -9,9 +9,9 @@ namespace PowerPointLabs.LiveCodingLab
 
         public static Color bulletsTextHighlightColor = Color.FromArgb(242, 41, 10);
         public static Color bulletsTextDefaultColor = Color.FromArgb(0, 0, 0);
-        public static float scrollSpeedDefaultValue = 1.0f;
         public static Color codeTextColor = Color.FromArgb(0, 0, 0);
         public static string codeFontType = "Consolas";
+        public static string language = "None";
         public static int codeFontSize = 18;
 
         public static void ShowCodeBoxSettingsDialog()
@@ -19,7 +19,8 @@ namespace PowerPointLabs.LiveCodingLab
             CodeBoxSettingsDialog dialog = new CodeBoxSettingsDialog(
                 codeTextColor,
                 codeFontType,
-                codeFontSize.ToString());
+                codeFontSize.ToString(),
+                language);
             dialog.DialogConfirmedHandler += OnCodeBoxSettingsDialogConfirmed;
             dialog.ShowThematicDialog();
         }
@@ -27,24 +28,23 @@ namespace PowerPointLabs.LiveCodingLab
         {
             AnimationSettingsDialog dialog = new AnimationSettingsDialog(
                 bulletsTextHighlightColor,
-                bulletsTextDefaultColor,
-                scrollSpeedDefaultValue);
+                bulletsTextDefaultColor);
             dialog.DialogConfirmedHandler += OnAnimationSettingsDialogConfirmed;
             dialog.ShowThematicDialog();
         }
 
-        private static void OnCodeBoxSettingsDialogConfirmed(Color newCodeColor, string newFontType, string newFontSize)
+        private static void OnCodeBoxSettingsDialogConfirmed(Color newCodeColor, string newFontType, string newFontSize, string newLanguage)
         {
             codeTextColor = newCodeColor;
             codeFontType = newFontType;
             codeFontSize = int.Parse(newFontSize);
+            language = newLanguage;
         }
 
-        private static void OnAnimationSettingsDialogConfirmed(Color newHighlightColor, Color newDefaultColor, float newScrollSpeed)
+        private static void OnAnimationSettingsDialogConfirmed(Color newHighlightColor, Color newDefaultColor)
         {
             bulletsTextHighlightColor = newHighlightColor;
             bulletsTextDefaultColor = newDefaultColor;
-            scrollSpeedDefaultValue = newScrollSpeed;
         }
     }
 }
