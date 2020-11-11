@@ -15,6 +15,7 @@ namespace Lexer.Grammars
                 new LexicalRule { Type = TokenType.Comment, RegExpression = new Regex(@"/\*(?:(?!\*/).)*\*/") },
                 new LexicalRule { Type = TokenType.Comment, RegExpression = new Regex(@"/\*(?:(?!\*/).)*") },
                 new LexicalRule { Type = TokenType.Comment, RegExpression = new Regex(@"(?:(?!\*/).)*\*/") },
+                new LexicalRule { Type = TokenType.Comment, RegExpression = new Regex("^(\\*.*)") },
                 new LexicalRule { Type = TokenType.WhiteSpace, RegExpression = new Regex("^\\s") }, // Whitespace
 
                 new LexicalRule 
