@@ -40,6 +40,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
             languages.Add("Java");
             languages.Add("Python");
+            languages.Add("C++");
             languages.Add("None");
             languageComboBox.ItemsSource = languages;
         }

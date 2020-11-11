@@ -4,37 +4,34 @@ using System.Text.RegularExpressions;
 
 namespace Lexer.Grammars
 {
-    public class JavaGrammar : IGrammar
+    public class CppGrammar : IGrammar
     {
-        public JavaGrammar()
+        public CppGrammar()
         {
             Rules = new List<LexicalRule>()
             {
                 new LexicalRule { Type = TokenType.Comment, RegExpression = new Regex("^(//.*)") }, // Comment
+                new LexicalRule { Type = TokenType.Comment, RegExpression = LexicalRule.WordRegex("#include") },
                 new LexicalRule { Type = TokenType.Comment, RegExpression = new Regex(@"/\*(?:(?!\*/).)*\*/") },
                 new LexicalRule { Type = TokenType.Comment, RegExpression = new Regex(@"/\*(?:(?!\*/).)*") },
                 new LexicalRule { Type = TokenType.Comment, RegExpression = new Regex(@"(?:(?!\*/).)*\*/") },
                 new LexicalRule { Type = TokenType.WhiteSpace, RegExpression = new Regex("^\\s") }, // Whitespace
-                new LexicalRule { Type = TokenType.Operator, RegExpression = new Regex("^[\\+\\-\\*/%&|\\^~<>!]") }, // Single Char Operator
-                new LexicalRule { Type = TokenType.Operator, RegExpression = new Regex("^((==)|(!=)|(<=)|(>=)|(<>)|(<<)|(>>)|(//)|(\\*\\*))") }, // Double Char Operator
-                new LexicalRule { Type = TokenType.Delimiter, RegExpression = new Regex("^[\\(\\)\\[\\]\\{\\}@,:`=;\\.]") }, // Single Delimiter
-                new LexicalRule { Type = TokenType.Delimiter, RegExpression = new Regex("^((\\+=)|(\\-=)|(\\*=)|(%=)|(/=)|(&=)|(\\|=)|(\\^=))") }, // Double Char Operator
-                new LexicalRule { Type = TokenType.Delimiter, RegExpression = new Regex("^((//=)|(>>=)|(<<=)|(\\*\\*=))") }, // Triple Delimiter
 
                 new LexicalRule 
                 { 
                     Type = TokenType.Keyword, 
                     RegExpression = LexicalRule.WordRegex(
-                        "abstract", "assert", "boolean", "break", "byte", "case", "catch", "char", "class", "const",
-                        "continue", "default", "do", "double", "else", "enum", "extends", "final", "finally", "float",
-                        "for", "goto", "if", "implements", "import", "instanceof", "int", "interface", "long", "native",
-                        "new", "package", "private", "protected", "public", "return", "short", "static", "strictfp", "super", 
-                        "switch", "synchronized", "this", "throw", "throws", "transient", "try", "void", "volatile", "while") 
+                        "asm", "auto", "bool", "break", "case", "catch", "char", "class", "const", "const_cast", "continue",
+                        "default", "delete", "do", "double", "dynamic_cast", "else", "enum", "explicit", "export", "extern", "false",
+                        "float", "for", "friend", "goto", "if", "inline", "int", "long", "mutable", "namespace", "new",
+                        "operator", "private", "protected", "public", "register", "reinterpret_cast", "return", "short", "signed", 
+                        "sizeof", "static", "static_cast", "struct", "switch", "template", "this", "throw", "true", "try", "typedef", 
+                        "typeid", "typename", "union", "unsigned", "using", "virtual", "void", "volatile", "wchar_t", "while") 
                 }, // Keywords
                 
                 new LexicalRule { Type = TokenType.Identifier, RegExpression = new Regex("^[_A-Za-z][_A-Za-z0-9]*") }, // Identifier
                 new LexicalRule { Type = TokenType.String, RegExpression = new Regex("^((@'(?:[^']|'')*'|'(?:\\.|[^\\']|)*('|\\b))|(@\"(?:[^\"]|\"\")*\"|\"(?:\\.|[^\\\"])*(\"|\\b)))", RegexOptions.IgnoreCase) }, // String Marker
-                
+                new LexicalRule { Type = TokenType.String, RegExpression = new Regex("(<.*>)") },
                 new LexicalRule { Type = TokenType.Unknown, RegExpression = new Regex("^.") }, // Any
             };
 
