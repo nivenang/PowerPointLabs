@@ -185,6 +185,10 @@ namespace PowerPointLabs.LiveCodingLab.Utility
                 grammar = new Lexer.Grammars.PythonGrammar();
 
             }
+            else if (LiveCodingLabSettings.language.Equals("C"))
+            {
+                grammar = new Lexer.Grammars.CGrammar();
+            }
             else if (LiveCodingLabSettings.language.Equals("C++"))
             {
                 grammar = new Lexer.Grammars.CppGrammar();

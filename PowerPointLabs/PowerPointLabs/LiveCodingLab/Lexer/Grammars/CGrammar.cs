@@ -4,9 +4,9 @@ using System.Text.RegularExpressions;
 
 namespace Lexer.Grammars
 {
-    public class CppGrammar : IGrammar
+    public class CGrammar : IGrammar
     {
-        public CppGrammar()
+        public CGrammar()
         {
             Rules = new List<LexicalRule>()
             {
@@ -22,14 +22,18 @@ namespace Lexer.Grammars
                 { 
                     Type = TokenType.Keyword, 
                     RegExpression = LexicalRule.WordRegex(
-                        "asm", "auto", "bool", "break", "case", "catch", "char", "class", "const", "const_cast", "continue",
-                        "default", "delete", "do", "double", "dynamic_cast", "else", "enum", "explicit", "export", "extern", "false",
-                        "float", "for", "friend", "goto", "if", "inline", "int", "long", "mutable", "namespace", "new", "NULL",
-                        "operator", "private", "protected", "public", "register", "reinterpret_cast", "return", "short", "signed", 
-                        "sizeof", "size_t", "static", "static_cast", "struct", "switch", "template", "this", "throw", "true", "try", "typedef", 
-                        "typeid", "typename", "union", "unsigned", "using", "virtual", "void", "volatile", "wchar_t", "while") 
+                        "auto", "break", "case", "char", "const", "continue", "default", "do", "double", "else", "enum", "extern",
+                        "float", "for", "goto", "if", "int", "long", "NULL", "register", "return", "short", "signed", "size_t", "sizeof", 
+                        "static", "struct", "switch", "typedef", "union", "unsigned", "void", "volatile", "while", "_Packed") 
                 }, // Keywords
-                
+                new LexicalRule
+                {
+                    Type = TokenType.Builtins,
+                    RegExpression = LexicalRule.WordRegex(
+                    "calloc", "free", "malloc", "realloc", "va_list", "va_start", "va_arg", "va_end", "FILE",
+                    "getchar", "putchar", "gets", "puts", "scanf", "printf", "fscanf", "fputc", "fputs",
+                    "fclose", "fgets", "fgetc", "fread", "fwrite", "fprintf")
+                },
                 new LexicalRule { Type = TokenType.Identifier, RegExpression = new Regex("^[_A-Za-z][_A-Za-z0-9]*") }, // Identifier
                 new LexicalRule { Type = TokenType.String, RegExpression = new Regex("^((@'(?:[^']|'')*'|'(?:\\.|[^\\']|)*('|\\b))|(@\"(?:[^\"]|\"\")*\"|\"(?:\\.|[^\\\"])*(\"|\\b)))", RegexOptions.IgnoreCase) }, // String Marker
                 new LexicalRule { Type = TokenType.String, RegExpression = new Regex("(<.*>)") },
