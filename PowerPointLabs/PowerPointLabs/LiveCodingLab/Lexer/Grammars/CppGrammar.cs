@@ -2,7 +2,7 @@
 using System.Drawing;
 using System.Text.RegularExpressions;
 
-namespace Lexer.Grammars
+namespace PowerPointLabs.LiveCodingLab.Lexer.Grammars
 {
     public class CppGrammar : IGrammar
     {

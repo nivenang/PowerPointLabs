@@ -30,19 +30,16 @@ namespace PowerPointLabs.LiveCodingLab.Views
         {
             InitializeComponent();
             List<string> fonts = new List<string>();
-            List<string> languages = new List<string>();
+            List<string> languages = new List<string>
+            { 
+                "Java", "Python", "C", "C++", "None"
+            };
 
             foreach (Drawing.FontFamily font in Drawing.FontFamily.Families)
             {
                 fonts.Add(font.Name);
             }
             fontComboBox.ItemsSource = fonts;
-
-            languages.Add("Java");
-            languages.Add("Python");
-            languages.Add("C");
-            languages.Add("C++");
-            languages.Add("None");
             languageComboBox.ItemsSource = languages;
         }
 

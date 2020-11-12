@@ -6,12 +6,13 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using Highlight;
 using Highlight.Engines;
-using Lexer;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
 
 using PowerPointLabs.ActionFramework.Common.Extension;
 using PowerPointLabs.ELearningLab.Extensions;
+using PowerPointLabs.LiveCodingLab.Lexer;
+using PowerPointLabs.LiveCodingLab.Lexer.Grammars;
 using PowerPointLabs.LiveCodingLab.Model;
 using PowerPointLabs.LiveCodingLab.Service;
 using PowerPointLabs.LiveCodingLab.Views;
@@ -161,7 +162,14 @@ namespace PowerPointLabs.LiveCodingLab.Utility
         private static Shape HighlightSyntax(Shape shape, PowerPointSlide slide)
         {
             Shape shapeToProcess = ConvertTextToParagraphs(shape);
-            IGrammar grammar;
+
+            Dictionary<string, Type> stringToGrammar = new Dictionary<string, Type>
+            {
+                { "Java", typeof(JavaGrammar) },
+                { "Python", typeof(PythonGrammar) },
+                { "C", typeof(CGrammar) },
+                { "C++", typeof(CppGrammar) },
+            };
 
             if (LiveCodingLabSettings.language.Equals("None"))
             {
@@ -180,23 +188,8 @@ namespace PowerPointLabs.LiveCodingLab.Utility
                 }
                 return shapeToProcess;
             }
-            else if (LiveCodingLabSettings.language.Equals("Python"))
-            {
-                grammar = new Lexer.Grammars.PythonGrammar();
 
-            }
-            else if (LiveCodingLabSettings.language.Equals("C"))
-            {
-                grammar = new Lexer.Grammars.CGrammar();
-            }
-            else if (LiveCodingLabSettings.language.Equals("C++"))
-            {
-                grammar = new Lexer.Grammars.CppGrammar();
-            }
-            else
-            {
-                grammar = new Lexer.Grammars.JavaGrammar();
-            }
+            IGrammar grammar = (IGrammar)Activator.CreateInstance(stringToGrammar[LiveCodingLabSettings.language]);
 
             Tokenizer lexer = new Tokenizer(grammar);
 

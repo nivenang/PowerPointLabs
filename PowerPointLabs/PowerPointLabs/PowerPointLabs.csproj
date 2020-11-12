@@ -830,6 +830,15 @@
     <Compile Include="LiveCodingLab\AnimateNewLines.cs" />
     <Compile Include="LiveCodingLab\HighlightDifference.cs" />
     <Compile Include="LiveCodingLab\ILiveCodingLabPane.cs" />
+    <Compile Include="LiveCodingLab\Lexer\Grammars\CGrammar.cs" />
+    <Compile Include="LiveCodingLab\Lexer\Grammars\CppGrammar.cs" />
+    <Compile Include="LiveCodingLab\Lexer\Grammars\JavaGrammar.cs" />
+    <Compile Include="LiveCodingLab\Lexer\Grammars\PythonGrammar.cs" />
+    <Compile Include="LiveCodingLab\Lexer\IGrammar.cs" />
+    <Compile Include="LiveCodingLab\Lexer\LexicalRules.cs" />
+    <Compile Include="LiveCodingLab\Lexer\Token.cs" />
+    <Compile Include="LiveCodingLab\Lexer\Tokenizer.cs" />
+    <Compile Include="LiveCodingLab\Lexer\TokenType.cs" />
     <Compile Include="LiveCodingLab\LiveCodingLabSettings.cs" />
     <Compile Include="LiveCodingLab\LiveCodingLabMain.cs" />
     <Compile Include="LiveCodingLab\LiveCodingLabErrorHandler.cs" />

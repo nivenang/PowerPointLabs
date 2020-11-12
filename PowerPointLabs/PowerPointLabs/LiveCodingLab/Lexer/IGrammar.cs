@@ -23,7 +23,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 
-namespace Lexer
+namespace PowerPointLabs.LiveCodingLab.Lexer
 {
     public interface IGrammar
     {

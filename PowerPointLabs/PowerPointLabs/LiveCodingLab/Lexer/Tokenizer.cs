@@ -22,7 +22,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 
-namespace Lexer
+namespace PowerPointLabs.LiveCodingLab.Lexer
 {
     public class Tokenizer
     {
