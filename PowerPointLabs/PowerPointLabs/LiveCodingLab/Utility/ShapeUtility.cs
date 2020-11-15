@@ -57,7 +57,14 @@ namespace PowerPointLabs.LiveCodingLab.Utility
             codeShape.TextEffect.Alignment = MsoTextEffectAlignment.msoTextEffectAlignmentLeft;
             codeShape.Name = string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, codeBox.Id);
             codeBox.Slide = slide;
-            codeBox.Shape = HighlightSyntax(codeShape, slide);
+            if (codeBox.IsFile)
+            {
+                codeBox.Shape = HighlightSyntax(codeShape, slide, codeBox.FileText);
+            }
+            else
+            {
+                codeBox.Shape = HighlightSyntax(codeShape, slide);
+            }
             codeBox.ShapeName = codeShape.Name;
             return codeBox;
         }
@@ -145,24 +152,26 @@ namespace PowerPointLabs.LiveCodingLab.Utility
             if (codeBox.IsFile)
             {
                 shapeInSlide.TextFrame.TextRange.Text = CodeBoxFileService.GetCodeFromFile(codeBox.Text);
+                codeBox.Shape = HighlightSyntax(shapeInSlide, codeBox.Slide, codeBox.FileText);
             }
             else if (codeBox.IsDiff)
             {
                 shapeInSlide.TextFrame.TextRange.Text = CodeBoxFileService.ConvertFileDiffToString(CodeBoxFileService.ParseDiff(codeBox.Text)[0])[codeBox.DiffIndex];
+                codeBox.Shape = HighlightSyntax(shapeInSlide, codeBox.Slide);
             }
             else
             {
                 shapeInSlide.TextFrame.TextRange.Text = codeBox.Text;
+                codeBox.Shape = HighlightSyntax(shapeInSlide, codeBox.Slide);
             }
             codeBox.ShapeName = shapeInSlide.Name;
-            codeBox.Shape = HighlightSyntax(shapeInSlide, codeBox.Slide);
             return codeBox;
         }
 
-        private static Shape HighlightSyntax(Shape shape, PowerPointSlide slide)
+        private static Shape HighlightSyntax(Shape shape, PowerPointSlide slide, string filePath="")
         {
             Shape shapeToProcess = ConvertTextToParagraphs(shape);
-
+           
             Dictionary<string, Type> stringToGrammar = new Dictionary<string, Type>
             {
                 { "Java", typeof(JavaGrammar) },
@@ -171,27 +180,58 @@ namespace PowerPointLabs.LiveCodingLab.Utility
                 { "C++", typeof(CppGrammar) },
             };
 
-            if (LiveCodingLabSettings.language.Equals("None"))
+            Dictionary<string, Type> fileToGrammar = new Dictionary<string, Type>
             {
-                string keyWords = "(abstract|as|base|bool|break|byte|case|catch|char|checked|class|const|continue|decimal|default|delegate|do|double|else|enum|event|explicit|extern|false|finally|fixed|float|for|" +
-                    "foreach|goto|if|implicit|import|int|in|interface|internal|is|lock|long|namespace|new|null|object|operator|out|override|params|private|protected|public|readonly|ref|return|sbyte|sealed|short|sizeof|stackalloc|static|" +
-                    "string|struct|switch|this|throw|true|try|typeof|uint|ulong|unchecked|unsafe|ushort|using|virtual|volatile|void|while)";
+                { "java", typeof(JavaGrammar) },
+                { "py", typeof(PythonGrammar) },
+                { "c", typeof(CGrammar) },
+                { "cpp", typeof(CppGrammar) },
+                { "cxx", typeof(CppGrammar) },
+                { "cc", typeof(CppGrammar) },
+                { "hpp", typeof(CppGrammar) },
+                { "hxx", typeof(CppGrammar) },
+            };
 
-                TextRange textRange = shapeToProcess.TextFrame.TextRange;
+            IGrammar grammar;
+            Tokenizer lexer;
 
-                foreach (TextRange paragraph in textRange.Paragraphs())
+            try
+            {
+                if (filePath != "" && filePath.LastIndexOf('.') >= 0 && fileToGrammar.ContainsKey(filePath.Substring(filePath.LastIndexOf('.')+1)))
                 {
-                    foreach (Match match in Regex.Matches(paragraph.Text, @"\b" + keyWords + @"\b"))
-                    {
-                        paragraph.Characters(match.Index + 1, match.Length).Font.Color.RGB = Color.Red.ToArgb();
-                    }
+                    grammar = (IGrammar)Activator.CreateInstance(fileToGrammar[filePath.Substring(filePath.LastIndexOf('.') + 1)]);
                 }
+                else if (LiveCodingLabSettings.language.Equals("None"))
+                {
+                    string keyWords = "(abstract|as|base|bool|break|byte|case|catch|char|checked|class|const|continue|decimal|default|delegate|do|double|else|enum|event|explicit|extern|false|finally|fixed|float|for|" +
+                        "foreach|goto|if|implicit|import|int|in|interface|internal|is|lock|long|namespace|new|null|object|operator|out|override|params|private|protected|public|readonly|ref|return|sbyte|sealed|short|sizeof|stackalloc|static|" +
+                        "string|struct|switch|this|throw|true|try|typeof|uint|ulong|unchecked|unsafe|ushort|using|virtual|volatile|void|while)";
+
+                    TextRange textRange = shapeToProcess.TextFrame.TextRange;
+
+                    foreach (TextRange paragraph in textRange.Paragraphs())
+                    {
+                        foreach (Match match in Regex.Matches(paragraph.Text, @"\b" + keyWords + @"\b"))
+                        {
+                            paragraph.Characters(match.Index + 1, match.Length).Font.Color.RGB = Color.Red.ToArgb();
+                        }
+                    }
+                    return shapeToProcess;
+                }
+                else
+                {
+                    grammar = (IGrammar)Activator.CreateInstance(stringToGrammar[LiveCodingLabSettings.language]);
+                }
+                lexer = new Tokenizer(grammar);
+            }
+            catch (NullReferenceException)
+            {
                 return shapeToProcess;
             }
-
-            IGrammar grammar = (IGrammar)Activator.CreateInstance(stringToGrammar[LiveCodingLabSettings.language]);
-
-            Tokenizer lexer = new Tokenizer(grammar);
+            catch (ArgumentNullException)
+            {
+                return shapeToProcess;
+            }
 
             foreach (TextRange paragraph in shapeToProcess.TextFrame.TextRange.Paragraphs())
             {
