@@ -176,7 +176,7 @@ namespace PowerPointLabs.LiveCodingLab
 
                         currentIndex = sequence.Count;
                         sequence.AddEffect(codeShapeBeforeEdit,
-                            PowerPoint.MsoAnimEffect.msoAnimEffectFade,
+                            PowerPoint.MsoAnimEffect.msoAnimEffectWipe,
                             PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
                             PowerPoint.MsoAnimTriggerType.msoAnimTriggerOnPageClick);
                         List<PowerPoint.Effect> deleteEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
@@ -246,7 +246,7 @@ namespace PowerPointLabs.LiveCodingLab
 
                         currentIndex = sequence.Count;
                         sequence.AddEffect(codeShapeAfterEdit,
-                            PowerPoint.MsoAnimEffect.msoAnimEffectAppear,
+                            PowerPoint.MsoAnimEffect.msoAnimEffectWipe,
                             PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
                             PowerPoint.MsoAnimTriggerType.msoAnimTriggerOnPageClick);
                         List<PowerPoint.Effect> insertEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
@@ -313,6 +313,7 @@ namespace PowerPointLabs.LiveCodingLab
 
             foreach (PowerPoint.Effect effect in effectList)
             {
+                effect.EffectParameters.Direction = PowerPoint.MsoAnimDirection.msoAnimDirectionRight;
                 effect.Exit = Office.MsoTriState.msoTrue;
                 effect.Timing.Duration = 0.5f;
                 effect.Timing.TriggerType = PowerPoint.MsoAnimTriggerType.msoAnimTriggerOnPageClick;
@@ -454,6 +455,7 @@ namespace PowerPointLabs.LiveCodingLab
             }
             foreach (PowerPoint.Effect effect in effectList)
             {
+                effect.EffectParameters.Direction = PowerPoint.MsoAnimDirection.msoAnimDirectionLeft;
                 effect.Timing.Duration = 0.5f;
                 effect.Timing.TriggerType = PowerPoint.MsoAnimTriggerType.msoAnimTriggerAfterPrevious;
             }
