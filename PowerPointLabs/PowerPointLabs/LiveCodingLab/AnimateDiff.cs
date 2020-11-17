@@ -315,7 +315,7 @@ namespace PowerPointLabs.LiveCodingLab
             {
                 effect.EffectParameters.Direction = PowerPoint.MsoAnimDirection.msoAnimDirectionRight;
                 effect.Exit = Office.MsoTriState.msoTrue;
-                effect.Timing.Duration = 0.5f;
+                effect.Timing.Duration = 0.7f;
                 effect.Timing.TriggerType = PowerPoint.MsoAnimTriggerType.msoAnimTriggerOnPageClick;
             }
             return effectList;
@@ -456,7 +456,7 @@ namespace PowerPointLabs.LiveCodingLab
             foreach (PowerPoint.Effect effect in effectList)
             {
                 effect.EffectParameters.Direction = PowerPoint.MsoAnimDirection.msoAnimDirectionLeft;
-                effect.Timing.Duration = 0.5f;
+                effect.Timing.Duration = 0.7f;
                 effect.Timing.TriggerType = PowerPoint.MsoAnimTriggerType.msoAnimTriggerAfterPrevious;
             }
             return effectList;

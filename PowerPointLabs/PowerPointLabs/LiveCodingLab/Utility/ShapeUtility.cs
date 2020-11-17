@@ -44,7 +44,7 @@ namespace PowerPointLabs.LiveCodingLab.Utility
             {
                 textToInsert = codeBox.Text;
             }
-            Shape codeShape = slide.Shapes.AddTextbox(MsoTextOrientation.msoTextOrientationHorizontal, 15, 15, 700, 250);
+            Shape codeShape = slide.Shapes.AddTextbox(MsoTextOrientation.msoTextOrientationHorizontal, 170, 100, 700, 250);
             if (textToInsert != null && textToInsert != "")
             {
                 codeShape.TextFrame.TextRange.Text = textToInsert;
@@ -79,7 +79,7 @@ namespace PowerPointLabs.LiveCodingLab.Utility
         public static CodeBox InsertDiffCodeBoxToSlide(PowerPointSlide slide, CodeBox codeBox, FileDiff diff)
         {
             string textToInsert = CodeBoxFileService.ConvertFileDiffToString(diff)[codeBox.DiffIndex];
-            Shape codeShape = slide.Shapes.AddTextbox(MsoTextOrientation.msoTextOrientationHorizontal, 15, 15, 700, 250);
+            Shape codeShape = slide.Shapes.AddTextbox(MsoTextOrientation.msoTextOrientationHorizontal, 170, 100, 700, 250);
             if (textToInsert != null && textToInsert != "")
             {
                 codeShape.TextFrame.TextRange.Text = textToInsert;
