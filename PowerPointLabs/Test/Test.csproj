@@ -111,6 +111,7 @@
     <Compile Include="FunctionalTest\BaseFunctionalTest.cs" />
     <Compile Include="FunctionalTest\ELearningLabTest.cs" />
     <Compile Include="FunctionalTest\LimitOpenPanesTest.cs" />
+    <Compile Include="FunctionalTest\LiveCodingLabTest.cs" />
     <Compile Include="FunctionalTest\SaveLabTest.cs" />
     <Compile Include="FunctionalTest\FillSlideTest.cs" />
     <Compile Include="FunctionalTest\PasteLabTest.cs" />

@@ -94,6 +94,15 @@ namespace PowerPointLabs.LiveCodingLab.Views
             view.GroupDescriptions.Add(groupDescription);
             RefreshCode();
         }
+        public ObservableCollection<CodeBoxPaneItem> GetCodeBoxList()
+        {
+            return codeBoxList;
+        }
+
+        public LiveCodingLabMain GetLiveCodingLabMain()
+        {
+            return _liveCodingLab;
+        }
         public void RemoveCodeBox(Object codeBox)
         {
             int index = 0;

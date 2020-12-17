@@ -43,6 +43,11 @@ namespace PowerPointLabs.FunctionalTestInterface.Impl
             get { return ELearningLabController.Instance; }
         }
 
+        public ILiveCodingLabController LiveCodingLab 
+        {
+            get { return LiveCodingLabController.Instance; }
+        }
+
         private Ribbon1 Ribbon
         {
             get { return FunctionalTestExtensions.GetRibbonUi(); }

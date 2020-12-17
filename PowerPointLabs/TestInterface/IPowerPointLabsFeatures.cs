@@ -66,5 +66,6 @@ namespace TestInterface
         ISyncLabController SyncLab { get; }
         ITimerLabController TimerLab { get; }
         IELearningLabController ELearningLab { get; }
+        ILiveCodingLabController LiveCodingLab { get; }
     }
 }

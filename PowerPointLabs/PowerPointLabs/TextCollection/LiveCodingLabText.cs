@@ -11,6 +11,7 @@
         public const string AnimateScrollUpTag = "AnimateScrollUp";
         public const string SettingsTag = "LiveCodingLabSettings";
         public const string TaskPanelTitle = "Live Coding Lab";
+        public const string PaneTag = "LiveCodingLab";
         #endregion
 
         #region Identifiers

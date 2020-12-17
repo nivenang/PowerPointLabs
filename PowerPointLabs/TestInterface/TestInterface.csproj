@@ -34,6 +34,7 @@
     <Compile Include="ExplanationItemTemplate.cs" />
     <Compile Include="IELearningLabController.cs" />
     <Compile Include="IExplanationItem.cs" />
+    <Compile Include="ILiveCodingLabController.cs" />
     <Compile Include="ITimerLabController.cs" />
     <Compile Include="IHighlightLabController.cs" />
     <Compile Include="ISyncLabController.cs" />
