@@ -127,7 +127,7 @@ namespace PowerPointLabs.LiveCodingLab.Utility
         {
             try
             {
-                if (!codeBox.Slide.HasShapeWithSameName(string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, codeBox.Id)))
+                if (codeBox.Shape == null && !codeBox.Slide.HasShapeWithSameName(string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, codeBox.Id)))
                 {
                     if (codeBox.IsDiff && codeBox.DiffIndex >= 0)
                     {

@@ -136,7 +136,8 @@ namespace PowerPointLabs.LiveCodingLab
                 int lineCount = 0;
                 List<PowerPoint.Effect> disappearHighlightEffects = new List<PowerPoint.Effect>();
                 List<PowerPoint.Effect> appearHighlightEffects = new List<PowerPoint.Effect>();
-                List<PowerPoint.Effect> intermediateEffects = new List<PowerPoint.Effect>();
+                List<PowerPoint.Effect> intermediateAppearEffects = new List<PowerPoint.Effect>();
+                List<PowerPoint.Effect> intermediateDisappearEffects = new List<PowerPoint.Effect>();
 
                 while (beforeCount < codeTextBeforeEdit.Paragraphs().Count && afterCount < codeTextAfterEdit.Paragraphs().Count)
                 {
@@ -155,7 +156,7 @@ namespace PowerPointLabs.LiveCodingLab
 
                                 moveUpEffects = FormatMoveUpWhitespaceEffects(beforeLineToEffectLine[beforeCount], moveUpEffects, currentMultiplier, fontSize);
 
-                                intermediateEffects.AddRange(moveUpEffects);
+                                intermediateDisappearEffects.AddRange(moveUpEffects);
 
                                 currentMultiplier--;
                             }
@@ -183,7 +184,7 @@ namespace PowerPointLabs.LiveCodingLab
 
                         deleteEffects = FormatDeleteEffects(beforeLineToEffectLine[beforeCount], deleteEffects);
 
-                        intermediateEffects.AddRange(deleteEffects);
+                        intermediateDisappearEffects.AddRange(deleteEffects);
 
                         if (lineCount + 1 >= fullDiff.Count || (lineCount + 1 < fullDiff.Count && fullDiff[lineCount + 1] != DiffType.Add))
                         {
@@ -196,7 +197,7 @@ namespace PowerPointLabs.LiveCodingLab
 
                             moveUpEffects = FormatMoveUpEffects(beforeLineToEffectLine[beforeCount], moveUpEffects, currentMultiplier, fontSize);
 
-                            intermediateEffects.AddRange(moveUpEffects);
+                            intermediateDisappearEffects.AddRange(moveUpEffects);
 
                             currentMultiplier--;
                         }
@@ -219,7 +220,7 @@ namespace PowerPointLabs.LiveCodingLab
 
                                 moveDownEffects = FormatMoveDownWhitespaceEffects(beforeLineToEffectLine[beforeCount], moveDownEffects, currentMultiplier, fontSize);
 
-                                intermediateEffects.AddRange(moveDownEffects);
+                                intermediateAppearEffects.AddRange(moveDownEffects);
 
                                 currentMultiplier++;
                             }
@@ -239,7 +240,7 @@ namespace PowerPointLabs.LiveCodingLab
 
                             moveDownEffects = FormatMoveDownEffects(beforeLineToEffectLine[beforeCount], moveDownEffects, currentMultiplier, fontSize);
 
-                            intermediateEffects.AddRange(moveDownEffects);
+                            intermediateAppearEffects.AddRange(moveDownEffects);
 
                             currentMultiplier++;
                         }
@@ -253,7 +254,7 @@ namespace PowerPointLabs.LiveCodingLab
 
                         insertEffects = FormatInsertEffects(afterLineToEffectLine[afterCount], insertEffects);
 
-                        intermediateEffects.AddRange(insertEffects);
+                        intermediateAppearEffects.AddRange(insertEffects);
 
                         currentIndex = sequence.Count;
                         sequence.AddEffect(codeShapeAfterEdit,
@@ -280,8 +281,9 @@ namespace PowerPointLabs.LiveCodingLab
                 if (isBlockDiff)
                 {
                     RearrangeBlockDiffEffects(disappearHighlightEffects, disappearEffects[disappearEffects.Count - 1], PowerPoint.MsoAnimTriggerType.msoAnimTriggerOnPageClick);
-                    RearrangeBlockDiffEffects(intermediateEffects, disappearHighlightEffects[disappearHighlightEffects.Count - 1], PowerPoint.MsoAnimTriggerType.msoAnimTriggerOnPageClick);
-                    RearrangeBlockDiffEffects(appearHighlightEffects, intermediateEffects[intermediateEffects.Count - 1], PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
+                    RearrangeBlockDiffEffects(intermediateDisappearEffects, disappearHighlightEffects[disappearHighlightEffects.Count - 1], PowerPoint.MsoAnimTriggerType.msoAnimTriggerOnPageClick);
+                    RearrangeBlockDiffEffects(intermediateAppearEffects, intermediateDisappearEffects[intermediateDisappearEffects.Count - 1], PowerPoint.MsoAnimTriggerType.msoAnimTriggerAfterPrevious);
+                    RearrangeBlockDiffEffects(appearHighlightEffects, intermediateAppearEffects[intermediateAppearEffects.Count - 1], PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
                 }
                 if (currentSlide.HasAnimationForClick(clickNumber: 1))
                 {
