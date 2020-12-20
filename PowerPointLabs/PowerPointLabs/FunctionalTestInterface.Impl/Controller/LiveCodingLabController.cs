@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -36,7 +37,7 @@ namespace PowerPointLabs.FunctionalTestInterface.Impl.Controller
             }));
         }
 
-        public void InsertTextCodeBox(string text)
+        public void InsertTextCodeBox(string text, string shapeName)
         {
             if (_pane != null)
             {
@@ -47,8 +48,8 @@ namespace PowerPointLabs.FunctionalTestInterface.Impl.Controller
                     item1.Text = text;
                     _pane.LiveCodingLabPaneWPF.RefreshCode();
                     InsertCodeBoxIntoSlide(item1);
-                    item1.CodeBox.Shape.Name = "InsertTextCodeBoxTestShape";
-                    item1.CodeBox.ShapeName = "InsertTextCodeBoxTestShape";
+                    item1.CodeBox.Shape.Name = shapeName;
+                    item1.CodeBox.ShapeName = shapeName;
                 });
             }
         }
@@ -71,6 +72,32 @@ namespace PowerPointLabs.FunctionalTestInterface.Impl.Controller
             }
         }
         
+        public void RefreshTextCodeBox(string oldText, string newText)
+        {
+            if (_pane != null)
+            {
+                UIThreadExecutor.Execute(() =>
+                {
+                    ObservableCollection<CodeBoxPaneItem> codeBoxList = _pane.LiveCodingLabPaneWPF.GetCodeBoxList();
+                    CodeBoxPaneItem item1 = null;
+                    foreach (CodeBoxPaneItem item in codeBoxList)
+                    {
+                        if (item.CodeBox.Text.Trim().Equals(oldText.Trim()))
+                        {
+                            item1 = item;
+                            break;
+                        }
+                    }
+                    if (item1 != null)
+                    {
+                        item1.codeTextBox.Text = newText;
+                        _pane.LiveCodingLabPaneWPF.refreshCodeButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+
+                    }
+                });
+            }
+        }
+
         public void InsertDiffCodeBox(string diffFilePath)
         {
             Action<string, LiveCodingPaneWPF, string> liveCodingAction = (diffPath, liveCodingPane, diffGroupName) => _pane.LiveCodingLabPaneWPF.GetLiveCodingLabMain().InsertDiff(diffPath, liveCodingPane, diffGroupName);
@@ -88,10 +115,44 @@ namespace PowerPointLabs.FunctionalTestInterface.Impl.Controller
             }
         }
 
+        public void AnimateLineDiff()
+        {
+            if (_pane != null)
+            {
+                UIThreadExecutor.Execute(() =>
+                {
+                    _pane.LiveCodingLabPaneWPF.animateLineDiffButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                });
+            }
+        }
+
+        public void AnimateBlockDiff()
+        {
+            if (_pane != null)
+            {
+                UIThreadExecutor.Execute(() =>
+                {
+                    _pane.LiveCodingLabPaneWPF.animateBlockDiffButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                });
+            }
+        }
+
+        public void AnimateWordDiff()
+        {
+            if (_pane != null)
+            {
+                UIThreadExecutor.Execute(() =>
+                {
+                    _pane.LiveCodingLabPaneWPF.animateWordDiffButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                });
+            }
+        }
+
         private CodeBoxPaneItem CreateCodeBox()
         {
             _pane.LiveCodingLabPaneWPF.insertCodeBox.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
             return _pane.LiveCodingLabPaneWPF.GetCodeBoxList().First();
         }
+
     }
 }

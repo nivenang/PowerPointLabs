@@ -17,6 +17,7 @@ namespace Test.FunctionalTest
     {
         private const string InsertTextCodeBoxShape = "InsertTextCodeBoxTestShape";
         private const string InsertFileCodeBoxShape = "InsertFileCodeBoxTestShape";
+        private const string RefreshCodeBoxShape = "RefreshCodeBoxTestShape";
         private const string InsertDiffCodeBoxShape = "PPTL";
         private const string InsertDiffCodeBoxBeforeOriginalShape = "InsertDiffCodeBeforeOriginalShape";
         private const string InsertDiffCodeBoxAfterOriginalShape = "InsertDiffCodeAfterOriginalShape";
@@ -25,13 +26,24 @@ namespace Test.FunctionalTest
         private const string InsertCodeBoxFile = "LiveCodingLab\\sample.txt";
         private const string InsertCodeBoxFileText = "Insert File Code Box Test\n";
         private const string InsertCodeBoxDiff = "LiveCodingLab\\sample.diff";
+        private const string RefreshCodeBoxTextBefore = "Before Refresh Code Text\n";
+        private const string RefreshCodeBoxTextAfter = "After Refresh Code Text\n";
 
         private const int TestInsertTextCodeBoxSlideNo = 3;
         private const int TestInsertFileCodeBoxSlideNo = 4;
-        private const int TestInsertDiffOriginalShapeSlideNo = 5;
-        private const int TestInsertDiffBeforeCodeBoxSlideNo = 6;
-        private const int TestInsertDiffAfterCodeBoxSlideNo = 7;
-
+        private const int TestRefreshCodeSlideNo = 5;
+        private const int TestInsertDiffOriginalShapeSlideNo = 6;
+        private const int TestInsertDiffBeforeCodeBoxSlideNo = 7;
+        private const int TestInsertDiffAfterCodeBoxSlideNo = 8;
+        private const int TestAnimateLineDiffExpectedSlideNo = 10;
+        private const int TestAnimateLineDiffSlideNo = 11;
+        private const int TestAnimateLineDiffActualSlideNo = 12;
+        private const int TestAnimateBlockDiffExpectedSlideNo = 14;
+        private const int TestAnimateBlockDiffSlideNo = 15;
+        private const int TestAnimateBlockDiffActualSlideNo = 16;
+        private const int TestAnimateWordDiffExpectedSlideNo = 18;
+        private const int TestAnimateWordDiffSlideNo = 19;
+        private const int TestAnimateWordDiffActualSlideNo = 20;
 
         protected override string GetTestingSlideName()
         {
@@ -50,9 +62,12 @@ namespace Test.FunctionalTest
             // Code Box Tests
             TestInsertTextCodeBox(liveCodingLab);
             TestInsertFileCodeBox(liveCodingLab);
+            TestRefreshCode(liveCodingLab);
             TestInsertDiffCodeBox(liveCodingLab);
 
             // Animation Tests
+            TestAnimateLineDiff(liveCodingLab);
+            TestAnimateBlockDiff(liveCodingLab);
         }
 
         #region Code Box Tests
@@ -60,7 +75,7 @@ namespace Test.FunctionalTest
         {
             PpOperations.SelectSlide(TestInsertTextCodeBoxSlideNo);
 
-            liveCodingLab.InsertTextCodeBox(InsertCodeBoxText);
+            liveCodingLab.InsertTextCodeBox(InsertCodeBoxText, InsertTextCodeBoxShape);
             
             ThreadUtil.WaitFor(1000);
             Assert.AreEqual(PpOperations.SelectAllTextInShape(InsertTextCodeBoxShape).Trim(), InsertCodeBoxText.Trim());
@@ -74,6 +89,23 @@ namespace Test.FunctionalTest
 
             ThreadUtil.WaitFor(1000);
             Assert.AreEqual(PpOperations.SelectAllTextInShape(InsertFileCodeBoxShape).Trim(), InsertCodeBoxFileText.Trim());
+        }
+
+        private void TestRefreshCode(ILiveCodingLabController liveCodingLab)
+        {
+            PpOperations.SelectSlide(TestRefreshCodeSlideNo);
+
+            liveCodingLab.InsertTextCodeBox(RefreshCodeBoxTextBefore, RefreshCodeBoxShape);
+
+            ThreadUtil.WaitFor(1000);
+
+            Assert.AreEqual(PpOperations.SelectAllTextInShape(RefreshCodeBoxShape).Trim(), RefreshCodeBoxTextBefore.Trim());
+
+            liveCodingLab.RefreshTextCodeBox(RefreshCodeBoxTextBefore, RefreshCodeBoxTextAfter);
+
+            ThreadUtil.WaitFor(1000);
+
+            Assert.AreEqual(PpOperations.SelectAllTextInShape(RefreshCodeBoxShape).Trim(), RefreshCodeBoxTextAfter.Trim());
         }
 
         private void TestInsertDiffCodeBox(ILiveCodingLabController liveCodingLab)
@@ -98,7 +130,46 @@ namespace Test.FunctionalTest
         #endregion
 
         #region Animation Tests
+        private void TestAnimateLineDiff(ILiveCodingLabController liveCodingLab)
+        {
+            PpOperations.SelectSlide(TestAnimateLineDiffSlideNo);
 
+            liveCodingLab.AnimateLineDiff();
+
+            Slide expectedSlide = PpOperations.SelectSlide(TestAnimateLineDiffExpectedSlideNo);
+            Slide actualSlide = PpOperations.SelectSlide(TestAnimateLineDiffActualSlideNo);
+
+            SlideUtil.IsSameAnimations(expectedSlide, actualSlide);
+            SlideUtil.IsSameLooking(expectedSlide, actualSlide);
+        }
+
+        private void TestAnimateBlockDiff(ILiveCodingLabController liveCodingLab)
+        {
+            PpOperations.SelectSlide(TestAnimateBlockDiffSlideNo);
+
+            liveCodingLab.AnimateBlockDiff();
+
+            Slide expectedSlide = PpOperations.SelectSlide(TestAnimateBlockDiffExpectedSlideNo);
+            Slide actualSlide = PpOperations.SelectSlide(TestAnimateBlockDiffActualSlideNo);
+
+            SlideUtil.IsSameAnimations(expectedSlide, actualSlide);
+            SlideUtil.IsSameLooking(expectedSlide, actualSlide);
+        }
+
+        /*
+        private void TestAnimateWordDiff(ILiveCodingLabController liveCodingLab)
+        {
+            PpOperations.SelectSlide(TestAnimateWordDiffSlideNo);
+
+            liveCodingLab.AnimateWordDiff();
+
+            Slide expectedSlide = PpOperations.SelectSlide(TestAnimateWordDiffExpectedSlideNo);
+            Slide actualSlide = PpOperations.SelectSlide(TestAnimateWordDiffActualSlideNo);
+
+            SlideUtil.IsSameAnimations(expectedSlide, actualSlide);
+            SlideUtil.IsSameLooking(expectedSlide, actualSlide);
+        }
+        */
         #endregion
 
         #region Helper methods
