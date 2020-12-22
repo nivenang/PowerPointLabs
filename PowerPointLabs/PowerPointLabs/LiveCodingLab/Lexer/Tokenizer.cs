@@ -53,7 +53,7 @@ namespace PowerPointLabs.LiveCodingLab.Lexer
                     {
                         if (match.Length == 0)
                         {
-                            throw new Exception(string.Format("Regex matche length is zero. This can lead to infinite loop. Please modify your regex {0} for {1} so that it can't matche character of zero length", rule.RegExpression, rule.Type));
+                            throw new Exception(string.Format("Regex matched length is zero. This can lead to infinite loop. Please modify your regex {0} for {1} so that it can't matche character of zero length", rule.RegExpression, rule.Type));
                         }
 
                         yield return new Token(i, match.Length, rule.Type);

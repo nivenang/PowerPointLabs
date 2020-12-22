@@ -40,6 +40,7 @@ namespace PowerPointLabs.LiveCodingLab.Lexer
 
         WhiteSpace,
         Identifier,
+        Metadata,
 
         Unknown
     }
