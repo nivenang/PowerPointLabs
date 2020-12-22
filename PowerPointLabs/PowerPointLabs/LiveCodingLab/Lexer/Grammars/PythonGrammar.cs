@@ -37,8 +37,16 @@ namespace PowerPointLabs.LiveCodingLab.Lexer.Grammars
                 new LexicalRule { Type = TokenType.Delimiter, RegExpression = new Regex("^[\\(\\)\\[\\]\\{\\}@,:`=;\\.]") }, // Single Delimiter
                 new LexicalRule { Type = TokenType.Delimiter, RegExpression = new Regex("^((\\+=)|(\\-=)|(\\*=)|(%=)|(/=)|(&=)|(\\|=)|(\\^=))") }, // Double Char Operator
                 new LexicalRule { Type = TokenType.Delimiter, RegExpression = new Regex("^((//=)|(>>=)|(<<=)|(\\*\\*=))") }, // Triple Delimiter
+                new LexicalRule { Type = TokenType.Number, RegExpression = new Regex("^[0-9]+") },
 
-                new LexicalRule { Type = TokenType.Keyword, RegExpression = LexicalRule.WordRegex("as", "assert", "break", "class", "continue", "def", "del", "elif", "else", "except", "finally", "for", "from", "global", "if", "import", "lambda", "pass", "raise", "return", "try", "while", "with", "yield", "in", "print") }, // Keywords
+                new LexicalRule 
+                { 
+                    Type = TokenType.Keyword, 
+                    RegExpression = LexicalRule.WordRegex("as", "assert", "break", "class", "continue", "def", "del", "elif",
+                        "else", "except", "finally", "for", "from", "global", "if", "import", "lambda", "pass", "raise", 
+                        "return", "try", "while", "with", "yield", "in", "print") 
+                }, // Keywords
+
                 new LexicalRule 
                 {
                     Type = TokenType.Builtins,
@@ -75,14 +83,14 @@ namespace PowerPointLabs.LiveCodingLab.Lexer.Grammars
 
             ColorDict = new Dictionary<TokenType, Color>()
             {
-                { TokenType.Comment, Color.FromArgb(255, 128, 128, 128) },
-                { TokenType.String, Color.FromArgb(255, 0, 171, 0) },
-                { TokenType.Builtins, Color.FromArgb(255, 144, 0, 144) },
-                { TokenType.Keyword, Color.FromArgb(255, 255, 119, 0) },
+                { TokenType.Comment, Color.FromArgb(128, 128, 128, 128) },
+                { TokenType.String, Color.FromArgb(128, 0, 128, 0) },
+                { TokenType.Builtins, Color.FromArgb(128, 144, 0, 144) },
+                { TokenType.Keyword, Color.FromArgb(128, 128, 0, 0) },
                 { TokenType.Identifier, Color.FromArgb(0, 0, 0, 0) },
                 { TokenType.Delimiter, Color.FromArgb(0, 0, 0, 0) },
                 { TokenType.WhiteSpace, Color.FromArgb(0, 0, 0, 0) },
-                { TokenType.Number, Color.FromArgb(0, 0, 0, 0) },
+                { TokenType.Number, Color.FromArgb(128, 255, 0, 0) },
                 { TokenType.Operator, Color.FromArgb(255, 0, 0, 0) },
                 { TokenType.Unknown, Color.FromArgb(0, 0, 0, 0) },
 
