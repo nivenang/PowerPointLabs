@@ -37,6 +37,7 @@ namespace PowerPointLabs.LiveCodingLab.Lexer
 
         Keyword,
         Builtins,
+        Control,
 
         WhiteSpace,
         Identifier,

@@ -20,19 +20,26 @@ namespace PowerPointLabs.LiveCodingLab.Lexer.Grammars
 
                 new LexicalRule
                 {
+                    Type = TokenType.Control,
+                    RegExpression = LexicalRule.WordRegex("break", "case", "catch", "continue", "default", "do", "else", "for", "if", 
+                        "goto", "throw", "try", "return", "switch", "while")
+                },
+
+                new LexicalRule
+                {
                     Type = TokenType.Keyword,
                     RegExpression = LexicalRule.WordRegex(
-                        "asm", "auto", "bool", "break", "case", "catch", "char", "class", "const", "const_cast", "continue",
-                        "default", "delete", "do", "double", "dynamic_cast", "else", "enum", "explicit", "export", "extern", "false",
-                        "float", "for", "friend", "goto", "if", "inline", "int", "long", "mutable", "namespace", "new", "NULL",
-                        "operator", "private", "protected", "public", "register", "reinterpret_cast", "return", "short", "signed",
-                        "sizeof", "size_t", "static", "static_cast", "struct", "switch", "template", "this", "throw", "true", "try", "typedef",
-                        "typeid", "typename", "union", "unsigned", "using", "virtual", "void", "volatile", "wchar_t", "while")
+                        "asm", "auto", "bool", "char", "class", "const", "const_cast",
+                        "delete", "double", "dynamic_cast", "enum", "explicit", "export", "extern", "false",
+                        "float", "friend", "inline", "int", "long", "mutable", "namespace", "new", "NULL",
+                        "operator", "private", "protected", "public", "register", "reinterpret_cast", "short", "signed",
+                        "sizeof", "size_t", "static", "static_cast", "struct", "template", "this", "true", "typedef",
+                        "typeid", "typename", "union", "unsigned", "using", "virtual", "void", "volatile", "wchar_t")
                 }, // Keywords
                 
                 new LexicalRule { Type = TokenType.Identifier, RegExpression = new Regex("^[_A-Za-z][_A-Za-z0-9]*") }, // Identifier
                 new LexicalRule { Type = TokenType.String, RegExpression = new Regex("^((@'(?:[^']|'')*'|'(?:\\.|[^\\']|)*('|\\b))|(@\"(?:[^\"]|\"\")*\"|\"(?:\\.|[^\\\"])*(\"|\\b)))", RegexOptions.IgnoreCase) }, // String Marker
-                // new LexicalRule { Type = TokenType.String, RegExpression = new Regex("(<.*>)") },
+                new LexicalRule { Type = TokenType.String, RegExpression = new Regex("(<.*>)") },
                 new LexicalRule { Type = TokenType.Unknown, RegExpression = new Regex("^.") }, // Any
             };
 
@@ -48,6 +55,7 @@ namespace PowerPointLabs.LiveCodingLab.Lexer.Grammars
                 { TokenType.Number, Color.FromArgb(0, 0, 0, 0) },
                 { TokenType.Operator, Color.FromArgb(255, 0, 0, 0) },
                 { TokenType.Metadata, Color.FromArgb(128, 128, 128, 128) },
+                { TokenType.Control, Color.FromArgb(128, 196, 0, 143) },
                 { TokenType.Unknown, Color.FromArgb(0, 0, 0, 0) },
             };
         }
