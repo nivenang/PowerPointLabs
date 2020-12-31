@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using DiffPlex.DiffBuilder;
+using DiffMatchPatch;
 using PowerPointLabs.ActionFramework.Common.Extension;
 using PowerPointLabs.ActionFramework.Common.Log;
 using PowerPointLabs.ELearningLab.Extensions;
@@ -34,6 +34,7 @@ namespace PowerPointLabs.LiveCodingLab
         {
             try
             {
+
                 PowerPointSlide currentSlide = PowerPointCurrentPresentationInfo.CurrentSlide;
                 if (currentSlide == null)
                 {
@@ -50,8 +51,6 @@ namespace PowerPointLabs.LiveCodingLab
                 CodeBoxPaneItem diffCodeBoxBefore = codeListBox[0];
                 CodeBoxPaneItem diffCodeBoxAfter = codeListBox[1];
 
-                FileDiff diffFile;
-
                 if (diffCodeBoxBefore.CodeBox.IsDiff && diffCodeBoxAfter.CodeBox.IsDiff)
                 {
                     if (diffCodeBoxBefore.CodeBox.Text != diffCodeBoxAfter.CodeBox.Text)
@@ -61,16 +60,6 @@ namespace PowerPointLabs.LiveCodingLab
                         return;
                     }
 
-                    List<FileDiff> diffList = CodeBoxFileService.ParseDiff(diffCodeBoxBefore.CodeBox.Text);
-
-                    if (diffList.Count < 1)
-                    {
-                        MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesMissingCodeSnippet,
-                                        LiveCodingLabText.ErrorAnimateNewLinesDialogTitle);
-                        return;
-                    }
-
-                    diffFile = diffList[0];
                 }
                 else if (!diffCodeBoxBefore.CodeBox.IsDiff && !diffCodeBoxAfter.CodeBox.IsDiff)
                 {
@@ -94,9 +83,6 @@ namespace PowerPointLabs.LiveCodingLab
                     diffCodeBoxAfter.CodeBox.Shape.Top = diffCodeBoxBefore.CodeBox.Shape.Top;
                     diffCodeBoxAfter.CodeBox.Shape.Width = diffCodeBoxBefore.CodeBox.Shape.Width;
                     diffCodeBoxAfter.CodeBox.Shape.Height = diffCodeBoxBefore.CodeBox.Shape.Height;
-
-                    var diff = InlineDiffBuilder.Diff(diffCodeBoxBefore.CodeBox.Text, diffCodeBoxAfter.CodeBox.Text);
-                    diffFile = BuildDiffFromText(diffCodeBoxBefore.CodeBox.Text, diffCodeBoxAfter.CodeBox.Text);
                 }
                 else
                 {
@@ -105,12 +91,125 @@ namespace PowerPointLabs.LiveCodingLab
                     return;
                 }
 
-                AnimateDiff(codeListBox, diffFile, true);
+                // Creates a new animation slide between the before and after code
+                PowerPointSlide transitionSlide = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, index: currentSlide.Index + 1);
+                transitionSlide.Name = LiveCodingLabText.TransitionSlideIdentifier + DateTime.Now.ToString("yyyyMMddHHmmssffff");
+                AddPowerPointLabsIndicator(transitionSlide);
+
+                PowerPoint.TextRange codeTextBeforeEdit = diffCodeBoxBefore.CodeBox.Shape.TextFrame.TextRange;
+                PowerPoint.TextRange codeTextAfterEdit = diffCodeBoxAfter.CodeBox.Shape.TextFrame.TextRange;
+                
+                CreateTransitionTextForWordDiff(transitionSlide, codeTextBeforeEdit, codeTextAfterEdit);
             }
             catch (Exception e)
             {
                 Logger.LogException(e, "AnimateWordDiff");
                 throw;
+            }
+        }
+
+        private void CreateTransitionTextForWordDiff(PowerPointSlide transitionSlide, PowerPoint.TextRange codeTextBeforeEdit, PowerPoint.TextRange codeTextAfterEdit)
+        {
+
+            var differ = DiffMatchPatchModule.Default;
+            var diffs = differ.DiffMain(codeTextBeforeEdit.Text, codeTextAfterEdit.Text);
+            differ.DiffCleanupSemantic(diffs);
+            int originalLeftPointer = 170;
+            int leftPointer = 170;
+            int topPointer = 100;
+            Queue<Tuple<int, int>> pointerQueue = new Queue<Tuple<int, int>>();
+
+            for (int j = 0; j < diffs.Count; j++)
+            {
+                Tuple<int, int> maxPointer = null;
+                string text = diffs[j].Text;
+                string[] lines = text.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+
+                if (diffs[j].Operation.IsDelete || diffs[j].Operation.IsEqual)
+                {
+                    pointerQueue.Clear();
+                }
+                else
+                {
+                    maxPointer = Tuple.Create(leftPointer, topPointer);
+                }
+
+                if (diffs[j].Operation.IsInsert && pointerQueue.Count > 0)
+                {
+                    Tuple<int, int> temp = pointerQueue.Dequeue();
+                    leftPointer = temp.Item1;
+                    topPointer = temp.Item2;
+                }
+                PowerPoint.Shape textbox = transitionSlide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                    leftPointer, topPointer, 700, 250);
+
+                textbox.TextFrame.TextRange.Text = lines[0];
+                textbox.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                textbox.TextFrame.WordWrap = Office.MsoTriState.msoTrue;
+                textbox.TextFrame.TextRange.Font.Size = LiveCodingLabSettings.codeFontSize;
+                textbox.TextFrame.TextRange.Font.Name = LiveCodingLabSettings.codeFontType;
+                textbox.TextFrame.TextRange.Font.Color.RGB = LiveCodingLabSettings.codeTextColor.ToArgb();
+                textbox.TextEffect.Alignment = Office.MsoTextEffectAlignment.msoTextEffectAlignmentLeft;
+                if (diffs[j].Operation.IsDelete)
+                {
+                    pointerQueue.Enqueue(Tuple.Create(leftPointer, topPointer));
+                }
+                leftPointer += lines[0].Length * 10;
+                if (lines[0].Contains("\n"))
+                {
+                    topPointer += 30;
+                }
+
+                if (lines.Length > 1)
+                {
+                    for (int i = 1; i < lines.Length; i++)
+                    {
+                        if (diffs[j].Operation.IsInsert && pointerQueue.Count > 0)
+                        {
+                            Tuple<int, int> temp = pointerQueue.Dequeue();
+                            leftPointer = temp.Item1;
+                            topPointer = temp.Item2;
+                        }
+                        else
+                        {
+                            leftPointer = originalLeftPointer;
+                            topPointer += 30;
+                        }
+
+                        textbox = transitionSlide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                            leftPointer, topPointer, 700, 250);
+
+                        textbox.TextFrame.TextRange.Text = lines[i];
+                        textbox.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                        textbox.TextFrame.WordWrap = Office.MsoTriState.msoTrue;
+                        textbox.TextFrame.TextRange.Font.Size = LiveCodingLabSettings.codeFontSize;
+                        textbox.TextFrame.TextRange.Font.Name = LiveCodingLabSettings.codeFontType;
+                        textbox.TextFrame.TextRange.Font.Color.RGB = LiveCodingLabSettings.codeTextColor.ToArgb();
+                        textbox.TextEffect.Alignment = Office.MsoTextEffectAlignment.msoTextEffectAlignmentLeft;
+                        if (diffs[j].Operation.IsDelete)
+                        {
+                            pointerQueue.Enqueue(Tuple.Create(leftPointer, topPointer));
+                        }
+                    }
+                    leftPointer += lines[lines.Length - 1].Length * 10;
+                    if (lines[lines.Length - 1].Contains("\n"))
+                    {
+                        topPointer += 30;
+                    }
+                }
+
+                if (maxPointer != null && topPointer <= maxPointer.Item2)
+                {
+                    if (topPointer == maxPointer.Item2)
+                    {
+                        leftPointer = Math.Max(leftPointer, maxPointer.Item1);
+                    }
+                    else
+                    {
+                        topPointer = maxPointer.Item2;
+                        leftPointer = maxPointer.Item1;
+                    }
+                }
             }
         }
     }
