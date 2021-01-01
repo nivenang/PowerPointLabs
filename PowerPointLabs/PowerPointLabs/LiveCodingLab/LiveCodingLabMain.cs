@@ -30,6 +30,14 @@ namespace PowerPointLabs.LiveCodingLab
             Normal
         }
 
+        enum WordDiffType
+        {
+            DeleteEqual,
+            DeleteAdd,
+            AddEqual,
+            Equal
+        }
+
         public LiveCodingLabMain()
         {
             currentPresentation = PowerPointPresentation.Current;

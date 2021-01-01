@@ -344,8 +344,8 @@ namespace PowerPointLabs.LiveCodingLab.Views
         private void AnimateWordDiffButton_Click(object sender, RoutedEventArgs e)
         {
             RefreshCode();
-            // Action<List<CodeBoxPaneItem>> animateWordDiffAction = codeBoxes => _liveCodingLab.AnimateWordDiff(codeBoxes);
-            // ClickHandler(animateWordDiffAction, LiveCodingLabMain.AnimateWordDiff_ErrorParameters);
+            Action<List<CodeBoxPaneItem>> animateWordDiffAction = codeBoxes => _liveCodingLab.AnimateWordDiff(codeBoxes);
+            ClickHandler(animateWordDiffAction, LiveCodingLabMain.AnimateWordDiff_ErrorParameters);
         }
         private void AnimationSettingsButton_Click(object sender, RoutedEventArgs e)
         {
