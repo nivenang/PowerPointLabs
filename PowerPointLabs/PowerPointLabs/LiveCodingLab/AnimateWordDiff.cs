@@ -96,9 +96,6 @@ namespace PowerPointLabs.LiveCodingLab
                 PowerPointSlide transitionSlide = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, index: currentSlide.Index + 1);
                 transitionSlide.Name = LiveCodingLabText.TransitionSlideIdentifier + DateTime.Now.ToString("yyyyMMddHHmmssffff");
 
-
-
-
                 IEnumerable<Tuple<WordDiffType, Shape, Shape>> transitionText = CreateTransitionTextForWordDiff(transitionSlide, diffCodeBoxBefore, diffCodeBoxAfter);
 
                 CreateAnimationForTransitionText(transitionSlide, transitionText);
@@ -317,7 +314,6 @@ namespace PowerPointLabs.LiveCodingLab
                                 }
                                 else if (!addShapes.Contains(shape) && shape.Left + emptyTextboxOffset > (afterShape.Left + afterShape.Width - emptyTextboxOffset))
                                 {
-                                    MessageBox.Show((shape.Left + emptyTextboxOffset).ToString(), (afterShape.Left + afterShape.Width - emptyTextboxOffset).ToString());
                                     sequence.AddEffect(shape,
                                         PowerPoint.MsoAnimEffect.msoAnimEffectPathLeft,
                                         PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
@@ -360,7 +356,6 @@ namespace PowerPointLabs.LiveCodingLab
         {
             PowerPoint.TextRange codeTextBeforeEdit = diffCodeBoxBefore.CodeBox.Shape.TextFrame.TextRange;
             PowerPoint.TextRange codeTextAfterEdit = diffCodeBoxAfter.CodeBox.Shape.TextFrame.TextRange;
-
             var differ = DiffMatchPatchModule.Default;
             var diffs = differ.DiffMain(codeTextBeforeEdit.Text, codeTextAfterEdit.Text);
             differ.DiffCleanupSemantic(diffs);
@@ -372,6 +367,7 @@ namespace PowerPointLabs.LiveCodingLab
             float topBeforePointer = diffCodeBoxBefore.CodeBox.Shape.Top;
             float leftAfterPointer = diffCodeBoxBefore.CodeBox.Shape.Left;
             float topAfterPointer = diffCodeBoxBefore.CodeBox.Shape.Top;
+            int charCountBefore = 1;
             List<Tuple<Operation, Shape>> transitionText = new List<Tuple<Operation, Shape>>();
             List<Tuple<WordDiffType, Shape, Shape>> transitionTextToAnimate = new List<Tuple<WordDiffType, Shape, Shape>>();
 
@@ -401,9 +397,17 @@ namespace PowerPointLabs.LiveCodingLab
                 textbox.TextFrame.WordWrap = Office.MsoTriState.msoFalse;
                 textbox.TextFrame.TextRange.Font.Size = codeTextBeforeEdit.Font.Size;
                 textbox.TextFrame.TextRange.Font.Name = codeTextBeforeEdit.Font.Name;
-                textbox.TextFrame.TextRange.Font.Color.RGB = LiveCodingLabSettings.codeTextColor.ToArgb();
                 textbox.TextEffect.Alignment = Office.MsoTextEffectAlignment.msoTextEffectAlignmentLeft;
                 transitionText.Add(Tuple.Create(diffs[j].Operation, textbox));
+
+                for (int charIndex = 1; charIndex <= lines[0].Length; charIndex++)
+                {
+                    if (diffs[j].Operation.IsDelete || diffs[j].Operation.IsEqual)
+                    {
+                        textbox.TextFrame.TextRange.Characters(charIndex, 1).Font.Color.RGB = codeTextBeforeEdit.Characters(charCountBefore, 1).Font.Color.RGB;
+                        charCountBefore++;
+                    }
+                }
 
                 leftPointer += textbox.Width - (2 * emptyTextboxOffset);
                 if (!diffs[j].Operation.IsDelete)
@@ -416,6 +420,10 @@ namespace PowerPointLabs.LiveCodingLab
                     leftEqualPointer = originalLeftPointer;
                     topPointer += topPointerLineOffset;
                 }
+                if (!diffs[j].Operation.IsInsert && charCountBefore <= codeTextBeforeEdit.Characters().Length && Char.IsControl(codeTextBeforeEdit.Characters(charCountBefore, 1).Text, 0))
+                {
+                    charCountBefore++;
+                }
 
                 if (lines.Length > 1)
                 {
@@ -424,7 +432,6 @@ namespace PowerPointLabs.LiveCodingLab
                         leftPointer = originalLeftPointer;
                         leftEqualPointer = originalLeftPointer;
                         topPointer += topPointerLineOffset;
-
                         textbox = transitionSlide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
                             leftPointer, topPointer, 0, 0);
 
@@ -433,9 +440,22 @@ namespace PowerPointLabs.LiveCodingLab
                         textbox.TextFrame.WordWrap = Office.MsoTriState.msoFalse;
                         textbox.TextFrame.TextRange.Font.Size = codeTextBeforeEdit.Font.Size;
                         textbox.TextFrame.TextRange.Font.Name = codeTextBeforeEdit.Font.Name;
-                        textbox.TextFrame.TextRange.Font.Color.RGB = LiveCodingLabSettings.codeTextColor.ToArgb();
                         textbox.TextEffect.Alignment = Office.MsoTextEffectAlignment.msoTextEffectAlignmentLeft;
                         transitionText.Add(Tuple.Create(diffs[j].Operation, textbox));
+
+                        for (int charIndex = 1; charIndex <= lines[i].Length; charIndex++)
+                        {
+                            if (diffs[j].Operation.IsDelete || diffs[j].Operation.IsEqual)
+                            {
+                                textbox.TextFrame.TextRange.Characters(charIndex, 1).Font.Color.RGB = codeTextBeforeEdit.Characters(charCountBefore, 1).Font.Color.RGB;
+                                charCountBefore++;
+                            }
+                        }
+
+                        if (i < lines.Length - 1 && (diffs[j].Operation.IsDelete || diffs[j].Operation.IsEqual))
+                        {
+                            charCountBefore++;
+                        }
                     }
                     leftPointer += textbox.Width - (2 * emptyTextboxOffset);
                     if (!diffs[j].Operation.IsDelete)
@@ -448,6 +468,12 @@ namespace PowerPointLabs.LiveCodingLab
                         leftEqualPointer = originalLeftPointer;
                         topPointer += topPointerLineOffset;
                     }
+
+                    if (!diffs[j].Operation.IsInsert && charCountBefore <= codeTextBeforeEdit.Characters().Length && Char.IsControl(codeTextBeforeEdit.Characters(charCountBefore, 1).Text, 0))
+                    {
+                        charCountBefore++;
+                    }
+
                 }
                 if (diffs[j].Operation.IsDelete)
                 {
