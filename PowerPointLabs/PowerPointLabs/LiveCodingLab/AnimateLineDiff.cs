@@ -36,11 +36,14 @@ namespace PowerPointLabs.LiveCodingLab
             try
             {
                 PowerPointSlide currentSlide = PowerPointCurrentPresentationInfo.CurrentSlide;
+                
+                // Check that there is a slide selected by the user
                 if (currentSlide == null)
                 {
                     currentSlide = currentPresentation.Slides[currentPresentation.SlideCount - 1];
                 }
 
+                // Check that there exists a "before" and "after" code
                 if (codeListBox.Count != 2)
                 {
                     MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesMissingCodeSnippet,
@@ -53,6 +56,7 @@ namespace PowerPointLabs.LiveCodingLab
 
                 FileDiff diffFile;
 
+                // Case 1: Animating differences across a Diff File
                 if (diffCodeBoxBefore.CodeBox.IsDiff && diffCodeBoxAfter.CodeBox.IsDiff)
                 {
                     if (diffCodeBoxBefore.CodeBox.Text != diffCodeBoxAfter.CodeBox.Text)
@@ -73,6 +77,7 @@ namespace PowerPointLabs.LiveCodingLab
 
                     diffFile = diffList[0];
                 }
+                // Case 2: Animating differences across two user-input code snippets by building a diff file
                 else if (!diffCodeBoxBefore.CodeBox.IsDiff && !diffCodeBoxAfter.CodeBox.IsDiff)
                 {
                     // Check that there exists a "before" code and an "after" code to be animated
@@ -99,6 +104,7 @@ namespace PowerPointLabs.LiveCodingLab
                     var diff = InlineDiffBuilder.Diff(diffCodeBoxBefore.CodeBox.Text, diffCodeBoxAfter.CodeBox.Text);
                     diffFile = BuildDiffFromText(diffCodeBoxBefore.CodeBox.Text, diffCodeBoxAfter.CodeBox.Text);
                 }
+                // Default: Inform user that code snippets to be animated do not match up
                 else
                 {
                     MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesMissingCodeSnippet,
@@ -106,6 +112,7 @@ namespace PowerPointLabs.LiveCodingLab
                     return;
                 }
 
+                // Run the Animate Diff algorithm on the diff object
                 AnimateDiff(codeListBox, diffFile, false);
             }
             catch (Exception e)
@@ -115,6 +122,12 @@ namespace PowerPointLabs.LiveCodingLab
             }
         }
 
+        /// <summary>
+        /// Creates a diff file from two user input code boxes for use in animating line diff
+        /// </summary>
+        /// <param name="text1">text containing the "before" code</param>
+        /// <param name="text2">text containing the "after" code</param>
+        /// <returns>diff file containing differences between the two code snippets</returns>
         private static FileDiff BuildDiffFromText(string text1, string text2)
         {
             var diff = InlineDiffBuilder.Diff(text1, text2);

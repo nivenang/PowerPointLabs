@@ -11,12 +11,19 @@ namespace PowerPointLabs.LiveCodingLab.Service
     {
         private static HashSet<int> codeBoxIds = new HashSet<int>();
 
+        /// <summary>
+        /// Add a unique code box id to the hash set.
+        /// </summary>
+        /// <param name="id">new unique id of the code box</param>
         public static void PopulateCodeBoxIds(int id)
         {
             codeBoxIds.Add(id);
         }
 
-
+        /// <summary>
+        /// Generate a new unique id for a code box
+        /// </summary>
+        /// <returns>new unique id for code box</returns>
         public static int GenerateUniqueId()
         {
             int count = 0;
@@ -30,6 +37,9 @@ namespace PowerPointLabs.LiveCodingLab.Service
             return count;
         }
 
+        /// <summary>
+        /// Clears all ids from the hash set
+        /// </summary>
         public static void Clear()
         {
             codeBoxIds.Clear();

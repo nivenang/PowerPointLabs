@@ -26,6 +26,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
         private int lastFontSize;
 
+        #region Constructors
         public CodeBoxSettingsDialog()
         {
             InitializeComponent();
@@ -54,7 +55,9 @@ namespace PowerPointLabs.LiveCodingLab.Views
             fontSizeInput.Text = defaultFontSize;
             languageComboBox.Text = defaultLanguage;
         }
+        #endregion
 
+        #region Event Handlers
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
             Drawing.Color textColor = GraphicsUtil.DrawingColorFromBrush(textColorRect.Fill);
@@ -82,8 +85,10 @@ namespace PowerPointLabs.LiveCodingLab.Views
         {
             ValidateFontSize();
         }
+        #endregion
 
-        private void ValidateFontSize ()
+        #region Helper Methods
+        private void ValidateFontSize()
         {
             int enteredValue;
             if (int.TryParse(fontSizeInput.Text, out enteredValue))
@@ -104,6 +109,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
             fontSizeInput.Text = enteredValue.ToString();
             lastFontSize = enteredValue;
         }
-
+        #endregion
     }
 }

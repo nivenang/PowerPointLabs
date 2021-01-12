@@ -80,6 +80,8 @@ namespace PowerPointLabs.LiveCodingLab.Views
         }
 
         #endregion
+
+        #region Constructor
         public LiveCodingPaneWPF()
         {
             InitializeComponent();
@@ -94,6 +96,8 @@ namespace PowerPointLabs.LiveCodingLab.Views
             view.GroupDescriptions.Add(groupDescription);
             RefreshCode();
         }
+        #endregion
+
         public ObservableCollection<CodeBoxPaneItem> GetCodeBoxList()
         {
             return codeBoxList;
@@ -242,7 +246,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
             codeListBox.SelectedIndex = 0;
             return item;
         }
-
         #endregion
 
         #region XAML-Binded Event Handler

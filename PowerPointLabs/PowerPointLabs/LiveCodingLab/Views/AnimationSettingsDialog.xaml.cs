@@ -21,6 +21,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
                                                     Drawing.Color defaultColor);
         public DialogConfirmedDelegate DialogConfirmedHandler { get; set; }
 
+        #region Constructors
         public AnimationSettingsDialog()
         {
             InitializeComponent();
@@ -33,7 +34,9 @@ namespace PowerPointLabs.LiveCodingLab.Views
             textHighlightColorRect.Fill = new SolidColorBrush(GraphicsUtil.MediaColorFromDrawingColor(defaultHighlightColor));
             textDefaultColorRect.Fill = new SolidColorBrush(GraphicsUtil.MediaColorFromDrawingColor(defaultTextColor));
         }
+        #endregion
 
+        #region Event Handlers
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
             Drawing.Color textHighlightColor = GraphicsUtil.DrawingColorFromBrush(textHighlightColorRect.Fill);
@@ -65,5 +68,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
                 textDefaultColorRect.Fill = GraphicsUtil.MediaBrushFromDrawingColor(colorDialog.Color);
             }
         }
+        #endregion
     }
 }

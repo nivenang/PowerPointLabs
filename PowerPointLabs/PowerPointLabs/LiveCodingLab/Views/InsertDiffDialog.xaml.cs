@@ -19,12 +19,17 @@ namespace PowerPointLabs.LiveCodingLab.Views
     {
         private string diffFilePath;
         private string diffGroupName;
+
+        #region Constructor
         public InsertDiffDialog()
         {
             InitializeComponent();
             diffFilePath = "";
             diffGroupName = "";
         }
+        #endregion
+
+        #region Attributes
         public string DiffFile
         {
             get { return diffFilePath; }
@@ -36,6 +41,9 @@ namespace PowerPointLabs.LiveCodingLab.Views
             get { return diffGroupName; }
             set { diffGroupName = value; }
         }
+        #endregion
+
+        #region Event Handlers
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
             diffFilePath = diffFileInput.Text;
@@ -43,5 +51,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
             DialogResult = true;
             Close();
         }
+        #endregion
     }
 }

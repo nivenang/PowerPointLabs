@@ -35,13 +35,15 @@ namespace PowerPointLabs.LiveCodingLab
         {
             try
             {
-
                 PowerPointSlide currentSlide = PowerPointCurrentPresentationInfo.CurrentSlide;
+
+                // Check that there is a slide selected by the user
                 if (currentSlide == null)
                 {
                     currentSlide = currentPresentation.Slides[currentPresentation.SlideCount - 1];
                 }
 
+                // Check that there exists a "before" and "after" code
                 if (codeListBox.Count != 2)
                 {
                     MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesMissingCodeSnippet,
@@ -52,6 +54,7 @@ namespace PowerPointLabs.LiveCodingLab
                 CodeBoxPaneItem diffCodeBoxBefore = codeListBox[0];
                 CodeBoxPaneItem diffCodeBoxAfter = codeListBox[1];
 
+                // Case 1: Animating differences across a Diff File
                 if (diffCodeBoxBefore.CodeBox.IsDiff && diffCodeBoxAfter.CodeBox.IsDiff)
                 {
                     if (diffCodeBoxBefore.CodeBox.Text != diffCodeBoxAfter.CodeBox.Text)
@@ -62,6 +65,7 @@ namespace PowerPointLabs.LiveCodingLab
                     }
 
                 }
+                // Case 2: Animating differences across two user-input code snippets by building a diff file
                 else if (!diffCodeBoxBefore.CodeBox.IsDiff && !diffCodeBoxAfter.CodeBox.IsDiff)
                 {
                     // Check that there exists a "before" code and an "after" code to be animated
@@ -85,6 +89,7 @@ namespace PowerPointLabs.LiveCodingLab
                     diffCodeBoxAfter.CodeBox.Shape.Width = diffCodeBoxBefore.CodeBox.Shape.Width;
                     diffCodeBoxAfter.CodeBox.Shape.Height = diffCodeBoxBefore.CodeBox.Shape.Height;
                 }
+                // Default: Inform user that code snippets to be animated do not match up
                 else
                 {
                     MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesMissingCodeSnippet,
@@ -96,8 +101,10 @@ namespace PowerPointLabs.LiveCodingLab
                 PowerPointSlide transitionSlide = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, index: currentSlide.Index + 1);
                 transitionSlide.Name = LiveCodingLabText.TransitionSlideIdentifier + DateTime.Now.ToString("yyyyMMddHHmmssffff");
 
+                // Create the transition text in the transition slide for Animating Word Diff
                 IEnumerable<Tuple<WordDiffType, Shape, Shape>> transitionText = CreateTransitionTextForWordDiff(transitionSlide, diffCodeBoxBefore, diffCodeBoxAfter);
 
+                // Animates the differences between the "before" and "after" code in the transition slide
                 CreateAnimationForTransitionText(transitionSlide, transitionText);
 
                 AddPowerPointLabsIndicator(transitionSlide);
@@ -109,6 +116,12 @@ namespace PowerPointLabs.LiveCodingLab
             }
         }
 
+        /// <summary>
+        /// Animates the differences between the "before" and "after" code snippets in the transition slide
+        /// Precondition: shapes in the transition slide must exist
+        /// </summary>
+        /// <param name="transitionSlide">transition slide to animate the code snippets</param>
+        /// <param name="transitionText">list containing tuples of shapes to create animations between</param>
         private void CreateAnimationForTransitionText(PowerPointSlide transitionSlide, IEnumerable<Tuple<WordDiffType, Shape, Shape>> transitionText)
         {
             PowerPoint.Sequence sequence = transitionSlide.TimeLine.MainSequence;
@@ -352,6 +365,13 @@ namespace PowerPointLabs.LiveCodingLab
             }
         }
 
+        /// <summary>
+        /// Creates the "before" and "after" code in the transition slide with each difference having a text box for animation
+        /// </summary>
+        /// <param name="transitionSlide">transition slide to create the code snippets in</param>
+        /// <param name="diffCodeBoxBefore">code box containing the "before" code snippet</param>
+        /// <param name="diffCodeBoxAfter">code box containing the "after" code snippet</param>
+        /// <returns>list of shapes to be animated in order</returns>
         private List<Tuple<WordDiffType, Shape, Shape>> CreateTransitionTextForWordDiff(PowerPointSlide transitionSlide, CodeBoxPaneItem diffCodeBoxBefore, CodeBoxPaneItem diffCodeBoxAfter)
         {
             PowerPoint.TextRange codeTextBeforeEdit = diffCodeBoxBefore.CodeBox.Shape.TextFrame.TextRange;
@@ -545,6 +565,10 @@ namespace PowerPointLabs.LiveCodingLab
             return transitionTextToAnimate;
         }
 
+        /// <summary>
+        /// Apply formatting and timings to delete effects in word diff animation to simulate code deletion
+        /// </summary>
+        /// <param name="effectList">list of effects to format</param>
         private void FormatWordDiffDeleteEffects(List<PowerPoint.Effect> effectList)
         {
             foreach (PowerPoint.Effect effect in effectList)
@@ -556,6 +580,10 @@ namespace PowerPointLabs.LiveCodingLab
             }
         }
 
+        /// <summary>
+        /// Apply formatting and timings to add effects in word diff animation to simulate code addition
+        /// </summary>
+        /// <param name="effectList">list of effects to format</param>
         private void FormatWordDiffAddEffects(List<PowerPoint.Effect> effectList)
         {
             foreach (PowerPoint.Effect effect in effectList)
@@ -566,6 +594,10 @@ namespace PowerPointLabs.LiveCodingLab
             }
         }
 
+        /// <summary>
+        /// Apply formatting and timings to colour change effects in word diff animation to simulate highlighting of code to be modified.
+        /// </summary>
+        /// <param name="effectList">list of effects to format</param>
         private void FormatWordDiffColourChangeEffects(List<PowerPoint.Effect> effectList)
         {
             foreach (PowerPoint.Effect effect in effectList)
@@ -575,6 +607,11 @@ namespace PowerPointLabs.LiveCodingLab
             }
         }
 
+        /// <summary>
+        /// Apply formatting and timings to move left effects in word diff animation to simulate code moving left to close up gaps from deletion.
+        /// </summary>
+        /// <param name="effectList">list of effects to format</param>
+        /// <param name="offset">distance for code to shift left by</param>
         private void FormatWordDiffMoveLeftEffects(List<PowerPoint.Effect> effectList, float offset)
         {
             foreach (PowerPoint.Effect effect in effectList)
@@ -589,6 +626,11 @@ namespace PowerPointLabs.LiveCodingLab
             }
         }
 
+        /// <summary>
+        /// Apply formatting and timings to move right effects in word diff animation to simulate code moving right to create space for addition.
+        /// </summary>
+        /// <param name="effectList">list of effects to format</param>
+        /// <param name="offset">distance for code to shift right by</param>
         private void FormatWordDiffMoveRightEffects(List<PowerPoint.Effect> effectList, float offset)
         {
             foreach (PowerPoint.Effect effect in effectList)
@@ -603,6 +645,11 @@ namespace PowerPointLabs.LiveCodingLab
             }
         }
 
+        /// <summary>
+        /// Retrieves all shapes in the specified slide, grouped by line
+        /// </summary>
+        /// <param name="slide">Slide to retrieve the shapes from</param>
+        /// <returns>dictionary that stores lists of shapes, keyed by line number</returns>
         private Dictionary<float, List<Shape>> GetShapesByLine(PowerPointSlide slide)
         {
             Dictionary<float, List<Shape>> shapesByLine = new Dictionary<float, List<Shape>>();

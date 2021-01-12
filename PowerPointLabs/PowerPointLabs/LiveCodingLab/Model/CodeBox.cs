@@ -252,6 +252,7 @@ namespace PowerPointLabs.LiveCodingLab.Model
         private string shapeName;
         #endregion
 
+        #region Constructor
         public CodeBox(int codeBoxId, string codeFile = "", string codeText = "", string codeDiff = "", bool isFile = false, bool isText = true, bool isDiff = false, PowerPointSlide slide = null, string shapeName = "", int diffIndex = -1)
         {
             this.codeBoxId = codeBoxId;
@@ -265,6 +266,7 @@ namespace PowerPointLabs.LiveCodingLab.Model
             this.diffIndex = diffIndex;
             this.shapeName = shapeName;
         }
+        #endregion
 
         public override bool Equals(object other)
         {

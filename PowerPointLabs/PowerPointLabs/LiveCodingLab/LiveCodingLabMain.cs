@@ -38,14 +38,19 @@ namespace PowerPointLabs.LiveCodingLab
             Equal
         }
 
+        #region Constructor
         public LiveCodingLabMain()
         {
             currentPresentation = PowerPointPresentation.Current;
         }
+        #endregion
 
         /// <summary>
         /// Deletes all redundant effects from the sequence.
         /// </summary>
+        /// <param name="markedForRemoval">list of redundant effects to be removed</param>
+        /// <param name="effectList">list of effects to be trimmed</param>
+        /// <returns>list of effects to be kept</returns>
         private static List<PowerPoint.Effect> DeleteRedundantEffects(List<int> markedForRemoval, List<PowerPoint.Effect> effectList)
         {
             for (int i = markedForRemoval.Count - 1; i >= 0; --i)
@@ -61,6 +66,10 @@ namespace PowerPointLabs.LiveCodingLab
         /// <summary>
         /// Takes the effects in the sequence in the range [startIndex,endIndex) and puts them into a list in the same order.
         /// </summary>
+        /// <param name="sequence">sequence of animation effects to appear in</param>
+        /// <param name="startIndex">starting index of the effects to be converted to list</param>
+        /// <param name="endIndex">ending index of the effects to be converted to list</param>
+        /// <returns>list of effects to be made into a list</returns>
         private static List<PowerPoint.Effect> AsList(PowerPoint.Sequence sequence, int startIndex, int endIndex)
         {
             List<PowerPoint.Effect> list = new List<PowerPoint.Effect>();
@@ -93,6 +102,10 @@ namespace PowerPointLabs.LiveCodingLab
                    shape.TextFrame2.HasText == MsoTriState.msoTrue;
         }
 
+        /// <summary>
+        /// Helper method to add the PowerPointLabs logo to created slides
+        /// </summary>
+        /// <param name="_slide">slide to insert the logo into</param>
         private void AddPowerPointLabsIndicator(PowerPointSlide _slide)
         {
             String tempFileName = Path.GetTempFileName();
@@ -107,6 +120,12 @@ namespace PowerPointLabs.LiveCodingLab
 
             ShapeUtil.MakeShapeViewTimeInvisible(indicatorShape, _slide);
         }
+
+        /// <summary>
+        /// Helper method to append line ends to each line
+        /// </summary>
+        /// <param name="line">Line to append the line end to</param>
+        /// <returns>line containing the appended line end</returns>
         private static string AppendLineEnd(string line)
         {
             if (line.Contains("\r\n"))

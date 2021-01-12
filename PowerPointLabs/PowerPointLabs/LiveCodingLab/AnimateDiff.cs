@@ -299,8 +299,11 @@ namespace PowerPointLabs.LiveCodingLab
         }
 
         /// <summary>
-        /// Deletes all redundant effects from the sequence.
+        /// Removes all redundant delete effects and modifies effect animation to simulate a delete animation.
         /// </summary>
+        /// <param name="lineToKeep">effect line which is retained while all other effects are deleted</param>
+        /// <param name="effectList">list of effects to be formatted</param>
+        /// <returns>list of formatted effects</returns>
         private List<PowerPoint.Effect> FormatDeleteEffects(int lineToKeep, List<PowerPoint.Effect> effectList)
         {
             for (int i = effectList.Count - 1; i >= 0; --i)
@@ -322,9 +325,15 @@ namespace PowerPointLabs.LiveCodingLab
             }
             return effectList;
         }
+
         /// <summary>
-        /// Deletes all redundant effects from the sequence.
+        /// Removes all redundant move up effects and modifies effect animation to simulate a move up animation.
         /// </summary>
+        /// <param name="lineToKeep">effect line which is retained while all other effects are deleted</param>
+        /// <param name="effectList">list of effects to be formatted</param>
+        /// <param name="currentMultiplier">multiplier for the distance that the effect must travel</param>
+        /// <param name="fontSize">size of font to scale the effects movement distance</param>
+        /// <returns>list of formatted effects</returns>
         private List<PowerPoint.Effect> FormatMoveUpEffects(int lineToKeep, List<PowerPoint.Effect> effectList, int currentMultiplier, float fontSize)
         {
             for (int i = lineToKeep; i >= 0; --i)
@@ -345,9 +354,15 @@ namespace PowerPointLabs.LiveCodingLab
             }
             return effectList;
         }
+
         /// <summary>
-        /// Deletes all redundant effects from the sequence.
+        /// Removes all redundant move up effects for whitespaces and modifies effect animation to simulate a move up animation.
         /// </summary>
+        /// <param name="lineToKeep">effect line which is retained while all other effects are deleted</param>
+        /// <param name="effectList">list of effects to be formatted</param>
+        /// <param name="currentMultiplier">multiplier for the distance that the effect must travel</param>
+        /// <param name="fontSize">size of font to scale the effects movement distance</param>
+        /// <returns>list of formatted effects</returns>
         private List<PowerPoint.Effect> FormatMoveUpWhitespaceEffects(int lineToKeep, List<PowerPoint.Effect> effectList, int currentMultiplier, float fontSize)
         {
             if (lineToKeep > 0)
@@ -374,8 +389,13 @@ namespace PowerPointLabs.LiveCodingLab
         }
 
         /// <summary>
-        /// Deletes all redundant effects from the sequence.
+        /// Removes all redundant move down effects and modifies effect animation to simulate a move down animation.
         /// </summary>
+        /// <param name="lineToKeep">effect line which is retained while all other effects are deleted</param>
+        /// <param name="effectList">list of effects to be formatted</param>
+        /// <param name="currentMultiplier">multiplier for the distance that the effect must travel</param>
+        /// <param name="fontSize">size of font to scale the effects movement distance</param>
+        /// <returns>list of formatted effects</returns>
         private List<PowerPoint.Effect> FormatMoveDownEffects(int lineToKeep, List<PowerPoint.Effect> effectList, int currentMultiplier, float fontSize)
         {
             if (lineToKeep > 0)
@@ -408,8 +428,13 @@ namespace PowerPointLabs.LiveCodingLab
         }
 
         /// <summary>
-        /// Deletes all redundant effects from the sequence.
+        /// Removes all redundant move down effects with whitespaces and modifies effect animation to simulate a move down animation.
         /// </summary>
+        /// <param name="lineToKeep">effect line which is retained while all other effects are deleted</param>
+        /// <param name="effectList">list of effects to be formatted</param>
+        /// <param name="currentMultiplier">multiplier for the distance that the effect must travel</param>
+        /// <param name="fontSize">size of font to scale the effects movement distance</param>
+        /// <returns>list of formatted effects</returns>
         private List<PowerPoint.Effect> FormatMoveDownWhitespaceEffects(int lineToKeep, List<PowerPoint.Effect> effectList, int currentMultiplier, float fontSize)
         {
             if (lineToKeep > 0)
@@ -442,13 +467,16 @@ namespace PowerPointLabs.LiveCodingLab
         }
 
         /// <summary>
-        /// Deletes all redundant effects from the sequence.
+        /// Removes all redundant insert effects and modifies effect animation to simulate an insert animation.
         /// </summary>
+        /// <param name="lineToKeep">effect line which is retained while all other effects are deleted</param>
+        /// <param name="effectList">list of effects to be formatted</param>
+        /// <returns>list of formatted effects</returns>
         private List<PowerPoint.Effect> FormatInsertEffects(int lineToKeep, List<PowerPoint.Effect> effectList)
         {
             for (int i = effectList.Count - 1; i >= 0; --i)
             {
-                // delete redundant colour change effects from back.
+                // delete redundant insert effects from back.
                 if (i != lineToKeep)
                 {
                     effectList[i].Delete();
@@ -463,9 +491,13 @@ namespace PowerPointLabs.LiveCodingLab
             }
             return effectList;
         }
+
         /// <summary>
-        /// Deletes all redundant effects from the sequence.
+        /// Removes all redundant colour change effects for lines to disappear and modifies effect animation to simulate a colour change animation.
         /// </summary>
+        /// <param name="lineToKeep">effect line which is retained while all other effects are deleted</param>
+        /// <param name="effectList">list of effects to be formatted</param>
+        /// <returns>list of formatted effects</returns>
         private List<PowerPoint.Effect> FormatDisappearColourChangeEffects(int lineToKeep, List<PowerPoint.Effect> effectList)
         {
             for (int i = effectList.Count - 1; i >= 0; --i)
@@ -485,9 +517,13 @@ namespace PowerPointLabs.LiveCodingLab
             }
             return effectList;
         }
+
         /// <summary>
-        /// Deletes all redundant effects from the sequence.
+        /// Removes all redundant colour change effects for lines to appear and modifies effect animation to simulate a colour change animation.
         /// </summary>
+        /// <param name="lineToKeep">effect line which is retained while all other effects are deleted</param>
+        /// <param name="effectList">list of effects to be formatted</param>
+        /// <returns>list of formatted effects</returns>
         private List<PowerPoint.Effect> FormatAppearColourChangeEffects(int lineToKeep, List<PowerPoint.Effect> effectList)
         {
             for (int i = effectList.Count - 1; i >= 0; --i)
@@ -511,6 +547,7 @@ namespace PowerPointLabs.LiveCodingLab
         /// <summary>
         /// Apply formatting and timing to the "disappear" effects (i.e. repetitive code).
         /// </summary>
+        /// <param name="disappearEffects">list of disappear effects</param>
         private static void FormatDisappearEffects(List<PowerPoint.Effect> disappearEffects)
         {
             foreach (PowerPoint.Effect effect in disappearEffects)
@@ -521,6 +558,12 @@ namespace PowerPointLabs.LiveCodingLab
             }
         }
 
+        /// <summary>
+        /// Rearranges the effects to simulate code change in one single block
+        /// </summary>
+        /// <param name="effectList">list of effects to be rearranged</param>
+        /// <param name="beforeEffect">effect to be queued in front of the effect list</param>
+        /// <param name="triggerType"></param>
         private static void RearrangeBlockDiffEffects(List<PowerPoint.Effect> effectList, PowerPoint.Effect beforeEffect, PowerPoint.MsoAnimTriggerType triggerType)
         {
             for (int i = 0; i < effectList.Count; i++)

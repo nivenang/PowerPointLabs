@@ -18,21 +18,30 @@ namespace PowerPointLabs.LiveCodingLab.Views
     public partial class GroupCodeBoxDialog
     {
         private string groupName;
+
+        #region Constructor
         public GroupCodeBoxDialog()
         {
             InitializeComponent();
             groupName = "";
         }
+        #endregion
+
+        #region Attributes
         public string ResponseText
         {
             get { return groupName; }
             set { groupName = value; }
         }
+        #endregion
+
+        #region Event Handlers
         private void OkButton_Click(object sender, RoutedEventArgs e)
         {
             groupName = groupNameInput.Text;
             DialogResult = true;
             Close();
         }
+        #endregion
     }
 }

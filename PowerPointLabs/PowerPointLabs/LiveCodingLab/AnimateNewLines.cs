@@ -33,6 +33,7 @@ namespace PowerPointLabs.LiveCodingLab
 
         private static float fontScale = 4.5f;
 
+        [Obsolete("DO NOT use this animation! Use AnimateDiff instead")]
         public void AnimateNewLines(List<CodeBoxPaneItem> listCodeBox)
         {
             try

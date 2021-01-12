@@ -27,15 +27,16 @@ namespace PowerPointLabs.LiveCodingLab.Utility
     {
 #pragma warning disable 0618
         /// <summary>
-        /// Insert code box text to slide. 
+        /// Insert code box text to specified slide. 
         /// Precondition: shape with codeBox.shapeName must not exist in slide before applying the method
         /// </summary>
-        /// <param name="slide"></param>
+        /// <param name="slide">Slide to insert textbox into</param>
         /// <param name="codeBox">CodeBox object containing the code snippet</param>
         /// <returns>generated code text box</returns>
         public static CodeBox InsertCodeBoxToSlide(PowerPointSlide slide, CodeBox codeBox)
         {
             string textToInsert;
+
             if (codeBox.IsFile)
             {
                 textToInsert = CodeBoxFileService.GetCodeFromFile(codeBox.Text);
@@ -44,7 +45,11 @@ namespace PowerPointLabs.LiveCodingLab.Utility
             {
                 textToInsert = codeBox.Text;
             }
+
+            // Create textbox in the specified slide
             Shape codeShape = slide.Shapes.AddTextbox(MsoTextOrientation.msoTextOrientationHorizontal, 170, 100, 700, 250);
+            
+            // Insert text into the created textbox
             if (textToInsert != null && textToInsert != "")
             {
                 codeShape.TextFrame.TextRange.Text = textToInsert;
@@ -57,6 +62,8 @@ namespace PowerPointLabs.LiveCodingLab.Utility
             codeShape.TextEffect.Alignment = MsoTextEffectAlignment.msoTextEffectAlignmentLeft;
             codeShape.Name = string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, codeBox.Id);
             codeBox.Slide = slide;
+
+            // Highlight the syntax of the code in the textbox
             if (codeBox.IsFile)
             {
                 codeBox.Shape = HighlightSyntax(codeShape, slide, codeBox.FileText);
@@ -70,16 +77,21 @@ namespace PowerPointLabs.LiveCodingLab.Utility
         }
 
         /// <summary>
-        /// Insert code box text to slide. 
+        /// Insert code box text of a diff file to slide. 
         /// Precondition: shape with codeBox.shapeName must not exist in slide before applying the method
         /// </summary>
-        /// <param name="slide"></param>
+        /// <param name="slide">Slide to insert textbox into</param>
         /// <param name="codeBox">CodeBox object containing the code snippet</param>
+        /// <param name="diff">diff file containing differences in code across two code snippets</param>
         /// <returns>generated code text box</returns>
         public static CodeBox InsertDiffCodeBoxToSlide(PowerPointSlide slide, CodeBox codeBox, FileDiff diff)
         {
             string textToInsert = CodeBoxFileService.ConvertFileDiffToString(diff)[codeBox.DiffIndex];
+
+            // Create textbox in the specified slide
             Shape codeShape = slide.Shapes.AddTextbox(MsoTextOrientation.msoTextOrientationHorizontal, 170, 100, 700, 250);
+
+            // Insert text into the created textbox
             if (textToInsert != null && textToInsert != "")
             {
                 codeShape.TextFrame.TextRange.Text = textToInsert;
@@ -92,16 +104,26 @@ namespace PowerPointLabs.LiveCodingLab.Utility
             codeShape.TextEffect.Alignment = MsoTextEffectAlignment.msoTextEffectAlignmentLeft;
             codeShape.Name = string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, codeBox.Id);
             codeBox.Slide = slide;
+
+            // Highlight the syntax of the code in the textbox
             codeBox.Shape = HighlightSyntax(codeShape, slide);
             codeBox.ShapeName = codeShape.Name;
             return codeBox;
         }
 
+        /// <summary>
+        /// Insert a textbox containing details of all code boxes into specified slide for storage purposes. 
+        /// </summary>
+        /// <param name="slide">Slide to insert textbox into</param>
+        /// <param name="shapeName">Name of text box used for the storage</param>
+        /// <param name="text">Encoded text for storage of code boxes</param>
+        /// <returns>generated text box containing encoded storage text</returns>
         public static Shape InsertStorageCodeBoxToSlide(PowerPointSlide slide, string shapeName, string text)
         {
             float slideWidth = PowerPointPresentation.Current.SlideWidth;
             float slideHeight = PowerPointPresentation.Current.SlideHeight;
 
+            // Create textbox in the specified slide
             Shape storageBox = slide.Shapes.AddTextbox(MsoTextOrientation.msoTextOrientationHorizontal, 0, 0,
                 slideWidth, 100);
             storageBox.Name = shapeName;
@@ -121,10 +143,11 @@ namespace PowerPointLabs.LiveCodingLab.Utility
         /// <summary>
         /// Replace original text in CodeBox shape on slide with the updated CodeBox text
         /// </summary>
-        /// <param name="codeBox"></param>
+        /// <param name="codeBox">Code box to be updated</param>
         /// <returns>updated codeBox containing the new text</returns>
         public static CodeBox ReplaceTextForShape(CodeBox codeBox)
         {
+            // Insert a new code box into the slide if code box does not exist in the slide
             try
             {
                 if (codeBox.Shape == null && !codeBox.Slide.HasShapeWithSameName(string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, codeBox.Id)))
@@ -145,10 +168,13 @@ namespace PowerPointLabs.LiveCodingLab.Utility
                 return InsertCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, codeBox);
             }
 
+            // Update the code in the slide to the new code
             Shape shapeInSlide = codeBox.Shape;
             shapeInSlide.TextFrame.TextRange.Font.Name = LiveCodingLabSettings.codeFontType;
             shapeInSlide.TextFrame.TextRange.Font.Size = LiveCodingLabSettings.codeFontSize;
             shapeInSlide.TextFrame.TextRange.Font.Color.RGB = LiveCodingLabSettings.codeTextColor.ToArgb();
+            
+            // Highlights the syntax of the updated code
             if (codeBox.IsFile)
             {
                 shapeInSlide.TextFrame.TextRange.Text = CodeBoxFileService.GetCodeFromFile(codeBox.Text);
@@ -168,10 +194,19 @@ namespace PowerPointLabs.LiveCodingLab.Utility
             return codeBox;
         }
 
+        /// <summary>
+        /// Highlights the syntax of the code box according to user's preferences 
+        /// </summary>
+        /// <param name="shape">Shape containing the code in the slide</param>
+        /// <param name="slide">Slide that contains the shape to be highlighted</param>
+        /// <param name="filePath">filePath of the code if it exists</param>
+        /// <returns>generated code box with highlighted syntax</returns>
         private static Shape HighlightSyntax(Shape shape, PowerPointSlide slide, string filePath="")
         {
+            // Break down entire code into individual lines
             Shape shapeToProcess = ConvertTextToParagraphs(shape);
            
+            // Generates the relevant grammar to highlight the syntax based on user specifications
             Dictionary<string, Type> stringToGrammar = new Dictionary<string, Type>
             {
                 { "Java", typeof(JavaGrammar) },
@@ -195,12 +230,15 @@ namespace PowerPointLabs.LiveCodingLab.Utility
             IGrammar grammar;
             Tokenizer lexer;
 
+            
             try
             {
+                // Automatically select the best grammar for syntax highlighting if code box is a file
                 if (filePath != "" && filePath.LastIndexOf('.') >= 0 && fileToGrammar.ContainsKey(filePath.Substring(filePath.LastIndexOf('.')+1)))
                 {
                     grammar = (IGrammar)Activator.CreateInstance(fileToGrammar[filePath.Substring(filePath.LastIndexOf('.') + 1)]);
                 }
+                // Use default grammar if no grammar is specified by user
                 else if (LiveCodingLabSettings.language.Equals("None"))
                 {
                     string keyWords = "(abstract|as|base|bool|break|byte|case|catch|char|checked|class|const|continue|decimal|default|delegate|do|double|else|enum|event|explicit|extern|false|finally|fixed|float|for|" +
@@ -218,6 +256,7 @@ namespace PowerPointLabs.LiveCodingLab.Utility
                     }
                     return shapeToProcess;
                 }
+                // Use user specified grammar if no filepath exists
                 else
                 {
                     grammar = (IGrammar)Activator.CreateInstance(stringToGrammar[LiveCodingLabSettings.language]);
@@ -233,6 +272,7 @@ namespace PowerPointLabs.LiveCodingLab.Utility
                 return shapeToProcess;
             }
 
+            // Colourise each token based on its token type
             foreach (TextRange paragraph in shapeToProcess.TextFrame.TextRange.Paragraphs())
             {
                 foreach (var token in lexer.Tokenize(paragraph.Text))
@@ -245,11 +285,17 @@ namespace PowerPointLabs.LiveCodingLab.Utility
             return shapeToProcess;
         }
 
+        /// <summary>
+        /// Converts a chunk of code into individual lines for easier parsing
+        /// </summary>
+        /// <param name="shape">Shape containing the code in the slide</param>
+        /// <returns>shape containing codes broken down into lines</returns>
         private static Shape ConvertTextToParagraphs(Shape shape)
         {
             TextRange codeText = shape.TextFrame.TextRange;
             string textWithParagraphs = "";
 
+            // Create a new line in the code box for every newline encountered
             foreach (TextRange line in codeText.Lines())
             {
                 if (line.Text.Contains("\r\n") || line.Text == "")
