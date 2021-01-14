@@ -129,6 +129,7 @@ namespace PowerPointLabs.LiveCodingLab
             HashSet<Shape> addShapes = new HashSet<Shape>();
             float emptyTextboxOffset = 7.272875f;
 
+            // Initialise a hash set of all addition text boxes
             foreach (Tuple<WordDiffType, Shape, Shape> shapePair in transitionText)
             {
                 if (shapePair.Item1 == WordDiffType.AddEqual)
@@ -141,6 +142,7 @@ namespace PowerPointLabs.LiveCodingLab
                 }
             }
 
+            // Create animations for each textbox
             foreach (Tuple<WordDiffType, Shape, Shape> pairToAnimate in transitionText)
             {
                 int currentIndex = sequence.Count;
@@ -150,7 +152,10 @@ namespace PowerPointLabs.LiveCodingLab
 
                 switch (pairToAnimate.Item1)
                 {
+                    // Case 1: First textbox contains code to be added
                     case WordDiffType.AddEqual:
+
+                        // Create movement effects if the following shape is on the same line
                         if (beforeShape.Top.Equals(afterShape.Top))
                         {
                             List<Shape> shapesToShift = shapesByLine[afterShape.Top];
@@ -208,6 +213,7 @@ namespace PowerPointLabs.LiveCodingLab
                             }
                         }
 
+                        // Create appear effects for the addition code
                         currentIndex = sequence.Count;
 
                         sequence.AddEffect(beforeShape,
@@ -227,7 +233,10 @@ namespace PowerPointLabs.LiveCodingLab
                         FormatWordDiffColourChangeEffects(colourChangeAddEqualEffects);
 
                         break;
+                    // Case 2: First textbox contains deletion code, second textbox has deletion or equal code
                     case WordDiffType.DeleteEqual:
+                        
+                        // Create deletion animation effects for the deletion code
                         sequence.AddEffect(beforeShape,
                             PowerPoint.MsoAnimEffect.msoAnimEffectChangeFontColor,
                             PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
@@ -244,6 +253,7 @@ namespace PowerPointLabs.LiveCodingLab
                         List<PowerPoint.Effect> deleteEqualEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
                         FormatWordDiffDeleteEffects(deleteEqualEffects);
 
+                        // Create the move left (closing up the gap from deleted line) effects only if following code is on the same line
                         if (!beforeShape.Equals(afterShape) && beforeShape.Top.Equals(afterShape.Top))
                         {
                             List<Shape> shapesToShift = shapesByLine[afterShape.Top];
@@ -263,7 +273,10 @@ namespace PowerPointLabs.LiveCodingLab
                         }
 
                         break;
+                    // Case 3: First textbox contains deletion code, second textbox has addition code
                     case WordDiffType.DeleteAdd:
+
+                        // Create deletion animation effects for the deletion code
                         sequence.AddEffect(beforeShape,
                             PowerPoint.MsoAnimEffect.msoAnimEffectChangeFontColor,
                             PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
@@ -280,6 +293,7 @@ namespace PowerPointLabs.LiveCodingLab
                         List<PowerPoint.Effect> deleteEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
                         FormatWordDiffDeleteEffects(deleteEffects);
 
+                        // Create the movement effects to either close the gap from the deletion or to create space for the addition line
                         if (beforeShape.Top.Equals(afterShape.Top))
                         {
                             List<Shape> shapesToShift = shapesByLine[afterShape.Top];
@@ -340,6 +354,7 @@ namespace PowerPointLabs.LiveCodingLab
                             }
                         }
 
+                        // Create addition animation effects for the new addition line
                         currentIndex = sequence.Count;
 
                         sequence.AddEffect(afterShape,
@@ -359,6 +374,7 @@ namespace PowerPointLabs.LiveCodingLab
                         FormatWordDiffColourChangeEffects(colourChangeAddEffects);
 
                         break;
+                    // Default: No animation created
                     default:
                         break;
                 }
@@ -374,11 +390,6 @@ namespace PowerPointLabs.LiveCodingLab
         /// <returns>list of shapes to be animated in order</returns>
         private List<Tuple<WordDiffType, Shape, Shape>> CreateTransitionTextForWordDiff(PowerPointSlide transitionSlide, CodeBoxPaneItem diffCodeBoxBefore, CodeBoxPaneItem diffCodeBoxAfter)
         {
-            PowerPoint.TextRange codeTextBeforeEdit = diffCodeBoxBefore.CodeBox.Shape.TextFrame.TextRange;
-            PowerPoint.TextRange codeTextAfterEdit = diffCodeBoxAfter.CodeBox.Shape.TextFrame.TextRange;
-            var differ = DiffMatchPatchModule.Default;
-            var diffs = differ.DiffMain(codeTextBeforeEdit.Text, codeTextAfterEdit.Text);
-            differ.DiffCleanupSemantic(diffs);
             float emptyTextboxOffset = 7.272875f;
             float topPointerLineOffset = 20 * (diffCodeBoxBefore.CodeBox.Shape.TextFrame.TextRange.Font.Size / 18);
             float originalLeftPointer = diffCodeBoxBefore.CodeBox.Shape.Left;
@@ -390,25 +401,40 @@ namespace PowerPointLabs.LiveCodingLab
             int charCountBefore = 1;
             List<Tuple<Operation, Shape>> transitionText = new List<Tuple<Operation, Shape>>();
             List<Tuple<WordDiffType, Shape, Shape>> transitionTextToAnimate = new List<Tuple<WordDiffType, Shape, Shape>>();
+            
+            // Use Diff library to create differences in words across the "before" and "after" code
+            PowerPoint.TextRange codeTextBeforeEdit = diffCodeBoxBefore.CodeBox.Shape.TextFrame.TextRange;
+            PowerPoint.TextRange codeTextAfterEdit = diffCodeBoxAfter.CodeBox.Shape.TextFrame.TextRange;
+            var differ = DiffMatchPatchModule.Default;
+            var diffs = differ.DiffMain(codeTextBeforeEdit.Text, codeTextAfterEdit.Text);
+            differ.DiffCleanupSemantic(diffs);
 
+            // Create individual textboxes for each diff object
             for (int j = 0; j < diffs.Count; j++)
             {
+                // Split each diff based on newlines
                 string text = diffs[j].Text;
                 string[] lines = text.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
+                
+                // Maintain a left and top pointer for both "before" and "after code
+                // to get the last known position of the code
                 float leftPointer;
                 float topPointer;
 
+                // Use the "after" code pointer if the line to be created is an addition line
                 if (diffs[j].Operation.IsInsert)
                 {
                     leftPointer = leftAfterPointer;
                     topPointer = topAfterPointer;
                 }
+                // else, use the "before" code pointer if the line to be created is a deletion line
                 else
                 {
                     leftPointer = leftBeforePointer;
                     topPointer = topBeforePointer;
                 }
 
+                // Create a textbox for the first part of the code line (driver for code lines with > 1 line)
                 Shape textbox = transitionSlide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
                     leftPointer, topPointer, 0, 0);
                 
@@ -418,8 +444,11 @@ namespace PowerPointLabs.LiveCodingLab
                 textbox.TextFrame.TextRange.Font.Size = codeTextBeforeEdit.Font.Size;
                 textbox.TextFrame.TextRange.Font.Name = codeTextBeforeEdit.Font.Name;
                 textbox.TextEffect.Alignment = Office.MsoTextEffectAlignment.msoTextEffectAlignmentLeft;
+
+                // Add the created textbox reference to a list for further processing
                 transitionText.Add(Tuple.Create(diffs[j].Operation, textbox));
 
+                // Syntax Highlighting for the created textbox
                 for (int charIndex = 1; charIndex <= lines[0].Length; charIndex++)
                 {
                     if (diffs[j].Operation.IsDelete || diffs[j].Operation.IsEqual)
@@ -429,22 +458,30 @@ namespace PowerPointLabs.LiveCodingLab
                     }
                 }
 
+                // Adjust left pointer to the end of the newly created textbox for next line 
                 leftPointer += textbox.Width - (2 * emptyTextboxOffset);
+                
+                // Increment the pointer for code lines containing only Equal lines if line is equal
                 if (!diffs[j].Operation.IsDelete)
                 {
                     leftEqualPointer += textbox.Width - (2 * emptyTextboxOffset);
                 }
+
+                // Set pointers to next line if the code line ends with a newline
                 if (lines[0].Contains("\n"))
                 {
                     leftPointer = originalLeftPointer;
                     leftEqualPointer = originalLeftPointer;
                     topPointer += topPointerLineOffset;
                 }
+
+                // Increment Syntax Highlighting pointer if line ends with newline
                 if (!diffs[j].Operation.IsInsert && charCountBefore <= codeTextBeforeEdit.Characters().Length && Char.IsControl(codeTextBeforeEdit.Characters(charCountBefore, 1).Text, 0))
                 {
                     charCountBefore++;
                 }
 
+                // Repeatedly create textboxes for the remaining part of the code line (for diff code lines > 1 line)
                 if (lines.Length > 1)
                 {
                     for (int i = 1; i < lines.Length; i++)
@@ -452,6 +489,8 @@ namespace PowerPointLabs.LiveCodingLab
                         leftPointer = originalLeftPointer;
                         leftEqualPointer = originalLeftPointer;
                         topPointer += topPointerLineOffset;
+
+                        // Create text box for the code line
                         textbox = transitionSlide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
                             leftPointer, topPointer, 0, 0);
 
@@ -461,8 +500,11 @@ namespace PowerPointLabs.LiveCodingLab
                         textbox.TextFrame.TextRange.Font.Size = codeTextBeforeEdit.Font.Size;
                         textbox.TextFrame.TextRange.Font.Name = codeTextBeforeEdit.Font.Name;
                         textbox.TextEffect.Alignment = Office.MsoTextEffectAlignment.msoTextEffectAlignmentLeft;
+                        
+                        // Add the created textbox reference to a list for further processing
                         transitionText.Add(Tuple.Create(diffs[j].Operation, textbox));
 
+                        // Syntax Highlighting for textbox
                         for (int charIndex = 1; charIndex <= lines[i].Length; charIndex++)
                         {
                             if (diffs[j].Operation.IsDelete || diffs[j].Operation.IsEqual)
@@ -472,16 +514,23 @@ namespace PowerPointLabs.LiveCodingLab
                             }
                         }
 
+                        // Increment the syntax highlighter pointer to accommodate new line
                         if (i < lines.Length - 1 && (diffs[j].Operation.IsDelete || diffs[j].Operation.IsEqual))
                         {
                             charCountBefore++;
                         }
                     }
+
+                    // Set left pointer to end of newly created textbox
                     leftPointer += textbox.Width - (2 * emptyTextboxOffset);
+
+                    // Increment the pointer for code lines containing only Equal lines if line is equal
                     if (!diffs[j].Operation.IsDelete)
                     {
                         leftEqualPointer += textbox.Width - (2 * emptyTextboxOffset);
                     }
+
+                    // Set pointers to next line if the code line ends with a newline
                     if (lines[lines.Length - 1].Contains("\n"))
                     {
                         leftPointer = originalLeftPointer;
@@ -489,12 +538,15 @@ namespace PowerPointLabs.LiveCodingLab
                         topPointer += topPointerLineOffset;
                     }
 
+                    // Increment the syntax highlighter pointer if there is a new line
                     if (!diffs[j].Operation.IsInsert && charCountBefore <= codeTextBeforeEdit.Characters().Length && Char.IsControl(codeTextBeforeEdit.Characters(charCountBefore, 1).Text, 0))
                     {
                         charCountBefore++;
                     }
 
                 }
+
+                // Update all left and top pointers according to their Diff types
                 if (diffs[j].Operation.IsDelete)
                 {
                     leftBeforePointer = leftPointer;
@@ -518,6 +570,7 @@ namespace PowerPointLabs.LiveCodingLab
                 }
             }
 
+            // Remove all empty textboxes created
             for (int i = transitionText.Count - 1; i >= 0; i--)
             {
                 if (transitionText[i].Item2.TextFrame.TextRange.Length == 0)
@@ -526,6 +579,7 @@ namespace PowerPointLabs.LiveCodingLab
                 }
             }
 
+            // Creates tuples that stores the diff types of successive pairs of text boxes for animation purposes
             for (int i = 1; i < transitionText.Count; i++)
             {
                 WordDiffType transitionTextType;
@@ -554,6 +608,8 @@ namespace PowerPointLabs.LiveCodingLab
                     i++;
                 }
             }
+
+            // Create a tuple that stores the diff type of the last pair of text boxes for animation purposes
             if (transitionText[transitionText.Count-1].Item1 == Operation.Delete)
             {
                 transitionTextToAnimate.Add(Tuple.Create(WordDiffType.DeleteEqual, transitionText[transitionText.Count - 1].Item2, transitionText[transitionText.Count - 1].Item2));

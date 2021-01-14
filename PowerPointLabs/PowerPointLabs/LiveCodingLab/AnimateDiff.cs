@@ -39,6 +39,8 @@ namespace PowerPointLabs.LiveCodingLab
                 int beforeCounter = 0;
                 int afterCounter = 0;
                 int lineCounter = 0;
+
+                // Get the diff type for each code line
                 foreach (ChunkDiff chunk in diffChunks)
                 {
                     List<LineDiff> diffLines = chunk.Changes.ToList();
@@ -107,6 +109,8 @@ namespace PowerPointLabs.LiveCodingLab
                 Dictionary<int, int> beforeLineToEffectLine = new Dictionary<int, int>();
                 Dictionary<int, int> afterLineToEffectLine = new Dictionary<int, int>();
                 int effectCount = 0;
+
+                // Create a mapping from line number to index of effect in "before" code effect list
                 for (int i = 0; i < codeTextBeforeEdit.Paragraphs().Count; i++)
                 {
                     if (codeTextBeforeEdit.Paragraphs(i+1).TrimText().Text == "")
@@ -119,6 +123,8 @@ namespace PowerPointLabs.LiveCodingLab
                 }
 
                 effectCount = 0;
+
+                // Create a mapping from line number to index of effect in "after" code effect list
                 for (int i = 0; i < codeTextAfterEdit.Paragraphs().Count; i++)
                 {
                     if (codeTextAfterEdit.Paragraphs(i + 1).TrimText().Text == "")
@@ -139,12 +145,18 @@ namespace PowerPointLabs.LiveCodingLab
                 List<PowerPoint.Effect> intermediateAppearEffects = new List<PowerPoint.Effect>();
                 List<PowerPoint.Effect> intermediateDisappearEffects = new List<PowerPoint.Effect>();
 
+                // Keep generating animations for code lines while there are still code lines to be animated
                 while (beforeCount < codeTextBeforeEdit.Paragraphs().Count && afterCount < codeTextAfterEdit.Paragraphs().Count)
                 {
+                    // Case 1: Code line is to be deleted
                     if (fullDiff[lineCount] == DiffType.Delete)
                     {
+                        // Case 1a: Deletion line is a newline, animate only the subsequent move up effects, no deletion animation necessary
                         if (codeTextBeforeEdit.Paragraphs(beforeCount + 1).TrimText().Text == "")
                         {
+                            // Check that there is no addition line after the line to be deleted
+                            // If there is an addition line after the line to be deleted, do not animate the shifting up,
+                            // simply animate the appearance of addition line to minimise shifting effects
                             if (lineCount + 1 >= fullDiff.Count || (lineCount + 1 < fullDiff.Count && fullDiff[lineCount + 1] != DiffType.Add))
                             {
                                 currentIndex = sequence.Count;
@@ -164,6 +176,8 @@ namespace PowerPointLabs.LiveCodingLab
                             lineCount++;
                             continue;
                         }
+
+                        // Case 1b: Deletion line contains text, animate deletion of line and subsequent shifting up of all code below it.
                         currentIndex = sequence.Count;
                         sequence.AddEffect(codeShapeBeforeEdit,
                             PowerPoint.MsoAnimEffect.msoAnimEffectChangeFontColor,
@@ -186,6 +200,9 @@ namespace PowerPointLabs.LiveCodingLab
 
                         intermediateDisappearEffects.AddRange(deleteEffects);
 
+                        // Check that there is no addition line after the line to be deleted
+                        // If there is an addition line after the line to be deleted, do not animate the shifting up,
+                        // simply animate the appearance of addition line to minimise shifting effects
                         if (lineCount + 1 >= fullDiff.Count || (lineCount + 1 < fullDiff.Count && fullDiff[lineCount + 1] != DiffType.Add))
                         {
                             currentIndex = sequence.Count;
@@ -205,8 +222,10 @@ namespace PowerPointLabs.LiveCodingLab
                         beforeCount++;
                         lineCount++;
                     }
+                    // Case 2: Code line is to be inserted/added
                     else if (fullDiff[lineCount] == DiffType.Add)
                     {
+                        // Case 2a: Addition line is a newline, animate only the subsequent move down effects, no addition animation necessary
                         if (codeTextAfterEdit.Paragraphs(afterCount + 1).TrimText().Text == "")
                         {
                             if (lineCount == 0 || (lineCount - 1 >= 0 && fullDiff[lineCount - 1] != DiffType.Delete))
@@ -229,6 +248,10 @@ namespace PowerPointLabs.LiveCodingLab
                             continue;
                         }
 
+                        // Case 2b: Addition line has text, animate both move down effects and addition line
+
+                        // Check if there is a deletion line before the addition line
+                        // If there is no deletion line, animate move down effects to accommodate new addition line
                         if (lineCount == 0 || (lineCount - 1 >= 0 && fullDiff[lineCount - 1] != DiffType.Delete))
                         {
                             currentIndex = sequence.Count;
@@ -245,6 +268,7 @@ namespace PowerPointLabs.LiveCodingLab
                             currentMultiplier++;
                         }
 
+                        // Animate the appearance of the new line
                         currentIndex = sequence.Count;
                         sequence.AddEffect(codeShapeAfterEdit,
                             PowerPoint.MsoAnimEffect.msoAnimEffectWipe,
@@ -270,6 +294,7 @@ namespace PowerPointLabs.LiveCodingLab
                         afterCount++;
                         lineCount++;
                     }
+                    // Case 3: Code line exists in both "before" and "after" code, so no animation is created
                     else
                     {
                         beforeCount++;
@@ -278,6 +303,7 @@ namespace PowerPointLabs.LiveCodingLab
                     }
                 }
 
+                // Rearrange effects to change code from "before" to "after" block by block
                 if (isBlockDiff)
                 {
                     RearrangeBlockDiffEffects(disappearHighlightEffects, disappearEffects[disappearEffects.Count - 1], PowerPoint.MsoAnimTriggerType.msoAnimTriggerOnPageClick);
