@@ -229,12 +229,16 @@ namespace PowerPointLabs.LiveCodingLab.Utility
 
             IGrammar grammar;
             Tokenizer lexer;
-
             
             try
             {
+                if (!LiveCodingLabSettings.language.Equals("None") && !stringToGrammar.ContainsKey(LiveCodingLabSettings.language))
+                {
+                    Tuple<string, List<LexicalRule>, Dictionary<TokenType, Color>> colorScheme = SyntaxHighlightingUploadService.GetColourSchemeFromJson(LiveCodingLabSettings.language);
+                    grammar = new CustomGrammar(colorScheme.Item1, colorScheme.Item2, colorScheme.Item3);
+                }
                 // Automatically select the best grammar for syntax highlighting if code box is a file
-                if (filePath != "" && filePath.LastIndexOf('.') >= 0 && fileToGrammar.ContainsKey(filePath.Substring(filePath.LastIndexOf('.')+1)))
+                else if (filePath != "" && filePath.LastIndexOf('.') >= 0 && fileToGrammar.ContainsKey(filePath.Substring(filePath.LastIndexOf('.') + 1)))
                 {
                     grammar = (IGrammar)Activator.CreateInstance(fileToGrammar[filePath.Substring(filePath.LastIndexOf('.') + 1)]);
                 }
@@ -257,9 +261,14 @@ namespace PowerPointLabs.LiveCodingLab.Utility
                     return shapeToProcess;
                 }
                 // Use user specified grammar if no filepath exists
-                else
+                else if (stringToGrammar.ContainsKey(LiveCodingLabSettings.language))
                 {
                     grammar = (IGrammar)Activator.CreateInstance(stringToGrammar[LiveCodingLabSettings.language]);
+                }
+                else
+                {
+                    Tuple<string, List<LexicalRule>, Dictionary<TokenType, Color>> colorScheme = SyntaxHighlightingUploadService.GetColourSchemeFromJson(LiveCodingLabSettings.language);
+                    grammar = new CustomGrammar(colorScheme.Item1, colorScheme.Item2, colorScheme.Item3);
                 }
                 lexer = new Tokenizer(grammar);
             }

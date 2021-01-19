@@ -1,0 +1,208 @@
+{
+  "language": "C#",
+  "rules": [
+    {
+      "type": "Comment",
+      "regex": "^(//.*)"
+    },
+    {
+      "type": "Comment",
+      "regex": "@/\\*(?:(?!\\*/).)*\\*/"
+    },
+    {
+      "type": "Comment",
+      "regex": "@/\\*(?:(?!\\*/).)*"
+    },
+    {
+      "type": "Comment",
+      "regex": "@(?:(?!\\*/).)*\\*/"
+    },
+    {
+      "type": "Metadata",
+      "regex": [
+        "#include",
+        "#define"
+      ]
+    },
+	{
+	  "type": "WhiteSpace",
+	  "regex": "^\\s"
+	},
+    {
+      "type": "Control",
+      "regex": [
+        "break",
+        "case",
+        "continue",
+        "default",
+        "do",
+        "else",
+        "for",
+        "goto",
+        "if",
+        "return",
+        "switch",
+        "while"
+      ]
+    },
+    {
+      "type": "Keyword",
+      "regex": [
+        "auto",
+        "char",
+        "const",
+        "double",
+        "enum",
+        "extern",
+        "float",
+        "int",
+        "long",
+        "NULL",
+        "register",
+        "short",
+        "signed",
+        "size_t",
+        "sizeof",
+        "static",
+        "struct",
+        "typedef",
+        "union",
+        "unsigned",
+        "void",
+        "volatile",
+        "_Packed"
+      ]
+    },
+    {
+      "type": "Builtins",
+      "regex": [
+        "calloc",
+        "free",
+        "malloc",
+        "realloc",
+        "va_list",
+        "va_start",
+        "va_arg",
+        "va_end",
+        "FILE",
+        "getchar",
+        "putchar",
+        "gets",
+        "puts",
+        "scanf",
+        "printf",
+        "fscanf",
+        "fputc",
+        "fputs",
+        "fclose",
+        "fgets",
+        "fgetc",
+        "fread",
+        "fwrite",
+        "fprintf"
+      ]
+    },
+    {
+      "type": "Identifier",
+      "regex": "^[_A-Za-z][_A-Za-z0-9]*"
+    },
+    {
+      "type": "String",
+      "regex": "^((@'(?:[^']|'')*'|'(?:\\.|[^\\']|)*('|\\b))|(@\"(?:[^\"]|\"\")*\"|\"(?:\\.|[^\\\"])*(\"|\\b)))"
+    },
+    {
+      "type": "String",
+      "regex": "(<.*>)"
+    },
+	{
+	  "type": "Unknown",
+	  "regex": "^."
+	}  
+  ],
+  "color": [
+    {
+      "name": "Comment",
+      "alpha": 128,
+      "blue": 0,
+      "green": 128,
+      "red": 0
+    },
+    {
+      "name": "String",
+      "alpha": 128,
+      "blue": 21,
+      "green": 21,
+      "red": 163
+    },
+    {
+      "name": "Builtins",
+      "alpha": 128,
+      "blue": 0,
+      "green": 0,
+      "red": 0
+    },
+    {
+      "name": "Keyword",
+      "alpha": 128,
+      "blue": 255,
+      "green": 0,
+      "red": 0
+    },
+    {
+      "name": "Identifier",
+      "alpha": 0,
+      "blue": 0,
+      "green": 0,
+      "red": 0
+    },
+    {
+      "name": "Delimiter",
+      "alpha": 0,
+      "blue": 0,
+      "green": 0,
+      "red": 0
+    },
+    {
+      "name": "Number",
+      "alpha": 0,
+      "blue": 0,
+      "green": 0,
+      "red": 0
+    },
+    {
+      "name": "Operator",
+      "alpha": 128,
+      "blue": 0,
+      "green": 0,
+      "red": 0
+    },
+    {
+      "name": "Metadata",
+      "alpha": 128,
+      "blue": 128,
+      "green": 128,
+      "red": 128
+    },
+    {
+      "name": "Control",
+      "alpha": 128,
+      "blue": 196,
+      "green": 0,
+      "red": 143
+    },
+    {
+      "name": "WhiteSpace",
+      "alpha": 0,
+      "blue": 0,
+      "green": 0,
+      "red": 0
+    },
+	{
+      "name": "Unknown",
+      "alpha": 0,
+      "blue": 0,
+      "green": 0,
+      "red": 0
+    },
+  ]
+}

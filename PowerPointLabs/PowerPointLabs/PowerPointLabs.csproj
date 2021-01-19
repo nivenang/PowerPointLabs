@@ -840,6 +840,7 @@
     <Compile Include="LiveCodingLab\AnimateNewLines.cs" />
     <Compile Include="LiveCodingLab\HighlightDifference.cs" />
     <Compile Include="LiveCodingLab\ILiveCodingLabPane.cs" />
+    <Compile Include="LiveCodingLab\Lexer\Grammars\CustomGrammar.cs" />
     <Compile Include="LiveCodingLab\Lexer\Grammars\CGrammar.cs" />
     <Compile Include="LiveCodingLab\Lexer\Grammars\CppGrammar.cs" />
     <Compile Include="LiveCodingLab\Lexer\Grammars\JavaGrammar.cs" />
@@ -853,6 +854,7 @@
     <Compile Include="LiveCodingLab\LiveCodingLabMain.cs" />
     <Compile Include="LiveCodingLab\LiveCodingLabErrorHandler.cs" />
     <Compile Include="LiveCodingLab\Model\CodeBox.cs" />
+    <Compile Include="LiveCodingLab\Service\SyntaxHighlightingUploadService.cs" />
     <Compile Include="LiveCodingLab\Service\CodeBoxFileService.cs" />
     <Compile Include="LiveCodingLab\Service\LiveCodingLabTextStorageService.cs" />
     <Compile Include="LiveCodingLab\Service\CodeBoxIdService.cs" />
@@ -1486,6 +1488,7 @@
     <Compile Include="ZoomLab\ZoomLabSettings.cs" />
     <Compile Include="ZoomLab\ZoomToArea.cs" />
     <None Include="app.config" />
+    <None Include="LiveCodingLab\Service\customgrammar.json" />
     <None Include="PowerPointLabs.dev.pfx" />
     <None Include="Resources\ClosedHand.cur" />
     <None Include="Resources\OpenHand.cur" />

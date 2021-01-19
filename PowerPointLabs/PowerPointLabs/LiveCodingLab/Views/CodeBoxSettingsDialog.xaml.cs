@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Drawing.Text;
+using System.IO;
 using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
@@ -35,6 +36,14 @@ namespace PowerPointLabs.LiveCodingLab.Views
             { 
                 "Java", "Python", "C", "C++", "None"
             };
+
+            string directory = Directory.GetParent(Directory.GetParent(Directory.GetParent(System.AppDomain.CurrentDomain.BaseDirectory).FullName).FullName).FullName + "\\LiveCodingLab\\Service\\";
+            string[] files = Directory.GetFiles(@directory, "*.json");
+
+            foreach (string file in files)
+            {
+                languages.Add(file.Substring(file.LastIndexOf("\\") + 1));
+            }
 
             foreach (Drawing.FontFamily font in Drawing.FontFamily.Families)
             {
