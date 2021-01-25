@@ -99,7 +99,7 @@ namespace PowerPointLabs.LiveCodingLab
 
                 // Creates a new animation slide between the before and after code
                 PowerPointSlide transitionSlide = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, index: currentSlide.Index + 1);
-                transitionSlide.Name = LiveCodingLabText.TransitionSlideIdentifier + DateTime.Now.ToString("yyyyMMddHHmmssffff");
+                transitionSlide.Name = LiveCodingLabText.AnimateWordDiffIdentifier + LiveCodingLabText.TransitionSlideIdentifier + DateTime.Now.ToString("yyyyMMddHHmmssffff");
 
                 // Create the transition text in the transition slide for Animating Word Diff
                 IEnumerable<Tuple<WordDiffType, Shape, Shape>> transitionText = CreateTransitionTextForWordDiff(transitionSlide, diffCodeBoxBefore, diffCodeBoxAfter);

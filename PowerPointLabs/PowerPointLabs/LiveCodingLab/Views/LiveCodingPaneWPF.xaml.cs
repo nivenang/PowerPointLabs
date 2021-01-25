@@ -350,6 +350,50 @@ namespace PowerPointLabs.LiveCodingLab.Views
             Action<List<CodeBoxPaneItem>> animateWordDiffAction = codeBoxes => _liveCodingLab.AnimateWordDiff(codeBoxes);
             ClickHandler(animateWordDiffAction, LiveCodingLabMain.AnimateWordDiff_ErrorParameters);
         }
+
+        private void RefreshAnimationButton_Click(object sender, RoutedEventArgs e)
+        {
+            RefreshCode();
+            List<PowerPointSlide> slides = currentPresentation.Slides;
+            for (int i = 1; i < slides.Count; i++)
+            {
+                PowerPointSlide slide = slides[i];
+                currentPresentation.GotoSlide(i);
+                string slideName = slide.Name;
+
+                if (!slideName.Contains(LiveCodingLabText.TransitionSlideIdentifier))
+                {
+                    continue;
+                }
+
+                slide.Delete();
+
+                try
+                {
+                    if (slideName.Contains(LiveCodingLabText.AnimateBlockDiffIdentifier))
+                    {
+                        // reanimate diff here
+                        Action<List<CodeBoxPaneItem>> animateBlockDiffAction = codeBoxes => _liveCodingLab.AnimateBlockDiff(codeBoxes);
+                        ClickHandler(animateBlockDiffAction, LiveCodingLabMain.AnimateBlockDiff_ErrorParameters);
+                    }
+                    else if (slideName.Contains(LiveCodingLabText.AnimateLineDiffIdentifier))
+                    {
+                        Action<List<CodeBoxPaneItem>> animateLineDiffAction = codeBoxes => _liveCodingLab.AnimateLineDiff(codeBoxes);
+                        ClickHandler(animateLineDiffAction, LiveCodingLabMain.AnimateLineDiff_ErrorParameters);
+                    }
+                    else if (slideName.Contains(LiveCodingLabText.AnimateWordDiffIdentifier))
+                    {
+                        Action<List<CodeBoxPaneItem>> animateWordDiffAction = codeBoxes => _liveCodingLab.AnimateWordDiff(codeBoxes);
+                        ClickHandler(animateWordDiffAction, LiveCodingLabMain.AnimateWordDiff_ErrorParameters);
+                    }
+                }
+                catch (Exception)
+                {
+                    continue;
+                }
+            }
+        }
+
         private void AnimationSettingsButton_Click(object sender, RoutedEventArgs e)
         {
             LiveCodingLabSettings.ShowAnimationSettingsDialog();

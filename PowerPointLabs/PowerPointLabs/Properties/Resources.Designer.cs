@@ -1733,6 +1733,16 @@ namespace PowerPointLabs.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap RefreshAnimation {
+            get {
+                object obj = ResourceManager.GetObject("RefreshAnimation", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap RefreshCode {
             get {
                 object obj = ResourceManager.GetObject("RefreshCode", resourceCulture);

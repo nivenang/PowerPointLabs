@@ -7,8 +7,6 @@
         public const string HighlightDifferenceTag = "HighlightDifference";
         public const string AnimateNewLinesTag = "AnimateNewLines";
         public const string LiveCodingLabPaneTag = "LiveCodingLab";
-        public const string AnimateScrollDownTag = "AnimateScrollDown";
-        public const string AnimateScrollUpTag = "AnimateScrollUp";
         public const string SettingsTag = "LiveCodingLabSettings";
         public const string TaskPanelTitle = "Live Coding Lab";
         public const string PaneTag = "LiveCodingLab";
@@ -50,6 +48,12 @@
             Underscore + "(" + CodeBoxIdentifier + @").*";
         public const string CodeBoxShapeNameRegex = Identifier + Underscore + @"[1-9][0-9]*" + Underscore + CodeBoxIdentifier;
         public const string TransitionSlideIdentifier = Identifier + Underscore + "LiveCodingTransitionSlide";
+        #endregion
+
+        #region Animation Identifiers
+        public const string AnimateLineDiffIdentifier = "AnimateLineDiff_";
+        public const string AnimateBlockDiffIdentifier = "AnimateBlockDiff_";
+        public const string AnimateWordDiffIdentifier = "AnimateWordDiff_";
         #endregion
 
         #region GUI Text
