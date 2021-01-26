@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using Microsoft.Office.Core;
+using Microsoft.Office.Interop.PowerPoint;
 using PowerPointLabs.ActionFramework.Common.Extension;
 using PowerPointLabs.ColorThemes.Extensions;
 using PowerPointLabs.ELearningLab.Extensions;
@@ -394,6 +396,30 @@ namespace PowerPointLabs.LiveCodingLab.Views
             }
         }
 
+        private void CreateCustomSlideShowButton_Click(object sender, RoutedEventArgs e)
+        {
+            int[] slideIndex = new int[currentPresentation.SlideCount];
+            List<PowerPointSlide> slides = currentPresentation.Slides;
+            int j = 0;
+
+            for (int i = 1; i <= currentPresentation.SlideCount; i++)
+            {
+                if (!slides[i - 1].HasShapeWithRule(new Regex(@"PPTIndicator.*")) && !slides[i - 1].Hidden)
+                {
+                    slideIndex[j] = slides[i - 1].ID;
+                    j++;
+                }
+            }
+            foreach (NamedSlideShow slideShow in currentPresentation.Presentation.SlideShowSettings.NamedSlideShows)
+            {
+                if (slideShow.Name.Equals("PPTLabsLiveCodingLab"))
+                {
+                    slideShow.Delete();
+                    break;
+                }
+            }
+            currentPresentation.Presentation.SlideShowSettings.NamedSlideShows.Add("PPTLabsLiveCodingLab", slideIndex);
+        }
         private void AnimationSettingsButton_Click(object sender, RoutedEventArgs e)
         {
             LiveCodingLabSettings.ShowAnimationSettingsDialog();

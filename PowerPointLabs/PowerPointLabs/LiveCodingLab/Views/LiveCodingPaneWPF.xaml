@@ -81,10 +81,14 @@
                 <Image Source="..\..\Resources\AnimateNewLines.png"/>
             </WPF:ImageButton>
             <TextBlock x:Name="animateWordDiffTextBlock" HorizontalAlignment="Left" Margin="149,166,0,0" TextWrapping="Wrap" Text="Animate Word Diff" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
-            <WPF:ImageButton ToolTip="Animates the changes word by word across two code snippets on two separate slides" x:Name="refreshAnimationButton" HorizontalAlignment="Left" Margin="214.5,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="RefreshAnimationButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
+            <WPF:ImageButton ToolTip="Refreshes and recreates all previously generated animation slides" x:Name="refreshAnimationButton" HorizontalAlignment="Left" Margin="214.5,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="RefreshAnimationButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
                 <Image Source="..\..\Resources\RefreshAnimation.png"/>
             </WPF:ImageButton>
             <TextBlock x:Name="refreshAnimationTextBlock" HorizontalAlignment="Left" Margin="214.5,166,0,0" TextWrapping="Wrap" Text="Refresh Animation" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
+            <WPF:ImageButton ToolTip="" x:Name="createCustomSlideShowButton" HorizontalAlignment="Left" Margin="280,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="CreateCustomSlideShowButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
+                <Image Source="..\..\Resources\AnimateNewLines.png"/>
+            </WPF:ImageButton>
+            <TextBlock x:Name="createCustomSlideShowTextBlock" HorizontalAlignment="Left" Margin="280,166,0,0" TextWrapping="Wrap" Text="Create Custom Slideshow" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
             <ListView Name="codeListBox"
                  ItemsSource="{Binding CodeBoxPaneItem}"
                  Margin="10,212,5,10"
