@@ -357,6 +357,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
         {
             RefreshCode();
             List<PowerPointSlide> slides = currentPresentation.Slides;
+
             for (int i = 1; i < slides.Count; i++)
             {
                 PowerPointSlide slide = slides[i];
@@ -368,7 +369,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
                     continue;
                 }
 
-                slide.Delete();
+                slide.MoveTo(slides.Count);
 
                 try
                 {
@@ -391,9 +392,92 @@ namespace PowerPointLabs.LiveCodingLab.Views
                 }
                 catch (Exception)
                 {
+                    slide.MoveTo(i + 1);
                     continue;
                 }
+
+                // Copy all shapes from old transition slide to new transition slide here
+                PowerPointSlide newTransitionSlide = currentPresentation.Slides[i];
+                Dictionary<int, Effect> effectsToRefresh = new Dictionary<int, Effect>();
+                Sequence currSequence = newTransitionSlide.TimeLine.MainSequence;
+
+                foreach (Shape shape in slide.Shapes)
+                {
+                    if (!shape.Name.StartsWith(LiveCodingLabText.TransitionTextIdentifier) && !shape.Name.StartsWith(PowerPointSlide.PptLabsIndicatorShapeName))
+                    {
+                        Shape newShape = newTransitionSlide.CopyShapeToSlide(shape);
+                        effectsToRefresh = TransferAnimation(slide, newTransitionSlide, shape, newShape, effectsToRefresh);
+                    }
+                }
+
+                List<Effect> effects = AsList(currSequence, 1, currSequence.Count + 1);
+                
+                foreach (KeyValuePair<int, Effect> entry in effectsToRefresh)
+                {
+                    if (entry.Key < 0)
+                    {
+                        entry.Value.MoveBefore(effects[0]);
+                        effects.Insert(0, entry.Value);
+                    }
+                    else
+                    {
+                        entry.Value.MoveAfter(effects[entry.Key]);
+                        effects.Insert(entry.Key, entry.Value);
+                    }
+                }
+
+                slide.Delete();
             }
+        }
+
+        private Dictionary<int, Effect> TransferAnimation(PowerPointSlide prevTranSlide, PowerPointSlide transitionSlide, Shape source, Shape destination, Dictionary<int, Effect> effectsToRefresh)
+        {
+            Sequence prevSequence = prevTranSlide.TimeLine.MainSequence;
+
+            List<Effect> effectList = prevSequence.Cast<Effect>().ToList();
+            List<Tuple<int, Effect>> relevantEffectList = new List<Tuple<int, Effect>>();
+
+            for (int i = 0; i < effectList.Count; i++)
+            {
+                if (effectList[i].Shape.Equals(source))
+                {
+                    relevantEffectList.Add(Tuple.Create(i - 1, effectList[i]));
+                }
+            }
+
+            for (int j = 0; j < relevantEffectList.Count; j++)
+            {
+                Sequence sequence = transitionSlide.TimeLine.MainSequence;
+                int currentIndex = sequence.Count;
+                Effect effect = relevantEffectList[j].Item2;
+
+                sequence.AddEffect(destination, effect.EffectType, effect.EffectInformation.BuildByLevelEffect,
+                    effect.Timing.TriggerType);
+
+                List<Effect> effects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
+
+                foreach (Effect newEffect in effects)
+                {
+                    newEffect.EffectType = relevantEffectList[j].Item2.EffectType;
+                    newEffect.Timing.TriggerType = relevantEffectList[j].Item2.Timing.TriggerType;
+                    if (newEffect.Exit != relevantEffectList[j].Item2.Exit)
+                    {
+                        newEffect.Exit = relevantEffectList[j].Item2.Exit;
+                    }
+                    effectsToRefresh[relevantEffectList[j].Item1] = newEffect;
+                    j++;
+                }
+            }
+            return effectsToRefresh;
+        }
+        private static List<PowerPoint.Effect> AsList(PowerPoint.Sequence sequence, int startIndex, int endIndex)
+        {
+            List<PowerPoint.Effect> list = new List<PowerPoint.Effect>();
+            for (int i = startIndex; i < endIndex; ++i)
+            {
+                list.Add(sequence[i]);
+            }
+            return list;
         }
 
         private void CreateCustomSlideShowButton_Click(object sender, RoutedEventArgs e)
