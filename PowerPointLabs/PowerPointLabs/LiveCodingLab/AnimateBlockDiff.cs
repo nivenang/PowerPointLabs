@@ -45,8 +45,8 @@ namespace PowerPointLabs.LiveCodingLab
                 // Check that there exists a "before" and "after" code
                 if (codeListBox.Count != 2)
                 {
-                    MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesMissingCodeSnippet,
-                                    LiveCodingLabText.ErrorAnimateNewLinesDialogTitle);
+                    MessageBox.Show(LiveCodingLabText.ErrorAnimateDiffMissingCodeSnippet,
+                                    LiveCodingLabText.ErrorAnimateBlockDiffDialogTitle);
                     return;
                 }
 
@@ -60,8 +60,8 @@ namespace PowerPointLabs.LiveCodingLab
                 {
                     if (diffCodeBoxBefore.CodeBox.Text != diffCodeBoxAfter.CodeBox.Text)
                     {
-                        MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesMissingCodeSnippet,
-                                        LiveCodingLabText.ErrorAnimateNewLinesDialogTitle);
+                        MessageBox.Show(LiveCodingLabText.ErrorAnimateDiffWrongCodeSnippet,
+                                        LiveCodingLabText.ErrorAnimateBlockDiffDialogTitle);
                         return;
                     }
 
@@ -69,8 +69,8 @@ namespace PowerPointLabs.LiveCodingLab
 
                     if (diffList.Count < 1)
                     {
-                        MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesMissingCodeSnippet,
-                                        LiveCodingLabText.ErrorAnimateNewLinesDialogTitle);
+                        MessageBox.Show(LiveCodingLabText.ErrorAnimateDiffMissingCodeSnippet,
+                                        LiveCodingLabText.ErrorAnimateBlockDiffDialogTitle);
                         return;
                     }
 
@@ -82,16 +82,16 @@ namespace PowerPointLabs.LiveCodingLab
                     // Check that there exists a "before" code and an "after" code to be animated
                     if (diffCodeBoxBefore.CodeBox.Shape == null || diffCodeBoxAfter.CodeBox.Shape == null)
                     {
-                        MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesMissingCodeSnippet,
-                                        LiveCodingLabText.ErrorAnimateNewLinesDialogTitle);
+                        MessageBox.Show(LiveCodingLabText.ErrorAnimateDiffMissingCodeSnippet,
+                                        LiveCodingLabText.ErrorAnimateBlockDiffDialogTitle);
                         return;
                     }
 
                     if (diffCodeBoxBefore.CodeBox.Shape.HasTextFrame == Office.MsoTriState.msoFalse ||
                         diffCodeBoxAfter.CodeBox.Shape.HasTextFrame == Office.MsoTriState.msoFalse)
                     {
-                        MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesMissingCodeSnippet,
-                                        LiveCodingLabText.ErrorAnimateNewLinesDialogTitle);
+                        MessageBox.Show(LiveCodingLabText.ErrorAnimateDiffMissingCodeSnippet,
+                                        LiveCodingLabText.ErrorAnimateBlockDiffDialogTitle);
                         return;
                     }
 
@@ -106,8 +106,8 @@ namespace PowerPointLabs.LiveCodingLab
                 // Default: Inform user that code snippets to be animated do not match up
                 else
                 {
-                    MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesMissingCodeSnippet,
-                                    LiveCodingLabText.ErrorAnimateNewLinesDialogTitle);
+                    MessageBox.Show(LiveCodingLabText.ErrorAnimateDiffMissingCodeSnippet,
+                                    LiveCodingLabText.ErrorAnimateBlockDiffDialogTitle);
                     return;
                 }
 

@@ -48,6 +48,7 @@
             Underscore + "(" + CodeBoxIdentifier + @").*";
         public const string CodeBoxShapeNameRegex = Identifier + Underscore + @"[1-9][0-9]*" + Underscore + CodeBoxIdentifier;
         public const string TransitionSlideIdentifier = Identifier + Underscore + "LiveCodingTransitionSlide";
+        public const string TransitionTextIdentifier = "PPTLabsTransitionText";
         #endregion
 
         #region Animation Identifiers
@@ -102,6 +103,12 @@
         public const string ErrorAnimateNewLinesMissingCodeSnippet = "Missing code snippet.";
         public const string ErrorAnimateNewLinesWrongCodeSnippet = "Mismatched code snippets. Please ensure that the 'after' code snippet have more lines than the 'before' code snippet.";
 
+        public const string ErrorAnimateLineDiffDialogTitle = "Unable to execute Animate Line Diff action";
+        public const string ErrorAnimateBlockDiffDialogTitle = "Unable to execute Animate Block Diff action";
+        public const string ErrorAnimateWordDiffDialogTitle = "Unable to execute Animate Word Diff action";
+        public const string ErrorAnimateDiffWrongSlide = "Please select the correct slide.";
+        public const string ErrorAnimateDiffMissingCodeSnippet = "Missing code snippet. Please ensure that there is a 'before' and 'after' code snippet and that your current slide selected is on the 'before' code snippet.";
+        public const string ErrorAnimateDiffWrongCodeSnippet = "Mismatched code snippets. Please ensure that the 'before' and 'after' code snippets have the same diff file.";
 
         public const string ErrorInvalidFileName = "The file specified does not exist.";
         public const string ErrorInvalidCodeBox = "You need to have {1} {2} on both the current slide and next slide before applying '{0}'.";

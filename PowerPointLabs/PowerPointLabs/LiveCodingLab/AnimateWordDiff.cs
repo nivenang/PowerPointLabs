@@ -46,8 +46,8 @@ namespace PowerPointLabs.LiveCodingLab
                 // Check that there exists a "before" and "after" code
                 if (codeListBox.Count != 2)
                 {
-                    MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesMissingCodeSnippet,
-                                    LiveCodingLabText.ErrorAnimateNewLinesDialogTitle);
+                    MessageBox.Show(LiveCodingLabText.ErrorAnimateDiffMissingCodeSnippet,
+                                    LiveCodingLabText.ErrorAnimateWordDiffDialogTitle);
                     return;
                 }
 
@@ -59,8 +59,8 @@ namespace PowerPointLabs.LiveCodingLab
                 {
                     if (diffCodeBoxBefore.CodeBox.Text != diffCodeBoxAfter.CodeBox.Text)
                     {
-                        MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesMissingCodeSnippet,
-                                        LiveCodingLabText.ErrorAnimateNewLinesDialogTitle);
+                        MessageBox.Show(LiveCodingLabText.ErrorAnimateDiffWrongCodeSnippet,
+                                        LiveCodingLabText.ErrorAnimateWordDiffDialogTitle);
                         return;
                     }
 
@@ -71,16 +71,16 @@ namespace PowerPointLabs.LiveCodingLab
                     // Check that there exists a "before" code and an "after" code to be animated
                     if (diffCodeBoxBefore.CodeBox.Shape == null || diffCodeBoxAfter.CodeBox.Shape == null)
                     {
-                        MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesMissingCodeSnippet,
-                                        LiveCodingLabText.ErrorAnimateNewLinesDialogTitle);
+                        MessageBox.Show(LiveCodingLabText.ErrorAnimateDiffMissingCodeSnippet,
+                                        LiveCodingLabText.ErrorAnimateWordDiffDialogTitle);
                         return;
                     }
 
                     if (diffCodeBoxBefore.CodeBox.Shape.HasTextFrame == Office.MsoTriState.msoFalse ||
                         diffCodeBoxAfter.CodeBox.Shape.HasTextFrame == Office.MsoTriState.msoFalse)
                     {
-                        MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesMissingCodeSnippet,
-                                        LiveCodingLabText.ErrorAnimateNewLinesDialogTitle);
+                        MessageBox.Show(LiveCodingLabText.ErrorAnimateDiffMissingCodeSnippet,
+                                        LiveCodingLabText.ErrorAnimateWordDiffDialogTitle);
                         return;
                     }
 
@@ -92,8 +92,8 @@ namespace PowerPointLabs.LiveCodingLab
                 // Default: Inform user that code snippets to be animated do not match up
                 else
                 {
-                    MessageBox.Show(LiveCodingLabText.ErrorAnimateNewLinesMissingCodeSnippet,
-                                    LiveCodingLabText.ErrorAnimateNewLinesDialogTitle);
+                    MessageBox.Show(LiveCodingLabText.ErrorAnimateDiffMissingCodeSnippet,
+                                    LiveCodingLabText.ErrorAnimateWordDiffDialogTitle);
                     return;
                 }
 
@@ -438,6 +438,7 @@ namespace PowerPointLabs.LiveCodingLab
                 Shape textbox = transitionSlide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
                     leftPointer, topPointer, 0, 0);
                 
+                textbox.Name = LiveCodingLabText.TransitionTextIdentifier + DateTime.Now.ToString("yyyyMMddHHmmssffff");
                 textbox.TextFrame.TextRange.Text = lines[0];
                 textbox.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
                 textbox.TextFrame.WordWrap = Office.MsoTriState.msoFalse;
@@ -494,6 +495,7 @@ namespace PowerPointLabs.LiveCodingLab
                         textbox = transitionSlide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
                             leftPointer, topPointer, 0, 0);
 
+                        textbox.Name = LiveCodingLabText.TransitionTextIdentifier + DateTime.Now.ToString("yyyyMMddHHmmssffff");
                         textbox.TextFrame.TextRange.Text = lines[i];
                         textbox.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
                         textbox.TextFrame.WordWrap = Office.MsoTriState.msoFalse;

@@ -91,6 +91,8 @@ namespace PowerPointLabs.LiveCodingLab
 
                 PowerPoint.Shape codeShapeBeforeEdit = transitionSlide.CopyShapeToSlide(diffCodeBoxBefore.CodeBox.Shape);
                 PowerPoint.Shape codeShapeAfterEdit = transitionSlide.CopyShapeToSlide(diffCodeBoxAfter.CodeBox.Shape);
+                codeShapeBeforeEdit.Name = LiveCodingLabText.TransitionTextIdentifier + "Before" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
+                codeShapeAfterEdit.Name = LiveCodingLabText.TransitionTextIdentifier + "After" + DateTime.Now.ToString("yyyyMMddHHmmssffff");
 
                 PowerPoint.TextRange codeTextBeforeEdit = codeShapeBeforeEdit.TextFrame.TextRange;
                 PowerPoint.TextRange codeTextAfterEdit = codeShapeAfterEdit.TextFrame.TextRange;
