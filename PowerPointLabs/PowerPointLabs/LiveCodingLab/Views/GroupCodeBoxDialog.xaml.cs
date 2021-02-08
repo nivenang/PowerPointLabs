@@ -20,10 +20,11 @@ namespace PowerPointLabs.LiveCodingLab.Views
         private string groupName;
 
         #region Constructor
-        public GroupCodeBoxDialog()
+        public GroupCodeBoxDialog(string defaultName)
         {
             InitializeComponent();
-            groupName = "";
+            groupName = defaultName;
+            groupNameInput.Text = defaultName;
         }
         #endregion
 

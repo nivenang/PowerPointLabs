@@ -294,7 +294,16 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
         private void GroupCodeButton_Click(object sender, RoutedEventArgs e)
         {
-            GroupCodeBoxDialog dialog = new GroupCodeBoxDialog();
+            int defaultSlideNo = 1;
+            foreach (CodeBoxPaneItem item in codeListBox.SelectedItems)
+            {
+                if (item != null && item.CodeBox.Slide != null)
+                {
+                    defaultSlideNo = item.CodeBox.Slide.Index;
+                    break;
+                }
+            }
+            GroupCodeBoxDialog dialog = new GroupCodeBoxDialog("Slide " + defaultSlideNo.ToString());
             string defaultGroupName = "";
             if (dialog.ShowThematicDialog() == true)
             {
