@@ -69,26 +69,26 @@
                     <Image Source="..\..\Resources\SettingsGear.png"/>
                 </WPF:ImageButton>
             </GroupBox>
-            <WPF:ImageButton ToolTip="Animates the changes line by line across two code snippets on two separate slides" x:Name="animateLineDiffButton" HorizontalAlignment="Left" Margin="18,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="AnimateLineDiffButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
+            <WPF:ImageButton ToolTip="Animates the changes block by block across two code snippets on two separate slides" x:Name="animateBlockDiffButton" HorizontalAlignment="Left" Margin="18,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="AnimateBlockDiffButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
+                <Image Source="..\..\Resources\AnimateNewLines.png"/>
+            </WPF:ImageButton>
+            <TextBlock x:Name="animateBlockDiffTextBlock" HorizontalAlignment="Left" Margin="18,166.5,0,0" TextWrapping="Wrap" Text="Animate Block Diff" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
+            <WPF:ImageButton ToolTip="Animates the changes line by line across two code snippets on two separate slides" x:Name="animateLineDiffButton" HorizontalAlignment="Left" Margin="83.5,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="AnimateLineDiffButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
                 <Image Source="..\..\Resources\HighlightDifference.png"/>
             </WPF:ImageButton>
-            <TextBlock x:Name="animateLineDiffTextBlock" HorizontalAlignment="Left" Margin="18,166.5,0,0" TextWrapping="Wrap" Text="Animate Line Diff" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
-            <WPF:ImageButton ToolTip="Animates the changes block by block across two code snippets on two separate slides" x:Name="animateBlockDiffButton" HorizontalAlignment="Left" Margin="83.5,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="AnimateBlockDiffButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
+            <TextBlock x:Name="animateLineDiffTextBlock" HorizontalAlignment="Left" Margin="83.5,166.5,0,0" TextWrapping="Wrap" Text="Animate Line Diff" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
+            <WPF:ImageButton ToolTip="Animates the changes character by character across two code snippets on two separate slides" x:Name="animateCharDiffButton" HorizontalAlignment="Left" Margin="149,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="AnimateCharDiffButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
                 <Image Source="..\..\Resources\AnimateNewLines.png"/>
             </WPF:ImageButton>
-            <TextBlock x:Name="animateBlockDiffTextBlock" HorizontalAlignment="Left" Margin="83.5,166,0,0" TextWrapping="Wrap" Text="Animate Block Diff" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
-            <WPF:ImageButton ToolTip="Animates the changes word by word across two code snippets on two separate slides" x:Name="animateWordDiffButton" HorizontalAlignment="Left" Margin="149,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="AnimateWordDiffButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
-                <Image Source="..\..\Resources\AnimateNewLines.png"/>
-            </WPF:ImageButton>
-            <TextBlock x:Name="animateWordDiffTextBlock" HorizontalAlignment="Left" Margin="149,166,0,0" TextWrapping="Wrap" Text="Animate Word Diff" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
+            <TextBlock x:Name="animateCharDiffTextBlock" HorizontalAlignment="Left" Margin="149,166.5,0,0" TextWrapping="Wrap" Text="Animate Char Diff" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
             <WPF:ImageButton ToolTip="Refreshes and recreates all previously generated animation slides" x:Name="refreshAnimationButton" HorizontalAlignment="Left" Margin="214.5,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="RefreshAnimationButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
                 <Image Source="..\..\Resources\RefreshAnimation.png"/>
             </WPF:ImageButton>
-            <TextBlock x:Name="refreshAnimationTextBlock" HorizontalAlignment="Left" Margin="214.5,166,0,0" TextWrapping="Wrap" Text="Refresh Animation" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
+            <TextBlock x:Name="refreshAnimationTextBlock" HorizontalAlignment="Left" Margin="214.5,166.5,0,0" TextWrapping="Wrap" Text="Refresh Animation" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
             <WPF:ImageButton ToolTip="" x:Name="createCustomSlideShowButton" HorizontalAlignment="Left" Margin="280,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="CreateCustomSlideShowButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
                 <Image Source="..\..\Resources\AnimateNewLines.png"/>
             </WPF:ImageButton>
-            <TextBlock x:Name="createCustomSlideShowTextBlock" HorizontalAlignment="Left" Margin="280,166,0,0" TextWrapping="Wrap" Text="Create Handouts" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
+            <TextBlock x:Name="createCustomSlideShowTextBlock" HorizontalAlignment="Left" Margin="280,166.5,0,0" TextWrapping="Wrap" Text="Create Handouts" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
             <ListView Name="codeListBox"
                  ItemsSource="{Binding CodeBoxPaneItem}"
                  Margin="10,212,5,10"
