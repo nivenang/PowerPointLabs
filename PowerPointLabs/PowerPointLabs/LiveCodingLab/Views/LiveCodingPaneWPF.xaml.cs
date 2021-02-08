@@ -395,8 +395,8 @@ namespace PowerPointLabs.LiveCodingLab.Views
                     }
                     else if (slideName.Contains(LiveCodingLabText.AnimateWordDiffIdentifier))
                     {
-                        Action<List<CodeBoxPaneItem>> animateWordDiffAction = codeBoxes => _liveCodingLab.AnimateWordDiff(codeBoxes);
-                        ClickHandler(animateWordDiffAction, LiveCodingLabMain.AnimateWordDiff_ErrorParameters);
+                        Action<List<CodeBoxPaneItem>> animateCharDiffAction = codeBoxes => _liveCodingLab.AnimateCharDiff(codeBoxes);
+                        ClickHandler(animateCharDiffAction, LiveCodingLabMain.AnimateCharDiff_ErrorParameters);
                     }
                 }
                 catch (Exception)
