@@ -343,6 +343,21 @@ namespace PowerPointLabs.LiveCodingLab.Views
             Action<string, LiveCodingPaneWPF, string> insertDiffAction = (diffFilePath, liveCodingPane, diffGroupName) => _liveCodingLab.InsertDiff(diffFilePath, liveCodingPane, diffGroupName);
             ClickHandler(insertDiffAction, diffPath, diffGroup);
         }
+        private void CreateCodeBoxFromText_Click(object sender, RoutedEventArgs e)
+        {
+            CodeBoxPaneItem item = AddCodeBoxToList();
+            PowerPoint.ShapeRange shapes = GetSelectedShapes();
+            foreach (Shape shape in shapes)
+            {
+                item.Text = shape.TextFrame.TextRange.Text;
+                item.CodeBox.Shape = shape;
+                item.CodeBox.IsText = true;
+                item.CodeBox.ShapeName = shape.Name;
+                item.CodeBox.Slide = PowerPointCurrentPresentationInfo.CurrentSlide;
+                break;
+            }
+            SaveCodeBox();
+        }
         private void AnimateLineDiffButton_Click(object sender, RoutedEventArgs e)
         {
             RefreshCode();
