@@ -156,7 +156,7 @@ namespace PowerPointLabs.LiveCodingLab
                 List<PowerPoint.Effect> intermediateDisappearEffects = new List<PowerPoint.Effect>();
 
                 // Keep generating animations for code lines while there are still code lines to be animated
-                while (beforeCount < codeTextBeforeEdit.Paragraphs().Count && afterCount < codeTextAfterEdit.Paragraphs().Count)
+                while (beforeCount < codeTextBeforeEdit.Paragraphs().Count || afterCount < codeTextAfterEdit.Paragraphs().Count)
                 {
                     // Case 1: Code line is to be deleted
                     if (fullDiff[lineCount] == DiffType.Delete)
