@@ -370,6 +370,14 @@ namespace PowerPointLabs.LiveCodingLab.Views
             Action<List<CodeBoxPaneItem>> animateBlockDiffAction = codeBoxes => _liveCodingLab.AnimateBlockDiff(codeBoxes);
             ClickHandler(animateBlockDiffAction, LiveCodingLabMain.AnimateBlockDiff_ErrorParameters);
         }
+
+        private void AnimateWordDiffButton_Click(object sender, RoutedEventArgs e)
+        {
+            RefreshCode();
+            Action<List<CodeBoxPaneItem>> animateWordDiffAction = codeBoxes => _liveCodingLab.AnimateWordDiff(codeBoxes);
+            ClickHandler(animateWordDiffAction, LiveCodingLabMain.AnimateWordDiff_ErrorParameters);
+        }
+
         private void AnimateCharDiffButton_Click(object sender, RoutedEventArgs e)
         {
             RefreshCode();
@@ -409,6 +417,11 @@ namespace PowerPointLabs.LiveCodingLab.Views
                         ClickHandler(animateLineDiffAction, LiveCodingLabMain.AnimateLineDiff_ErrorParameters);
                     }
                     else if (slideName.Contains(LiveCodingLabText.AnimateWordDiffIdentifier))
+                    {
+                        Action<List<CodeBoxPaneItem>> animateWordDiffAction = codeBoxes => _liveCodingLab.AnimateWordDiff(codeBoxes);
+                        ClickHandler(animateWordDiffAction, LiveCodingLabMain.AnimateWordDiff_ErrorParameters);
+                    }
+                    else if (slideName.Contains(LiveCodingLabText.AnimateCharDiffIdentifier))
                     {
                         Action<List<CodeBoxPaneItem>> animateCharDiffAction = codeBoxes => _liveCodingLab.AnimateCharDiff(codeBoxes);
                         ClickHandler(animateCharDiffAction, LiveCodingLabMain.AnimateCharDiff_ErrorParameters);

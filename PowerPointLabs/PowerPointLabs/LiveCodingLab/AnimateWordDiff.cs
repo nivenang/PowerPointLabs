@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using DiffMatchPatch;
+using DiffPlex.DiffBuilder;
+using DiffPlex.DiffBuilder.Model;
 using PowerPointLabs.ActionFramework.Common.Extension;
 using PowerPointLabs.ActionFramework.Common.Log;
 using PowerPointLabs.ELearningLab.Extensions;
@@ -22,16 +23,16 @@ namespace PowerPointLabs.LiveCodingLab
     public partial class LiveCodingLabMain
     {
 #pragma warning disable 0618
-        internal const int AnimateCharDiff_MinNoOfShapesRequired = 1;
-        internal const string AnimateCharDiff_FeatureName = "Animate Char Diff";
-        internal const string AnimateCharDiff_ShapeSupport = "code box";
-        internal static readonly string[] AnimateCharDiff_ErrorParameters =
+        internal const int AnimateWordDiff_MinNoOfShapesRequired = 1;
+        internal const string AnimateWordDiff_FeatureName = "Animate Word Diff";
+        internal const string AnimateWordDiff_ShapeSupport = "code box";
+        internal static readonly string[] AnimateWordDiff_ErrorParameters =
         {
-            AnimateCharDiff_FeatureName,
-            AnimateCharDiff_MinNoOfShapesRequired.ToString(),
-            AnimateCharDiff_ShapeSupport
+            AnimateWordDiff_FeatureName,
+            AnimateWordDiff_MinNoOfShapesRequired.ToString(),
+            AnimateWordDiff_ShapeSupport
         };
-        public void AnimateCharDiff(List<CodeBoxPaneItem> codeListBox)
+        public void AnimateWordDiff(List<CodeBoxPaneItem> codeListBox)
         {
             try
             {
@@ -47,7 +48,7 @@ namespace PowerPointLabs.LiveCodingLab
                 if (codeListBox.Count != 2)
                 {
                     MessageBox.Show(LiveCodingLabText.ErrorAnimateDiffMissingCodeSnippet,
-                                    LiveCodingLabText.ErrorAnimateCharDiffDialogTitle);
+                                    LiveCodingLabText.ErrorAnimateWordDiffDialogTitle);
                     return;
                 }
 
@@ -60,7 +61,7 @@ namespace PowerPointLabs.LiveCodingLab
                     if (diffCodeBoxBefore.CodeBox.Text != diffCodeBoxAfter.CodeBox.Text)
                     {
                         MessageBox.Show(LiveCodingLabText.ErrorAnimateDiffWrongCodeSnippet,
-                                        LiveCodingLabText.ErrorAnimateCharDiffDialogTitle);
+                                        LiveCodingLabText.ErrorAnimateWordDiffDialogTitle);
                         return;
                     }
 
@@ -72,7 +73,7 @@ namespace PowerPointLabs.LiveCodingLab
                     if (diffCodeBoxBefore.CodeBox.Shape == null || diffCodeBoxAfter.CodeBox.Shape == null)
                     {
                         MessageBox.Show(LiveCodingLabText.ErrorAnimateDiffMissingCodeSnippet,
-                                        LiveCodingLabText.ErrorAnimateCharDiffDialogTitle);
+                                        LiveCodingLabText.ErrorAnimateWordDiffDialogTitle);
                         return;
                     }
 
@@ -80,7 +81,7 @@ namespace PowerPointLabs.LiveCodingLab
                         diffCodeBoxAfter.CodeBox.Shape.HasTextFrame == Office.MsoTriState.msoFalse)
                     {
                         MessageBox.Show(LiveCodingLabText.ErrorAnimateDiffMissingCodeSnippet,
-                                        LiveCodingLabText.ErrorAnimateCharDiffDialogTitle);
+                                        LiveCodingLabText.ErrorAnimateWordDiffDialogTitle);
                         return;
                     }
 
@@ -93,25 +94,25 @@ namespace PowerPointLabs.LiveCodingLab
                 else
                 {
                     MessageBox.Show(LiveCodingLabText.ErrorAnimateDiffMissingCodeSnippet,
-                                    LiveCodingLabText.ErrorAnimateCharDiffDialogTitle);
+                                    LiveCodingLabText.ErrorAnimateWordDiffDialogTitle);
                     return;
                 }
 
                 // Creates a new animation slide between the before and after code
                 PowerPointSlide transitionSlide = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, index: currentSlide.Index + 1);
-                transitionSlide.Name = LiveCodingLabText.AnimateCharDiffIdentifier + LiveCodingLabText.TransitionSlideIdentifier + DateTime.Now.ToString("yyyyMMddHHmmssffff");
+                transitionSlide.Name = LiveCodingLabText.AnimateWordDiffIdentifier + LiveCodingLabText.TransitionSlideIdentifier + DateTime.Now.ToString("yyyyMMddHHmmssffff");
 
                 // Create the transition text in the transition slide for Animating Word Diff
-                IEnumerable<Tuple<WordDiffType, Shape, Shape>> transitionText = CreateTransitionTextForCharDiff(transitionSlide, diffCodeBoxBefore, diffCodeBoxAfter);
+                IEnumerable<Tuple<WordDiffType, Shape, Shape>> transitionText = CreateTransitionTextForWordDiff(transitionSlide, diffCodeBoxBefore, diffCodeBoxAfter);
 
                 // Animates the differences between the "before" and "after" code in the transition slide
-                CreateAnimationForTransitionTextCharDiff(transitionSlide, transitionText);
+                CreateAnimationForTransitionTextWordDiff(transitionSlide, transitionText);
 
                 AddPowerPointLabsIndicator(transitionSlide);
             }
             catch (Exception e)
             {
-                Logger.LogException(e, "AnimateCharDiff");
+                Logger.LogException(e, "AnimateWordDiff");
                 throw;
             }
         }
@@ -122,7 +123,7 @@ namespace PowerPointLabs.LiveCodingLab
         /// </summary>
         /// <param name="transitionSlide">transition slide to animate the code snippets</param>
         /// <param name="transitionText">list containing tuples of shapes to create animations between</param>
-        private void CreateAnimationForTransitionTextCharDiff(PowerPointSlide transitionSlide, IEnumerable<Tuple<WordDiffType, Shape, Shape>> transitionText)
+        private void CreateAnimationForTransitionTextWordDiff(PowerPointSlide transitionSlide, IEnumerable<Tuple<WordDiffType, Shape, Shape>> transitionText)
         {
             PowerPoint.Sequence sequence = transitionSlide.TimeLine.MainSequence;
             Dictionary<float, List<Shape>> shapesByLine = GetShapesByLine(transitionSlide);
@@ -176,7 +177,7 @@ namespace PowerPointLabs.LiveCodingLab
                                         PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
                                         PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
                                     List<PowerPoint.Effect> shiftRightEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
-                                    FormatCharDiffMoveRightEffects(shiftRightEffects, offset);
+                                    FormatWordDiffMoveRightEffects(shiftRightEffects, offset);
                                 }
                                 else if (!addShapes.Contains(shape) && shiftShapesLeft)
                                 {
@@ -185,7 +186,7 @@ namespace PowerPointLabs.LiveCodingLab
                                         PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
                                         PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
                                     List<PowerPoint.Effect> shiftLeftEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
-                                    FormatCharDiffMoveLeftEffects(shiftLeftEffects, offset);
+                                    FormatWordDiffMoveLeftEffects(shiftLeftEffects, offset);
                                 }
                                 else if (!addShapes.Contains(shape) && shape.Left + emptyTextboxOffset < (beforeShape.Left + beforeShape.Width - emptyTextboxOffset))
                                 {
@@ -194,7 +195,7 @@ namespace PowerPointLabs.LiveCodingLab
                                         PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
                                         PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
                                     List<PowerPoint.Effect> shiftRightEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
-                                    FormatCharDiffMoveRightEffects(shiftRightEffects,
+                                    FormatWordDiffMoveRightEffects(shiftRightEffects,
                                         ((beforeShape.Left + beforeShape.Width - emptyTextboxOffset) - (shape.Left + emptyTextboxOffset)) / 10);
                                     shiftShapesRight = true;
                                     offset = ((beforeShape.Left + beforeShape.Width - emptyTextboxOffset) - (shape.Left + emptyTextboxOffset)) / 10;
@@ -206,7 +207,7 @@ namespace PowerPointLabs.LiveCodingLab
                                         PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
                                         PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
                                     List<PowerPoint.Effect> shiftLeftEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
-                                    FormatCharDiffMoveLeftEffects(shiftLeftEffects,
+                                    FormatWordDiffMoveLeftEffects(shiftLeftEffects,
                                         ((shape.Left + emptyTextboxOffset) - (beforeShape.Left + beforeShape.Width - emptyTextboxOffset)) / 10);
                                     offset = ((shape.Left + emptyTextboxOffset) - (beforeShape.Left + beforeShape.Width - emptyTextboxOffset)) / 10;
                                 }
@@ -221,7 +222,7 @@ namespace PowerPointLabs.LiveCodingLab
                             PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
                             PowerPoint.MsoAnimTriggerType.msoAnimTriggerOnPageClick);
                         List<PowerPoint.Effect> insertAddEqualEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
-                        FormatCharDiffAddEffects(insertAddEqualEffects);
+                        FormatWordDiffAddEffects(insertAddEqualEffects);
 
                         currentIndex = sequence.Count;
 
@@ -230,7 +231,7 @@ namespace PowerPointLabs.LiveCodingLab
                             PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
                             PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
                         List<PowerPoint.Effect> colourChangeAddEqualEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
-                        FormatCharDiffColourChangeEffects(colourChangeAddEqualEffects);
+                        FormatWordDiffColourChangeEffects(colourChangeAddEqualEffects);
 
                         break;
                     // Case 2: First textbox contains deletion code, second textbox has deletion or equal code
@@ -242,7 +243,7 @@ namespace PowerPointLabs.LiveCodingLab
                             PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
                             PowerPoint.MsoAnimTriggerType.msoAnimTriggerOnPageClick);
                         List<PowerPoint.Effect> colourChangeDeleteEqualEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
-                        FormatCharDiffColourChangeEffects(colourChangeDeleteEqualEffects);
+                        FormatWordDiffColourChangeEffects(colourChangeDeleteEqualEffects);
 
                         currentIndex = sequence.Count;
 
@@ -251,7 +252,7 @@ namespace PowerPointLabs.LiveCodingLab
                             PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
                             PowerPoint.MsoAnimTriggerType.msoAnimTriggerAfterPrevious);
                         List<PowerPoint.Effect> deleteEqualEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
-                        FormatCharDiffDeleteEffects(deleteEqualEffects);
+                        FormatWordDiffDeleteEffects(deleteEqualEffects);
 
                         // Create the move left (closing up the gap from deleted line) effects only if following code is on the same line
                         if (!beforeShape.Equals(afterShape) && beforeShape.Top.Equals(afterShape.Top))
@@ -268,7 +269,7 @@ namespace PowerPointLabs.LiveCodingLab
                                     PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
                                     PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
                                 List<PowerPoint.Effect> deleteEqualMoveLeftEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
-                                FormatCharDiffMoveLeftEffects(deleteEqualMoveLeftEffects, beforeShape.TextFrame.TextRange.Length);
+                                FormatWordDiffMoveLeftEffects(deleteEqualMoveLeftEffects, beforeShape.TextFrame.TextRange.Length);
                             }
                         }
 
@@ -282,7 +283,7 @@ namespace PowerPointLabs.LiveCodingLab
                             PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
                             PowerPoint.MsoAnimTriggerType.msoAnimTriggerOnPageClick);
                         List<PowerPoint.Effect> colourChangeDeleteEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
-                        FormatCharDiffColourChangeEffects(colourChangeDeleteEffects);
+                        FormatWordDiffColourChangeEffects(colourChangeDeleteEffects);
 
                         currentIndex = sequence.Count;
 
@@ -291,7 +292,7 @@ namespace PowerPointLabs.LiveCodingLab
                             PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
                             PowerPoint.MsoAnimTriggerType.msoAnimTriggerAfterPrevious);
                         List<PowerPoint.Effect> deleteEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
-                        FormatCharDiffDeleteEffects(deleteEffects);
+                        FormatWordDiffDeleteEffects(deleteEffects);
 
                         // Create the movement effects to either close the gap from the deletion or to create space for the addition line
                         if (beforeShape.Top.Equals(afterShape.Top))
@@ -315,7 +316,7 @@ namespace PowerPointLabs.LiveCodingLab
                                         PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
                                         PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
                                     List<PowerPoint.Effect> shiftRightEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
-                                    FormatCharDiffMoveRightEffects(shiftRightEffects, offset);
+                                    FormatWordDiffMoveRightEffects(shiftRightEffects, offset);
 
                                 }
                                 else if (!addShapes.Contains(shape) && shiftShapesLeft)
@@ -325,7 +326,7 @@ namespace PowerPointLabs.LiveCodingLab
                                         PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
                                         PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
                                     List<PowerPoint.Effect> shiftLeftEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
-                                    FormatCharDiffMoveLeftEffects(shiftLeftEffects, offset);
+                                    FormatWordDiffMoveLeftEffects(shiftLeftEffects, offset);
                                 }
                                 else if (!addShapes.Contains(shape) && shape.Left + emptyTextboxOffset < (afterShape.Left + afterShape.Width - emptyTextboxOffset))
                                 {
@@ -334,7 +335,7 @@ namespace PowerPointLabs.LiveCodingLab
                                         PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
                                         PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
                                     List<PowerPoint.Effect> shiftRightEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
-                                    FormatCharDiffMoveRightEffects(shiftRightEffects, 
+                                    FormatWordDiffMoveRightEffects(shiftRightEffects, 
                                         ((afterShape.Left + afterShape.Width - emptyTextboxOffset) - (shape.Left + emptyTextboxOffset)) / 10);
                                     shiftShapesRight = true;
                                     offset = ((afterShape.Left + afterShape.Width - emptyTextboxOffset) - (shape.Left + emptyTextboxOffset)) / 10;
@@ -346,7 +347,7 @@ namespace PowerPointLabs.LiveCodingLab
                                         PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
                                         PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
                                     List<PowerPoint.Effect> shiftLeftEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
-                                    FormatCharDiffMoveLeftEffects(shiftLeftEffects,
+                                    FormatWordDiffMoveLeftEffects(shiftLeftEffects,
                                         ((shape.Left + emptyTextboxOffset) - (afterShape.Left + afterShape.Width - emptyTextboxOffset)) / 10);
                                     shiftShapesLeft = true;
                                     offset = ((shape.Left + emptyTextboxOffset) - (afterShape.Left + afterShape.Width - emptyTextboxOffset)) / 10;
@@ -362,7 +363,7 @@ namespace PowerPointLabs.LiveCodingLab
                             PowerPoint.MsoAnimateByLevel.msoAnimateTextByAllLevels,
                             PowerPoint.MsoAnimTriggerType.msoAnimTriggerAfterPrevious);
                         List<PowerPoint.Effect> addEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
-                        FormatCharDiffAddEffects(addEffects);
+                        FormatWordDiffAddEffects(addEffects);
 
                         currentIndex = sequence.Count;
 
@@ -371,7 +372,7 @@ namespace PowerPointLabs.LiveCodingLab
                             PowerPoint.MsoAnimateByLevel.msoAnimateTextByAllLevels,
                             PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
                         List<PowerPoint.Effect> colourChangeAddEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
-                        FormatCharDiffColourChangeEffects(colourChangeAddEffects);
+                        FormatWordDiffColourChangeEffects(colourChangeAddEffects);
 
                         break;
                     // Default: No animation created
@@ -388,7 +389,7 @@ namespace PowerPointLabs.LiveCodingLab
         /// <param name="diffCodeBoxBefore">code box containing the "before" code snippet</param>
         /// <param name="diffCodeBoxAfter">code box containing the "after" code snippet</param>
         /// <returns>list of shapes to be animated in order</returns>
-        private List<Tuple<WordDiffType, Shape, Shape>> CreateTransitionTextForCharDiff(PowerPointSlide transitionSlide, CodeBoxPaneItem diffCodeBoxBefore, CodeBoxPaneItem diffCodeBoxAfter)
+        private List<Tuple<WordDiffType, Shape, Shape>> CreateTransitionTextForWordDiff(PowerPointSlide transitionSlide, CodeBoxPaneItem diffCodeBoxBefore, CodeBoxPaneItem diffCodeBoxAfter)
         {
             float emptyTextboxOffset = 7.272875f;
             float topPointerLineOffset = 20 * (diffCodeBoxBefore.CodeBox.Shape.TextFrame.TextRange.Font.Size / 18);
@@ -399,30 +400,33 @@ namespace PowerPointLabs.LiveCodingLab
             float leftAfterPointer = diffCodeBoxBefore.CodeBox.Shape.Left;
             float topAfterPointer = diffCodeBoxBefore.CodeBox.Shape.Top;
             int charCountBefore = 1;
-            List<Tuple<Operation, Shape>> transitionText = new List<Tuple<Operation, Shape>>();
+            List<Tuple<ChangeType, Shape>> transitionText = new List<Tuple<ChangeType, Shape>>();
             List<Tuple<WordDiffType, Shape, Shape>> transitionTextToAnimate = new List<Tuple<WordDiffType, Shape, Shape>>();
             
             // Use Diff library to create differences in words across the "before" and "after" code
             PowerPoint.TextRange codeTextBeforeEdit = diffCodeBoxBefore.CodeBox.Shape.TextFrame.TextRange;
             PowerPoint.TextRange codeTextAfterEdit = diffCodeBoxAfter.CodeBox.Shape.TextFrame.TextRange;
-            var differ = DiffMatchPatchModule.Default;
-            var diffs = differ.DiffMain(codeTextBeforeEdit.Text, codeTextAfterEdit.Text);
-            differ.DiffCleanupSemantic(diffs);
 
+            DiffPaneModel model = new DiffPaneModel();
+            DiffPlex.Differ differ = new DiffPlex.Differ();
+
+            DiffPlex.Model.DiffResult diffResult = differ.CreateWordDiffs(codeTextBeforeEdit.Text, codeTextAfterEdit.Text, true, true, new char[] { ',', ' ', '\'', '\n', '\r'});
+            BuildDiffPieces(diffResult, model.Lines);
+            var diffs = model.Lines;
             // Create individual textboxes for each diff object
             for (int j = 0; j < diffs.Count; j++)
             {
                 // Split each diff based on newlines
                 string text = diffs[j].Text;
                 string[] lines = text.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-                
+
                 // Maintain a left and top pointer for both "before" and "after code
                 // to get the last known position of the code
                 float leftPointer;
                 float topPointer;
 
                 // Use the "after" code pointer if the line to be created is an addition line
-                if (diffs[j].Operation.IsInsert)
+                if (diffs[j].Type == ChangeType.Inserted)
                 {
                     leftPointer = leftAfterPointer;
                     topPointer = topAfterPointer;
@@ -437,7 +441,7 @@ namespace PowerPointLabs.LiveCodingLab
                 // Create a textbox for the first part of the code line (driver for code lines with > 1 line)
                 Shape textbox = transitionSlide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
                     leftPointer, topPointer, 0, 0);
-                
+
                 textbox.Name = LiveCodingLabText.TransitionTextIdentifier + DateTime.Now.ToString("yyyyMMddHHmmssffff");
                 textbox.TextFrame.TextRange.Text = lines[0];
                 textbox.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
@@ -447,12 +451,12 @@ namespace PowerPointLabs.LiveCodingLab
                 textbox.TextEffect.Alignment = Office.MsoTextEffectAlignment.msoTextEffectAlignmentLeft;
 
                 // Add the created textbox reference to a list for further processing
-                transitionText.Add(Tuple.Create(diffs[j].Operation, textbox));
+                transitionText.Add(Tuple.Create(diffs[j].Type, textbox));
 
                 // Syntax Highlighting for the created textbox
                 for (int charIndex = 1; charIndex <= lines[0].Length; charIndex++)
                 {
-                    if (diffs[j].Operation.IsDelete || diffs[j].Operation.IsEqual)
+                    if (diffs[j].Type == ChangeType.Deleted || diffs[j].Type == ChangeType.Unchanged)
                     {
                         textbox.TextFrame.TextRange.Characters(charIndex, 1).Font.Color.RGB = codeTextBeforeEdit.Characters(charCountBefore, 1).Font.Color.RGB;
                         charCountBefore++;
@@ -461,9 +465,9 @@ namespace PowerPointLabs.LiveCodingLab
 
                 // Adjust left pointer to the end of the newly created textbox for next line 
                 leftPointer += textbox.Width - (2 * emptyTextboxOffset);
-                
+
                 // Increment the pointer for code lines containing only Equal lines if line is equal
-                if (!diffs[j].Operation.IsDelete)
+                if (diffs[j].Type != ChangeType.Deleted)
                 {
                     leftEqualPointer += textbox.Width - (2 * emptyTextboxOffset);
                 }
@@ -477,7 +481,7 @@ namespace PowerPointLabs.LiveCodingLab
                 }
 
                 // Increment Syntax Highlighting pointer if line ends with newline
-                if (!diffs[j].Operation.IsInsert && charCountBefore <= codeTextBeforeEdit.Characters().Length && Char.IsControl(codeTextBeforeEdit.Characters(charCountBefore, 1).Text, 0))
+                if (diffs[j].Type != ChangeType.Inserted && charCountBefore <= codeTextBeforeEdit.Characters().Length && Char.IsControl(codeTextBeforeEdit.Characters(charCountBefore, 1).Text, 0))
                 {
                     charCountBefore++;
                 }
@@ -502,14 +506,14 @@ namespace PowerPointLabs.LiveCodingLab
                         textbox.TextFrame.TextRange.Font.Size = codeTextBeforeEdit.Font.Size;
                         textbox.TextFrame.TextRange.Font.Name = codeTextBeforeEdit.Font.Name;
                         textbox.TextEffect.Alignment = Office.MsoTextEffectAlignment.msoTextEffectAlignmentLeft;
-                        
+
                         // Add the created textbox reference to a list for further processing
-                        transitionText.Add(Tuple.Create(diffs[j].Operation, textbox));
+                        transitionText.Add(Tuple.Create(diffs[j].Type, textbox));
 
                         // Syntax Highlighting for textbox
                         for (int charIndex = 1; charIndex <= lines[i].Length; charIndex++)
                         {
-                            if (diffs[j].Operation.IsDelete || diffs[j].Operation.IsEqual)
+                            if (diffs[j].Type == ChangeType.Deleted || diffs[j].Type == ChangeType.Unchanged)
                             {
                                 textbox.TextFrame.TextRange.Characters(charIndex, 1).Font.Color.RGB = codeTextBeforeEdit.Characters(charCountBefore, 1).Font.Color.RGB;
                                 charCountBefore++;
@@ -517,7 +521,7 @@ namespace PowerPointLabs.LiveCodingLab
                         }
 
                         // Increment the syntax highlighter pointer to accommodate new line
-                        if (i < lines.Length - 1 && (diffs[j].Operation.IsDelete || diffs[j].Operation.IsEqual))
+                        if (i < lines.Length - 1 && (diffs[j].Type == ChangeType.Deleted || diffs[j].Type == ChangeType.Unchanged))
                         {
                             charCountBefore++;
                         }
@@ -527,7 +531,7 @@ namespace PowerPointLabs.LiveCodingLab
                     leftPointer += textbox.Width - (2 * emptyTextboxOffset);
 
                     // Increment the pointer for code lines containing only Equal lines if line is equal
-                    if (!diffs[j].Operation.IsDelete)
+                    if (diffs[j].Type != ChangeType.Deleted)
                     {
                         leftEqualPointer += textbox.Width - (2 * emptyTextboxOffset);
                     }
@@ -541,7 +545,7 @@ namespace PowerPointLabs.LiveCodingLab
                     }
 
                     // Increment the syntax highlighter pointer if there is a new line
-                    if (!diffs[j].Operation.IsInsert && charCountBefore <= codeTextBeforeEdit.Characters().Length && Char.IsControl(codeTextBeforeEdit.Characters(charCountBefore, 1).Text, 0))
+                    if (diffs[j].Type != ChangeType.Inserted && charCountBefore <= codeTextBeforeEdit.Characters().Length && Char.IsControl(codeTextBeforeEdit.Characters(charCountBefore, 1).Text, 0))
                     {
                         charCountBefore++;
                     }
@@ -549,12 +553,12 @@ namespace PowerPointLabs.LiveCodingLab
                 }
 
                 // Update all left and top pointers according to their Diff types
-                if (diffs[j].Operation.IsDelete)
+                if (diffs[j].Type == ChangeType.Deleted)
                 {
                     leftBeforePointer = leftPointer;
                     topBeforePointer = topPointer;
                 }
-                else if (diffs[j].Operation.IsInsert)
+                else if (diffs[j].Type == ChangeType.Inserted)
                 {
                     if (topAfterPointer != topPointer)
                     {
@@ -585,15 +589,15 @@ namespace PowerPointLabs.LiveCodingLab
             for (int i = 1; i < transitionText.Count; i++)
             {
                 WordDiffType transitionTextType;
-                if (transitionText[i-1].Item1 == Operation.Delete && transitionText[i].Item1 == Operation.Insert)
+                if (transitionText[i - 1].Item1 == ChangeType.Deleted && transitionText[i].Item1 == ChangeType.Inserted)
                 {
                     transitionTextType = WordDiffType.DeleteAdd;
                 }
-                else if (transitionText[i-1].Item1 == Operation.Delete)
+                else if (transitionText[i - 1].Item1 == ChangeType.Deleted)
                 {
                     transitionTextType = WordDiffType.DeleteEqual;
                 }
-                else if (transitionText[i-1].Item1 == Operation.Insert)
+                else if (transitionText[i - 1].Item1 == ChangeType.Inserted)
                 {
                     transitionTextType = WordDiffType.AddEqual;
                 }
@@ -603,7 +607,7 @@ namespace PowerPointLabs.LiveCodingLab
                 }
                 if (transitionTextType != WordDiffType.Equal)
                 {
-                    transitionTextToAnimate.Add(Tuple.Create(transitionTextType, transitionText[i-1].Item2, transitionText[i].Item2));
+                    transitionTextToAnimate.Add(Tuple.Create(transitionTextType, transitionText[i - 1].Item2, transitionText[i].Item2));
                 }
                 if (transitionTextType == WordDiffType.DeleteAdd)
                 {
@@ -612,22 +616,68 @@ namespace PowerPointLabs.LiveCodingLab
             }
 
             // Create a tuple that stores the diff type of the last pair of text boxes for animation purposes
-            if (transitionText[transitionText.Count-1].Item1 == Operation.Delete)
+            if (transitionText[transitionText.Count - 1].Item1 == ChangeType.Deleted)
             {
                 transitionTextToAnimate.Add(Tuple.Create(WordDiffType.DeleteEqual, transitionText[transitionText.Count - 1].Item2, transitionText[transitionText.Count - 1].Item2));
             }
-            else if (transitionText[transitionText.Count - 1].Item1 == Operation.Insert)
+            else if (transitionText[transitionText.Count - 1].Item1 == ChangeType.Inserted)
             {
                 transitionTextToAnimate.Add(Tuple.Create(WordDiffType.AddEqual, transitionText[transitionText.Count - 1].Item2, transitionText[transitionText.Count - 1].Item2));
             }
             return transitionTextToAnimate;
+        }
+        private void BuildDiffPieces(DiffPlex.Model.DiffResult diffResult, List<DiffPiece> pieces)
+        {
+            int bPos = 0;
+
+            foreach (var diffBlock in diffResult.DiffBlocks)
+            {
+                for (; bPos < diffBlock.InsertStartB; bPos++)
+                {
+                    pieces.Add(new DiffPiece(diffResult.PiecesNew[bPos], ChangeType.Unchanged, bPos + 1));
+                }
+
+                int i = 0;
+                for (; i < Math.Min(diffBlock.DeleteCountA, diffBlock.InsertCountB); i++)
+                {
+                    pieces.Add(new DiffPiece(diffResult.PiecesOld[i + diffBlock.DeleteStartA], ChangeType.Deleted));
+                }
+
+                i = 0;
+                for (; i < Math.Min(diffBlock.DeleteCountA, diffBlock.InsertCountB); i++)
+                {
+                    pieces.Add(new DiffPiece(diffResult.PiecesNew[i + diffBlock.InsertStartB], ChangeType.Inserted, bPos + 1));
+                    bPos++;
+                }
+
+                if (diffBlock.DeleteCountA > diffBlock.InsertCountB)
+                {
+                    for (; i < diffBlock.DeleteCountA; i++)
+                    {
+                        pieces.Add(new DiffPiece(diffResult.PiecesOld[i + diffBlock.DeleteStartA], ChangeType.Deleted));
+                    }
+                }
+                else
+                {
+                    for (; i < diffBlock.InsertCountB; i++)
+                    {
+                        pieces.Add(new DiffPiece(diffResult.PiecesNew[i + diffBlock.InsertStartB], ChangeType.Inserted, bPos + 1));
+                        bPos++;
+                    }
+                }
+            }
+
+            for (; bPos < diffResult.PiecesNew.Length; bPos++)
+            {
+                pieces.Add(new DiffPiece(diffResult.PiecesNew[bPos], ChangeType.Unchanged, bPos + 1));
+            }
         }
 
         /// <summary>
         /// Apply formatting and timings to delete effects in word diff animation to simulate code deletion
         /// </summary>
         /// <param name="effectList">list of effects to format</param>
-        private void FormatCharDiffDeleteEffects(List<PowerPoint.Effect> effectList)
+        private void FormatWordDiffDeleteEffects(List<PowerPoint.Effect> effectList)
         {
             foreach (PowerPoint.Effect effect in effectList)
             {
@@ -642,7 +692,7 @@ namespace PowerPointLabs.LiveCodingLab
         /// Apply formatting and timings to add effects in word diff animation to simulate code addition
         /// </summary>
         /// <param name="effectList">list of effects to format</param>
-        private void FormatCharDiffAddEffects(List<PowerPoint.Effect> effectList)
+        private void FormatWordDiffAddEffects(List<PowerPoint.Effect> effectList)
         {
             foreach (PowerPoint.Effect effect in effectList)
             {
@@ -656,7 +706,7 @@ namespace PowerPointLabs.LiveCodingLab
         /// Apply formatting and timings to colour change effects in word diff animation to simulate highlighting of code to be modified.
         /// </summary>
         /// <param name="effectList">list of effects to format</param>
-        private void FormatCharDiffColourChangeEffects(List<PowerPoint.Effect> effectList)
+        private void FormatWordDiffColourChangeEffects(List<PowerPoint.Effect> effectList)
         {
             foreach (PowerPoint.Effect effect in effectList)
             {
@@ -670,7 +720,7 @@ namespace PowerPointLabs.LiveCodingLab
         /// </summary>
         /// <param name="effectList">list of effects to format</param>
         /// <param name="offset">distance for code to shift left by</param>
-        private void FormatCharDiffMoveLeftEffects(List<PowerPoint.Effect> effectList, float offset)
+        private void FormatWordDiffMoveLeftEffects(List<PowerPoint.Effect> effectList, float offset)
         {
             foreach (PowerPoint.Effect effect in effectList)
             {
@@ -689,7 +739,7 @@ namespace PowerPointLabs.LiveCodingLab
         /// </summary>
         /// <param name="effectList">list of effects to format</param>
         /// <param name="offset">distance for code to shift right by</param>
-        private void FormatCharDiffMoveRightEffects(List<PowerPoint.Effect> effectList, float offset)
+        private void FormatWordDiffMoveRightEffects(List<PowerPoint.Effect> effectList, float offset)
         {
             foreach (PowerPoint.Effect effect in effectList)
             {
@@ -701,32 +751,6 @@ namespace PowerPointLabs.LiveCodingLab
                 behaviour.MotionEffect.ToY = 0;
                 effect.Timing.TriggerType = PowerPoint.MsoAnimTriggerType.msoAnimTriggerAfterPrevious;
             }
-        }
-
-        /// <summary>
-        /// Retrieves all shapes in the specified slide, grouped by line
-        /// </summary>
-        /// <param name="slide">Slide to retrieve the shapes from</param>
-        /// <returns>dictionary that stores lists of shapes, keyed by line number</returns>
-        private Dictionary<float, List<Shape>> GetShapesByLine(PowerPointSlide slide)
-        {
-            Dictionary<float, List<Shape>> shapesByLine = new Dictionary<float, List<Shape>>();
-
-            foreach (Shape shape in slide.Shapes)
-            {
-                float shapeTopPosition = shape.Top;
-                
-                if (shapesByLine.ContainsKey(shapeTopPosition))
-                {
-                    shapesByLine[shapeTopPosition].Add(shape);
-                }
-                else
-                {
-                    shapesByLine.Add(shapeTopPosition, new List<Shape>() { shape });
-                }
-            }
-
-            return shapesByLine;
         }
     }
 }

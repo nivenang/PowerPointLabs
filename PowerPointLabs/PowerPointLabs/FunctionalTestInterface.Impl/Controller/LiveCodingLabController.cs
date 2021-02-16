@@ -137,6 +137,17 @@ namespace PowerPointLabs.FunctionalTestInterface.Impl.Controller
             }
         }
 
+        public void AnimateWordDiff()
+        {
+            if (_pane != null)
+            {
+                UIThreadExecutor.Execute(() =>
+                {
+                    _pane.LiveCodingLabPaneWPF.animateWordDiffButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                });
+            }
+        }
+
         public void AnimateCharDiff()
         {
             if (_pane != null)

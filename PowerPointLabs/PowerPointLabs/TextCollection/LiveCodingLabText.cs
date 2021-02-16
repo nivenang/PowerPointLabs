@@ -55,6 +55,7 @@
         public const string AnimateLineDiffIdentifier = "AnimateLineDiff_";
         public const string AnimateBlockDiffIdentifier = "AnimateBlockDiff_";
         public const string AnimateWordDiffIdentifier = "AnimateWordDiff_";
+        public const string AnimateCharDiffIdentifier = "AnimateCharDiff_";
         #endregion
 
         #region GUI Text
@@ -106,6 +107,7 @@
         public const string ErrorAnimateLineDiffDialogTitle = "Unable to execute Animate Line Diff action";
         public const string ErrorAnimateBlockDiffDialogTitle = "Unable to execute Animate Block Diff action";
         public const string ErrorAnimateWordDiffDialogTitle = "Unable to execute Animate Word Diff action";
+        public const string ErrorAnimateCharDiffDialogTitle = "Unable to execute Animate Char Diff action";
         public const string ErrorAnimateDiffWrongSlide = "Please select the correct slide.";
         public const string ErrorAnimateDiffMissingCodeSnippet = "Missing code snippet. Please ensure that there is a 'before' and 'after' code snippet and that your current slide selected is on the 'before' code snippet.";
         public const string ErrorAnimateDiffWrongCodeSnippet = "Mismatched code snippets. Please ensure that the 'before' and 'after' code snippets have the same diff file.";

@@ -825,6 +825,7 @@
     <Compile Include="ELearningLab\Service\FunctionService\AudioService.cs" />
     <Compile Include="ColorTheme\DesignTheme.cs" />
     <Compile Include="FunctionalTestInterface.Impl\Controller\LiveCodingLabController.cs" />
+    <Compile Include="LiveCodingLab\AnimateWordDiff.cs" />
     <Compile Include="LiveCodingLab\AnimateCharDiff.cs" />
     <Compile Include="LiveCodingLab\AnimateBlockDiff.cs" />
     <Compile Include="LiveCodingLab\AnimateDiff.cs" />

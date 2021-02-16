@@ -16,6 +16,8 @@
 
         void AnimateBlockDiff();
 
+        void AnimateWordDiff();
+
         void AnimateCharDiff();
     }
 }
