@@ -1,4 +1,5 @@
 ﻿using System.Windows.Controls;
+using Microsoft.Office.Interop.PowerPoint;
 using PowerPointLabs.Utils;
 
 namespace PowerPointLabs.LiveCodingLab.Views
@@ -9,6 +10,11 @@ namespace PowerPointLabs.LiveCodingLab.Views
         /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
+
+        public void UpdateOnSelectionChange(Selection sel)
+        {
+            LiveCodingLabPaneWPF.UpdateCodeBoxPaneItemInsertButtonEnabledStatus(sel);
+        }
 
         /// <summary> 
         /// Clean up any resources being used.

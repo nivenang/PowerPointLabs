@@ -160,28 +160,30 @@ namespace PowerPointLabs.LiveCodingLab.Views
         private void InsertButton_Click(object sender, RoutedEventArgs e)
         {
             codeBox.Text = codeTextBox.Text;
-            if (codeBox.Shape == null)
+            if (codeBox.IsDiff && codeBox.DiffIndex < 0)
             {
-                if (codeBox.IsDiff && codeBox.DiffIndex < 0)
-                {
-                    MessageBox.Show("Diff file is uninitialised. Please use Insert Diff feature to insert a Diff file",
+                MessageBox.Show("Diff file is uninitialised. Please use Insert Diff feature to insert a Diff file",
                                     "Unable to execute action");
-                    return;
-                }
-                else if (codeBox.IsDiff && codeBox.DiffIndex >= 0)
-                {
-                    codeBox = ShapeUtility.InsertDiffCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, codeBox, CodeBoxFileService.ParseDiff(codeBox.Text)[0]);
-                }
-                else
-                {
-                    codeBox = ShapeUtility.InsertCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, codeBox);
-                }
+                return;
+            }
+            else if (codeBox.IsDiff && codeBox.DiffIndex >= 0)
+            {
+                codeBox = ShapeUtility.InsertDiffCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, codeBox, CodeBoxFileService.ParseDiff(codeBox.Text)[0]);
             }
             else
             {
-                codeBox = ShapeUtility.ReplaceTextForShape(codeBox);
+                codeBox = ShapeUtility.InsertCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, codeBox);
             }
 
+            parent.SaveCodeBox();
+            insertButton.Visibility = Visibility.Collapsed;
+            refreshButton.Visibility = Visibility.Visible;
+        }
+
+        private void RefreshButton_Click(object sender, RoutedEventArgs e)
+        {
+            codeBox.Text = codeTextBox.Text;
+            codeBox = ShapeUtility.ReplaceTextForShape(codeBox);
             parent.SaveCodeBox();
         }
 

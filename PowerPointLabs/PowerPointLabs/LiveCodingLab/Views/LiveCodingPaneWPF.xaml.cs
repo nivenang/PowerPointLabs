@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
@@ -231,6 +232,22 @@ namespace PowerPointLabs.LiveCodingLab.Views
             }
 
             SaveCodeBox();
+        }
+
+        public void UpdateCodeBoxPaneItemInsertButtonEnabledStatus(Selection selection) 
+        {
+            foreach (CodeBoxPaneItem item in codeBoxList)
+            {
+                try
+                {
+                    int shapeId = item.CodeBox.Shape.Id;
+                }
+                catch (COMException)
+                {
+                    item.refreshButton.Visibility = Visibility.Collapsed;
+                    item.insertButton.Visibility = Visibility.Visible;
+                }
+            }
         }
         internal void InitialiseLogic()
         {

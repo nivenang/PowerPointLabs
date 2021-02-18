@@ -3,7 +3,7 @@
     internal static class LiveCodingLabText
     {
         #region Action Framework Tags
-        public const string RibbonMenuId = "LiveCodingLabMenu";
+        public const string RibbonMenuId = "LiveCodingLabButton";
         public const string HighlightDifferenceTag = "HighlightDifference";
         public const string AnimateNewLinesTag = "AnimateNewLines";
         public const string LiveCodingLabPaneTag = "LiveCodingLab";

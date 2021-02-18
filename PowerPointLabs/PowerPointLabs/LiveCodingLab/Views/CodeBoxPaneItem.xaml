@@ -89,7 +89,7 @@
                      FontSize="10" Margin="98,74,67,0" ToolTip="Check to use a diff for the code snippet." 
                      Checked="IsDiff_Checked"/>
         </Grid>
-        <Button x:Name="insertButton" Grid.Column="2" Margin="0,3,6,60" Click="InsertButton_Click" HorizontalAlignment="Right" MinWidth="25" MaxWidth="25" MinHeight="25" MaxHeight="25" Style="{StaticResource ImageButtonStyle}" Width="25">
+        <Button x:Name="insertButton" Grid.Column="2" Margin="0,3,6,60" Click="InsertButton_Click" HorizontalAlignment="Right" MinWidth="25" MaxWidth="25" MinHeight="25" MaxHeight="25" Style="{StaticResource ImageButtonStyle}" Width="25" Visibility="Visible">
             <Image x:Name="insertCode" Source="pack://siteoforigin:,,,/Resources/SyncLabEditButton.png" Stretch="Fill"/>
             <Button.ToolTip>
                 <StackPanel>
@@ -97,6 +97,18 @@
                     <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,8" />
                     <TextBlock>
                         Inserts the code snippet into the selected slide
+                    </TextBlock>
+                </StackPanel>
+            </Button.ToolTip>
+        </Button>
+        <Button x:Name="refreshButton" Grid.Column="2" Margin="0,3,6,60" Click="RefreshButton_Click" HorizontalAlignment="Right" MinWidth="25" MaxWidth="25" MinHeight="25" MaxHeight="25" Style="{StaticResource ImageButtonStyle}" Width="25" Visibility="Collapsed">
+            <Image x:Name="refreshCode" Source="..\..\Resources\icon-right_rotate.png" Stretch="Fill"/>
+            <Button.ToolTip>
+                <StackPanel>
+                    <TextBlock FontWeight="Bold" FontSize="14" Margin="0,0,0,5">Refresh Code</TextBlock>
+                    <Border BorderBrush="Silver" BorderThickness="0,1,0,0" Margin="0,8" />
+                    <TextBlock>
+                        Refreshes the code
                     </TextBlock>
                 </StackPanel>
             </Button.ToolTip>

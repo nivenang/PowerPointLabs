@@ -25,6 +25,7 @@ using PowerPointLabs.ELearningLab.Service;
 using PowerPointLabs.ELearningLab.Views;
 using PowerPointLabs.FunctionalTestInterface.Impl;
 using PowerPointLabs.FunctionalTestInterface.Impl.Controller;
+using PowerPointLabs.LiveCodingLab.Views;
 using PowerPointLabs.Models;
 using PowerPointLabs.PositionsLab;
 using PowerPointLabs.ResizeLab;
@@ -861,6 +862,9 @@ namespace PowerPointLabs
             CustomShapePane customShapePane = GetActivePane(typeof(CustomShapePane))?.Control as CustomShapePane;
             customShapePane?.UpdateOnSelectionChange(sel);
 
+            LiveCodingLabPane liveCodingLabPane = GetActivePane(typeof(LiveCodingLabPane))?.Control as LiveCodingLabPane;
+            liveCodingLabPane?.UpdateOnSelectionChange(sel);
+
             Ribbon.RefreshRibbonControl("AnimateInSlideButton");
             Ribbon.RefreshRibbonControl("DrillDownButton");
             Ribbon.RefreshRibbonControl("StepBackButton");
@@ -1009,6 +1013,7 @@ namespace PowerPointLabs
             Ribbon.RefreshRibbonControl(TimerLabText.RibbonMenuId);
             Ribbon.RefreshRibbonControl(AgendaLabText.RibbonMenuId);
             Ribbon.RefreshRibbonControl(PictureSlidesLabText.RibbonMenuId);
+            Ribbon.RefreshRibbonControl(LiveCodingLabText.RibbonMenuId);
         }
 
         private void ThisAddInShutdown(object sender, EventArgs e)
