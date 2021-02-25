@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using DiffPlex.DiffBuilder;
 using DiffPlex.DiffBuilder.Model;
@@ -37,6 +38,7 @@ namespace PowerPointLabs.LiveCodingLab
             try
             {
                 PowerPointSlide currentSlide = PowerPointCurrentPresentationInfo.CurrentSlide;
+                PowerPointSlide nextSlide = currentPresentation.GetSlide(currentSlide.Index + 1);
 
                 // Check that there is a slide selected by the user
                 if (currentSlide == null)
@@ -99,7 +101,9 @@ namespace PowerPointLabs.LiveCodingLab
                 }
 
                 // Creates a new animation slide between the before and after code
-                PowerPointSlide transitionSlide = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, index: currentSlide.Index + 1);
+                // PowerPointSlide transitionSlide = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, index: currentSlide.Index + 1);
+                PowerPointAutoAnimateSlide transitionSlide = AddTransitionAnimations(currentSlide, nextSlide);
+
                 transitionSlide.Name = LiveCodingLabText.AnimateWordDiffIdentifier + LiveCodingLabText.TransitionSlideIdentifier + DateTime.Now.ToString("yyyyMMddHHmmssffff");
 
                 // Create the transition text in the transition slide for Animating Word Diff
@@ -108,7 +112,10 @@ namespace PowerPointLabs.LiveCodingLab
                 // Animates the differences between the "before" and "after" code in the transition slide
                 CreateAnimationForTransitionTextWordDiff(transitionSlide, transitionText);
 
-                AddPowerPointLabsIndicator(transitionSlide);
+                if (!transitionSlide.HasShapeWithRule(new Regex(@"PPTIndicator.*")))
+                {
+                    AddPowerPointLabsIndicator(transitionSlide);
+                }
             }
             catch (Exception e)
             {

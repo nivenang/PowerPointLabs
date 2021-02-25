@@ -23,6 +23,9 @@ namespace PowerPointLabs.LiveCodingLab
     public partial class LiveCodingLabMain
     {
         PowerPointPresentation currentPresentation;
+        private static Shape[] currentSlideShapes;
+        private static Shape[] nextSlideShapes;
+        private static int[] matchingShapeIDs;
         enum DiffType
         {
             Add,
@@ -44,7 +47,103 @@ namespace PowerPointLabs.LiveCodingLab
             currentPresentation = PowerPointPresentation.Current;
         }
         #endregion
+        public List<int> GetMatchingShapeIDs()
+        {
+            List<PowerPointSlide> slides = currentPresentation.Slides;
+            List<int> matchingShapeIdsToReturn = new List<int>();
 
+            for (int i = 1; i < currentPresentation.SlideCount - 1; i++)
+            {
+                if (slides[i].HasShapeWithRule(new Regex(@"PPTIndicator.*")) && !slides[i].Hidden)
+                {
+                    int[] tempMatchingIds = GetMatchingShapeDetails(slides[i - 1], slides[i + 1]);
+                    matchingShapeIdsToReturn.AddRange(tempMatchingIds);
+                }
+            }
+            return matchingShapeIdsToReturn;
+        }
+
+        private static PowerPointAutoAnimateSlide AddTransitionAnimations(PowerPointSlide currentSlide, PowerPointSlide nextSlide)
+        {
+            PowerPointAutoAnimateSlide addedSlide = currentSlide.CreateAutoAnimateSlide() as PowerPointAutoAnimateSlide;
+            Globals.ThisAddIn.Application.ActiveWindow.View.GotoSlide(addedSlide.Index);
+
+            foreach (Shape shape in addedSlide.Shapes)
+            {
+                if (shape.Name.Contains("CodeBox"))
+                {
+                    shape.Delete();
+                }
+            }
+
+            addedSlide.MoveMotionAnimation(); // Move shapes with motion animation already added
+            addedSlide.PrepareForAutoAnimate();
+            if (HasMatchingShapes(currentSlide, nextSlide))
+            {
+                addedSlide.AddAutoAnimation(currentSlideShapes, nextSlideShapes, matchingShapeIDs);
+            }
+            return addedSlide;
+        }
+
+        private static bool HasMatchingShapes(PowerPointSlide currentSlide, PowerPointSlide nextSlide)
+        {
+            currentSlideShapes = new Shape[currentSlide.Shapes.Count];
+            nextSlideShapes = new Shape[currentSlide.Shapes.Count];
+            matchingShapeIDs = new int[currentSlide.Shapes.Count];
+
+            int counter = 0;
+            PowerPoint.Shape tempMatchingShape = null;
+            bool flag = false;
+
+            foreach (PowerPoint.Shape sh in currentSlide.Shapes)
+            {
+                tempMatchingShape = nextSlide.GetShapeWithSameIDAndName(sh);
+                if (tempMatchingShape == null)
+                {
+                    tempMatchingShape = nextSlide.GetShapeWithSameName(sh);
+                }
+
+                if (tempMatchingShape != null)
+                {
+                    currentSlideShapes[counter] = sh;
+                    nextSlideShapes[counter] = tempMatchingShape;
+                    matchingShapeIDs[counter] = sh.Id;
+                    counter++;
+                    flag = true;
+                }
+            }
+
+            return flag;
+        }
+        
+        private int[] GetMatchingShapeDetails(PowerPointSlide currentSlide, PowerPointSlide nextSlide)
+        {
+            Shape[] currentSlideShapesList = new Shape[currentSlide.Shapes.Count];
+            Shape[] nextSlideShapesList = new Shape[currentSlide.Shapes.Count];
+            int[] matchingShapeIDsList = new int[currentSlide.Shapes.Count];
+
+            int counter = 0;
+            PowerPoint.Shape tempMatchingShape = null;
+
+            foreach (PowerPoint.Shape sh in currentSlide.Shapes)
+            {
+                tempMatchingShape = nextSlide.GetShapeWithSameIDAndName(sh);
+                if (tempMatchingShape == null)
+                {
+                    tempMatchingShape = nextSlide.GetShapeWithSameName(sh);
+                }
+
+                if (tempMatchingShape != null)
+                {
+                    currentSlideShapesList[counter] = sh;
+                    nextSlideShapesList[counter] = tempMatchingShape;
+                    matchingShapeIDsList[counter] = sh.Id;
+                    counter++;
+                }
+            }
+
+            return matchingShapeIDsList;
+        }
         /// <summary>
         /// Deletes all redundant effects from the sequence.
         /// </summary>

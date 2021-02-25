@@ -406,6 +406,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
         {
             RefreshCode();
             List<PowerPointSlide> slides = currentPresentation.Slides;
+            List<int> matchingShapeIDs = _liveCodingLab.GetMatchingShapeIDs();
 
             for (int i = 1; i < slides.Count; i++)
             {
@@ -457,7 +458,11 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
                 foreach (Shape shape in slide.Shapes)
                 {
-                    if (!shape.Name.StartsWith(LiveCodingLabText.TransitionTextIdentifier) && !shape.Name.StartsWith(PowerPointSlide.PptLabsIndicatorShapeName))
+                    bool isTransitionText = shape.Name.StartsWith(LiveCodingLabText.TransitionTextIdentifier);
+                    bool isPptLabsIndicator = shape.Name.StartsWith(PowerPointSlide.PptLabsIndicatorShapeName);
+                    bool isMatchingShape = matchingShapeIDs.Contains(shape.Id);
+
+                    if (!isTransitionText && !isPptLabsIndicator && !isMatchingShape)
                     {
                         Shape newShape = newTransitionSlide.CopyShapeToSlide(shape);
                         effectsToRefresh = TransferAnimation(slide, newTransitionSlide, shape, newShape, effectsToRefresh);

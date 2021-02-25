@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 
 using PowerPointLabs.ActionFramework.Common.Extension;
@@ -27,6 +28,7 @@ namespace PowerPointLabs.LiveCodingLab
             try
             {
                 PowerPointSlide currentSlide = PowerPointCurrentPresentationInfo.CurrentSlide;
+                PowerPointSlide nextSlide = currentPresentation.GetSlide(currentSlide.Index + 1);
 
                 CodeBoxPaneItem diffCodeBoxBefore = listCodeBox[0];
                 CodeBoxPaneItem diffCodeBoxAfter = listCodeBox[1];
@@ -74,8 +76,9 @@ namespace PowerPointLabs.LiveCodingLab
                 }
 
                 // Creates a new animation slide between the before and after code
-                PowerPointSlide transitionSlide = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, index: currentSlide.Index + 1);
-                
+                //PowerPointSlide transitionSlide = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, index: currentSlide.Index + 1);
+                PowerPointAutoAnimateSlide transitionSlide = AddTransitionAnimations(currentSlide, nextSlide);
+
                 if (isBlockDiff)
                 {
                     transitionSlide.Name = LiveCodingLabText.AnimateBlockDiffIdentifier + LiveCodingLabText.TransitionSlideIdentifier + DateTime.Now.ToString("yyyyMMddHHmmssffff");
@@ -84,7 +87,6 @@ namespace PowerPointLabs.LiveCodingLab
                 {
                     transitionSlide.Name = LiveCodingLabText.AnimateLineDiffIdentifier + LiveCodingLabText.TransitionSlideIdentifier + DateTime.Now.ToString("yyyyMMddHHmmssffff");
                 }
-                AddPowerPointLabsIndicator(transitionSlide);
 
                 // Initialise an animation sequence object
                 PowerPoint.Sequence sequence = transitionSlide.TimeLine.MainSequence;
@@ -321,6 +323,12 @@ namespace PowerPointLabs.LiveCodingLab
                     RearrangeBlockDiffEffects(intermediateAppearEffects, intermediateDisappearEffects[intermediateDisappearEffects.Count - 1], PowerPoint.MsoAnimTriggerType.msoAnimTriggerAfterPrevious);
                     RearrangeBlockDiffEffects(appearHighlightEffects, intermediateAppearEffects[intermediateAppearEffects.Count - 1], PowerPoint.MsoAnimTriggerType.msoAnimTriggerWithPrevious);
                 }
+
+                if (!transitionSlide.HasShapeWithRule(new Regex(@"PPTIndicator.*")))
+                {
+                    AddPowerPointLabsIndicator(transitionSlide);
+                }
+
                 if (currentSlide.HasAnimationForClick(clickNumber: 1))
                 {
                     Globals.ThisAddIn.Application.CommandBars.ExecuteMso("AnimationPreview");
