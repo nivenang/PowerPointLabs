@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
-
+using System.Runtime.InteropServices;
 using Microsoft.Office.Interop.PowerPoint;
 using PowerPointLabs.LiveCodingLab.Service;
 using PowerPointLabs.Models;
@@ -172,7 +172,6 @@ namespace PowerPointLabs.LiveCodingLab.Model
             set
             {
                 codeBoxId = value;
-                NotifyPropertyChanged(LiveCodingLabText.CodeBox_Id);
             }
         }
 
@@ -198,6 +197,7 @@ namespace PowerPointLabs.LiveCodingLab.Model
             set
             {
                 codeShape = value;
+                NotifyPropertyChanged(LiveCodingLabText.CodeBox_CodeShape);
             }
         }
 
@@ -311,6 +311,36 @@ namespace PowerPointLabs.LiveCodingLab.Model
         public void NotifyPropertyChanged([CallerMemberName] string propertyName = "")
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
+
+        private void CodeBox_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            switch (e.PropertyName)
+            {
+                case LiveCodingLabText.CodeBox_CodeShape:
+                    try
+                    {
+                        int shapeId = codeShape.Id;
+                    }
+                    catch (COMException)
+                    {
+                        codeShape = null;
+                    }
+                    break;
+                case LiveCodingLabText.CodeBox_Slide:
+                    try
+                    {
+                        int slideID = slide.ID;
+                    }
+                    catch (COMException)
+                    {
+                        slide = null;
+                        codeShape = null;
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }

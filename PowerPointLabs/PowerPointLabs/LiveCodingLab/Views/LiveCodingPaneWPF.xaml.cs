@@ -33,6 +33,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
         private LiveCodingLabMain _liveCodingLab;
         private readonly LiveCodingLabErrorHandler _errorHandler;
         private ObservableCollection<CodeBoxPaneItem> codeBoxList;
+        private ObservableCollection<CodeBoxPaneItem> codeBoxListToDisplay;
         private PowerPointPresentation currentPresentation;
         private CollectionView view;
         private PropertyGroupDescription groupDescription;
@@ -92,12 +93,15 @@ namespace PowerPointLabs.LiveCodingLab.Views
             currentPresentation = PowerPointPresentation.Current;
             _errorHandler = LiveCodingLabErrorHandler.InitializeErrorHandler(this);
             codeBoxList = LoadCodeBoxes(currentPresentation.FirstSlide);
+            codeBoxListToDisplay = new ObservableCollection<CodeBoxPaneItem>();
+            RefreshCode();
+            codeListBox.ItemsSource = codeBoxListToDisplay;
             Focusable = true;
-            codeListBox.ItemsSource = codeBoxList;
             view = (CollectionView)CollectionViewSource.GetDefaultView(codeListBox.ItemsSource);
             groupDescription = new PropertyGroupDescription("Group");
             view.GroupDescriptions.Add(groupDescription);
             RefreshCode();
+
         }
         #endregion
 
@@ -136,6 +140,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
         public void SaveCodeBox()
         {
             LiveCodingLabTextStorageService.StoreCodeBoxToSlide(codeBoxList, currentPresentation.FirstSlide);
+            ReloadCodeBoxOnSlideSelectionChanged();
         }
 
         public void MoveUpCodeBox(CodeBoxPaneItem item)
@@ -224,7 +229,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
                 {
                     int slideID = slide.ID;
                 }
-                catch (System.Runtime.InteropServices.COMException)
+                catch (COMException)
                 {
                     item.CodeBox.Slide = null;
                     item.CodeBox.Shape = null;
@@ -249,6 +254,57 @@ namespace PowerPointLabs.LiveCodingLab.Views
                 }
             }
         }
+
+        public void ReloadCodeBoxOnSlideSelectionChanged()
+        {
+            PowerPointSlide currentSlide = PowerPointCurrentPresentationInfo.CurrentSlide;
+            HashSet<string> groupsToInclude = new HashSet<string>();
+            codeBoxListToDisplay.Clear();
+
+            if (currentSlide == null)
+            {
+                return;
+            }
+
+            foreach (CodeBoxPaneItem item in codeBoxList)
+            {
+                try
+                {
+                    if (!item.CodeBox.Slide.HasShapeWithSameName(string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, item.CodeBox.Id)))
+                    {
+                        item.refreshButton.Visibility = Visibility.Collapsed;
+                        item.insertButton.Visibility = Visibility.Visible;
+                    }
+                }
+                catch (COMException)
+                {
+                    item.refreshButton.Visibility = Visibility.Collapsed;
+                    item.insertButton.Visibility = Visibility.Visible;
+                }
+                if (item.CodeBox.Slide == null)
+                {
+                    continue;
+                }
+                if (item.CodeBox.Slide.Index.Equals(currentSlide.Index))
+                {
+                    groupsToInclude.Add(item.Group);
+                }
+            }
+
+            foreach (CodeBoxPaneItem item in codeBoxList)
+            {
+                if (item.CodeBox.Slide == null)
+                {
+                    continue;
+                }
+
+                if (groupsToInclude.Contains(item.Group))
+                {
+                    codeBoxListToDisplay.Add(item);
+                }
+            }
+        }
+
         internal void InitialiseLogic()
         {
             if (_liveCodingLab == null)

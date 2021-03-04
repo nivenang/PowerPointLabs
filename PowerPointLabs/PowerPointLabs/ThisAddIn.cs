@@ -620,6 +620,20 @@ namespace PowerPointLabs
             }
         }
 
+        private void UpdateLiveCodingPane()
+        {
+            CustomTaskPane liveCodingLabPane = GetActivePane(typeof(LiveCodingLabPane));
+            if (liveCodingLabPane == null)
+            {
+                return;
+            }
+            LiveCodingLabPane taskPane = liveCodingLabPane.Control as LiveCodingLabPane;
+            if (liveCodingLabPane.Visible == true)
+            {
+                taskPane.LiveCodingLabPaneWPF.ReloadCodeBoxOnSlideSelectionChanged();
+            }
+        }
+
         private void CleanUp(PowerPoint.DocumentWindow associatedWindow)
         {
             if (_documentHashcodeMapper.ContainsKey(associatedWindow))
@@ -787,6 +801,7 @@ namespace PowerPointLabs
             }
 
             UpdateELearningPane(sldRange.Count);
+            UpdateLiveCodingPane();
             // in case the recorder is on event
             BreakRecorderEvents();
 

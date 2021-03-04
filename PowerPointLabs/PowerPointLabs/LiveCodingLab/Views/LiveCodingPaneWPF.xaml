@@ -64,7 +64,7 @@
                 <Image Source="..\..\Resources\InsertDiff.png"/>
             </WPF:ImageButton>
             <TextBlock x:Name="insertDiffTextBlock" HorizontalAlignment="Left" Margin="230,36,0,0" TextWrapping="Wrap" Text="Insert Diff Files" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
-            <WPF:ImageButton ToolTip="Creates animations to highlight the differences and animate new lines between two code snippets based on a diff file" x:Name="createCodeBoxFromTextButton" HorizontalAlignment="Left" Margin="285,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="CreateCodeBoxFromText_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.RowSpan="2">
+            <WPF:ImageButton ToolTip="Creates a code box in the pane window from a pre-existing text box" x:Name="createCodeBoxFromTextButton" HorizontalAlignment="Left" Margin="285,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="CreateCodeBoxFromText_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.RowSpan="2">
                 <Image Source="..\..\Resources\InsertCode.png"/>
             </WPF:ImageButton>
             <TextBlock x:Name="createCodeBoxFromTextTextBlock" HorizontalAlignment="Left" Margin="285,36,0,0" TextWrapping="Wrap" Text="Create Code Box" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
