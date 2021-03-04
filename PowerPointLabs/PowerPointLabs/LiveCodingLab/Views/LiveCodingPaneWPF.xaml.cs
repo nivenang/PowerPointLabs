@@ -243,6 +243,10 @@ namespace PowerPointLabs.LiveCodingLab.Views
         {
             foreach (CodeBoxPaneItem item in codeBoxList)
             {
+                if (item.CodeBox.Shape == null)
+                {
+                    continue;
+                }
                 try
                 {
                     int shapeId = item.CodeBox.Shape.Id;
@@ -258,7 +262,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
         public void ReloadCodeBoxOnSlideSelectionChanged()
         {
             PowerPointSlide currentSlide = PowerPointCurrentPresentationInfo.CurrentSlide;
-            HashSet<string> groupsToInclude = new HashSet<string>();
+            HashSet<string> groupsToInclude = new HashSet<string>() { "Ungrouped" };
             codeBoxListToDisplay.Clear();
 
             if (currentSlide == null)
@@ -268,6 +272,10 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
             foreach (CodeBoxPaneItem item in codeBoxList)
             {
+                if (item.CodeBox.Slide == null)
+                {
+                    continue;
+                }
                 try
                 {
                     if (!item.CodeBox.Slide.HasShapeWithSameName(string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, item.CodeBox.Id)))
@@ -281,10 +289,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
                     item.refreshButton.Visibility = Visibility.Collapsed;
                     item.insertButton.Visibility = Visibility.Visible;
                 }
-                if (item.CodeBox.Slide == null)
-                {
-                    continue;
-                }
+
                 if (item.CodeBox.Slide.Index.Equals(currentSlide.Index))
                 {
                     groupsToInclude.Add(item.Group);
@@ -293,12 +298,8 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
             foreach (CodeBoxPaneItem item in codeBoxList)
             {
-                if (item.CodeBox.Slide == null)
-                {
-                    continue;
-                }
 
-                if (groupsToInclude.Contains(item.Group))
+                if (groupsToInclude.Contains(item.Group) || item.CodeBox.Slide == null)
                 {
                     codeBoxListToDisplay.Add(item);
                 }
