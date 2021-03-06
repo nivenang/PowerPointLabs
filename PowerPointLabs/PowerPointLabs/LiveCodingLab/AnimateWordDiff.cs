@@ -302,7 +302,7 @@ namespace PowerPointLabs.LiveCodingLab
                         FormatWordDiffDeleteEffects(deleteEffects);
 
                         // Create the movement effects to either close the gap from the deletion or to create space for the addition line
-                        if (beforeShape.Top.Equals(afterShape.Top))
+                        if (beforeShape.Top.Equals(afterShape.Top) && beforeShape.Width != afterShape.Width)
                         {
                             List<Shape> shapesToShift = shapesByLine[afterShape.Top];
                             int index = shapesToShift.IndexOf(afterShape);
@@ -419,7 +419,8 @@ namespace PowerPointLabs.LiveCodingLab
 
             DiffPlex.Model.DiffResult diffResult = differ.CreateWordDiffs(codeTextBeforeEdit.Text, codeTextAfterEdit.Text, true, true, new char[] { ',', ' ', '\'', '\n', '\r'});
             BuildDiffPieces(diffResult, model.Lines);
-            var diffs = model.Lines;
+            List<DiffPiece> diffs = model.Lines;
+
             // Create individual textboxes for each diff object
             for (int j = 0; j < diffs.Count; j++)
             {
@@ -445,20 +446,28 @@ namespace PowerPointLabs.LiveCodingLab
                     topPointer = topBeforePointer;
                 }
 
+                Shape textbox = null;
+
                 // Create a textbox for the first part of the code line (driver for code lines with > 1 line)
-                Shape textbox = transitionSlide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                    leftPointer, topPointer, 0, 0);
+                if (lines[0].Length > 0)
+                {
+                    textbox = transitionSlide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                        leftPointer, topPointer, 0, 0);
 
-                textbox.Name = LiveCodingLabText.TransitionTextIdentifier + DateTime.Now.ToString("yyyyMMddHHmmssffff");
-                textbox.TextFrame.TextRange.Text = lines[0];
-                textbox.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
-                textbox.TextFrame.WordWrap = Office.MsoTriState.msoFalse;
-                textbox.TextFrame.TextRange.Font.Size = codeTextBeforeEdit.Font.Size;
-                textbox.TextFrame.TextRange.Font.Name = codeTextBeforeEdit.Font.Name;
-                textbox.TextEffect.Alignment = Office.MsoTextEffectAlignment.msoTextEffectAlignmentLeft;
+                    textbox.Name = LiveCodingLabText.TransitionTextIdentifier + DateTime.Now.ToString("yyyyMMddHHmmssffff");
+                    textbox.TextFrame.TextRange.Text = lines[0];
+                    textbox.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                    textbox.TextFrame.WordWrap = Office.MsoTriState.msoFalse;
+                    textbox.TextFrame.TextRange.Font.Size = codeTextBeforeEdit.Font.Size;
+                    textbox.TextFrame.TextRange.Font.Name = codeTextBeforeEdit.Font.Name;
+                    textbox.TextEffect.Alignment = Office.MsoTextEffectAlignment.msoTextEffectAlignmentLeft;
 
-                // Add the created textbox reference to a list for further processing
-                transitionText.Add(Tuple.Create(diffs[j].Type, textbox));
+                    // Add the created textbox reference to a list for further processing
+                    if (!string.IsNullOrWhiteSpace(lines[0]))
+                    {
+                        transitionText.Add(Tuple.Create(diffs[j].Type, textbox));
+                    }
+                }
 
                 // Syntax Highlighting for the created textbox
                 for (int charIndex = 1; charIndex <= lines[0].Length; charIndex++)
@@ -470,13 +479,16 @@ namespace PowerPointLabs.LiveCodingLab
                     }
                 }
 
-                // Adjust left pointer to the end of the newly created textbox for next line 
-                leftPointer += textbox.Width - (2 * emptyTextboxOffset);
-
-                // Increment the pointer for code lines containing only Equal lines if line is equal
-                if (diffs[j].Type != ChangeType.Deleted)
+                if (lines[0].Length > 0)
                 {
-                    leftEqualPointer += textbox.Width - (2 * emptyTextboxOffset);
+                    // Adjust left pointer to the end of the newly created textbox for next line 
+                    leftPointer += textbox.Width - (2 * emptyTextboxOffset);
+
+                    // Increment the pointer for code lines containing only Equal lines if line is equal
+                    if (diffs[j].Type != ChangeType.Deleted)
+                    {
+                        leftEqualPointer += textbox.Width - (2 * emptyTextboxOffset);
+                    }
                 }
 
                 // Set pointers to next line if the code line ends with a newline
@@ -488,11 +500,12 @@ namespace PowerPointLabs.LiveCodingLab
                 }
 
                 // Increment Syntax Highlighting pointer if line ends with newline
+                
                 if (diffs[j].Type != ChangeType.Inserted && charCountBefore <= codeTextBeforeEdit.Characters().Length && Char.IsControl(codeTextBeforeEdit.Characters(charCountBefore, 1).Text, 0))
                 {
                     charCountBefore++;
                 }
-
+                
                 // Repeatedly create textboxes for the remaining part of the code line (for diff code lines > 1 line)
                 if (lines.Length > 1)
                 {
@@ -502,20 +515,26 @@ namespace PowerPointLabs.LiveCodingLab
                         leftEqualPointer = originalLeftPointer;
                         topPointer += topPointerLineOffset;
 
-                        // Create text box for the code line
-                        textbox = transitionSlide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
-                            leftPointer, topPointer, 0, 0);
+                        if (lines[i].Length > 0)
+                        {
+                            // Create text box for the code line
+                            textbox = transitionSlide.Shapes.AddTextbox(Office.MsoTextOrientation.msoTextOrientationHorizontal,
+                                leftPointer, topPointer, 0, 0);
 
-                        textbox.Name = LiveCodingLabText.TransitionTextIdentifier + DateTime.Now.ToString("yyyyMMddHHmmssffff");
-                        textbox.TextFrame.TextRange.Text = lines[i];
-                        textbox.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
-                        textbox.TextFrame.WordWrap = Office.MsoTriState.msoFalse;
-                        textbox.TextFrame.TextRange.Font.Size = codeTextBeforeEdit.Font.Size;
-                        textbox.TextFrame.TextRange.Font.Name = codeTextBeforeEdit.Font.Name;
-                        textbox.TextEffect.Alignment = Office.MsoTextEffectAlignment.msoTextEffectAlignmentLeft;
+                            textbox.Name = LiveCodingLabText.TransitionTextIdentifier + DateTime.Now.ToString("yyyyMMddHHmmssffff");
+                            textbox.TextFrame.TextRange.Text = lines[i];
+                            textbox.TextFrame.AutoSize = PowerPoint.PpAutoSize.ppAutoSizeShapeToFitText;
+                            textbox.TextFrame.WordWrap = Office.MsoTriState.msoFalse;
+                            textbox.TextFrame.TextRange.Font.Size = codeTextBeforeEdit.Font.Size;
+                            textbox.TextFrame.TextRange.Font.Name = codeTextBeforeEdit.Font.Name;
+                            textbox.TextEffect.Alignment = Office.MsoTextEffectAlignment.msoTextEffectAlignmentLeft;
 
-                        // Add the created textbox reference to a list for further processing
-                        transitionText.Add(Tuple.Create(diffs[j].Type, textbox));
+                            if (!string.IsNullOrWhiteSpace(lines[0]))
+                            {
+                                // Add the created textbox reference to a list for further processing
+                                transitionText.Add(Tuple.Create(diffs[j].Type, textbox));
+                            }
+                        }
 
                         // Syntax Highlighting for textbox
                         for (int charIndex = 1; charIndex <= lines[i].Length; charIndex++)
@@ -528,19 +547,24 @@ namespace PowerPointLabs.LiveCodingLab
                         }
 
                         // Increment the syntax highlighter pointer to accommodate new line
+                        /*
                         if (i < lines.Length - 1 && (diffs[j].Type == ChangeType.Deleted || diffs[j].Type == ChangeType.Unchanged))
                         {
-                            charCountBefore++;
+                             charCountBefore++;
                         }
+                        */
                     }
 
-                    // Set left pointer to end of newly created textbox
-                    leftPointer += textbox.Width - (2 * emptyTextboxOffset);
-
-                    // Increment the pointer for code lines containing only Equal lines if line is equal
-                    if (diffs[j].Type != ChangeType.Deleted)
+                    if (lines[lines.Length - 1].Length > 0)
                     {
-                        leftEqualPointer += textbox.Width - (2 * emptyTextboxOffset);
+                        // Set left pointer to end of newly created textbox
+                        leftPointer += textbox.Width - (2 * emptyTextboxOffset);
+
+                        // Increment the pointer for code lines containing only Equal lines if line is equal
+                        if (diffs[j].Type != ChangeType.Deleted)
+                        {
+                            leftEqualPointer += textbox.Width - (2 * emptyTextboxOffset);
+                        }
                     }
 
                     // Set pointers to next line if the code line ends with a newline
@@ -551,12 +575,11 @@ namespace PowerPointLabs.LiveCodingLab
                         topPointer += topPointerLineOffset;
                     }
 
-                    // Increment the syntax highlighter pointer if there is a new line
+                    // Increment the syntax highlighter pointer if there is a new line 
                     if (diffs[j].Type != ChangeType.Inserted && charCountBefore <= codeTextBeforeEdit.Characters().Length && Char.IsControl(codeTextBeforeEdit.Characters(charCountBefore, 1).Text, 0))
                     {
                         charCountBefore++;
                     }
-
                 }
 
                 // Update all left and top pointers according to their Diff types

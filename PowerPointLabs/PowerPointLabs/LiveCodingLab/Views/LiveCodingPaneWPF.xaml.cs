@@ -253,6 +253,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
                 }
                 catch (COMException)
                 {
+                    item.CodeBox.Shape = null;
                     item.refreshButton.Visibility = Visibility.Collapsed;
                     item.insertButton.Visibility = Visibility.Visible;
                 }
@@ -299,7 +300,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
             foreach (CodeBoxPaneItem item in codeBoxList)
             {
 
-                if (groupsToInclude.Contains(item.Group) || item.CodeBox.Slide == null)
+                if (groupsToInclude.Contains(item.Group) || item.CodeBox.Slide == null || item.CodeBox.Shape == null)
                 {
                     codeBoxListToDisplay.Add(item);
                 }
