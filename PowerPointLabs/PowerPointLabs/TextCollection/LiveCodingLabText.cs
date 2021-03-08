@@ -71,6 +71,9 @@
         public const string AnimateScrollUpButtonLabel = "Animate Scroll Up";
         public const string SettingsButtonLabel = "Settings";
 
+        public const string PromptToRecreateCodeBox = "Live Coding Lab has detected that this Code Box does not exist in the slides.\n" +
+            "Do you want to recreate the Code Box in the current slide?";
+
         public const string RibbonMenuSupertip =
             "Use Live Coding Lab to create live coding simulations for your slides.\n\n" +
             "Click this button to open the Live Coding Lab interface.";

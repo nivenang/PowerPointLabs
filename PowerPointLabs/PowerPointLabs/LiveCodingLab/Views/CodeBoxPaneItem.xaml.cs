@@ -1,6 +1,7 @@
 ﻿using System;
 using System.ComponentModel;
 using System.Drawing;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Controls;
@@ -207,9 +208,57 @@ namespace PowerPointLabs.LiveCodingLab.Views
         private void OnMouseDoubleClick(object sender, MouseButtonEventArgs e)
         {
             parent.RefreshCode();
-            if (codeBox.Slide != null)
+            bool hasCodeBoxInSlide = true;
+            if (codeBox.Slide == null || codeBox.Shape == null)
+            {
+                hasCodeBoxInSlide = false;
+            }
+            else
+            {
+                try
+                {
+                    int slideId = codeBox.Slide.ID;
+                    int shapeId = codeBox.Shape.Id;
+                }
+                catch (COMException)
+                {
+                    hasCodeBoxInSlide = false;
+                }
+            }
+
+            if (hasCodeBoxInSlide)
             {
                 Globals.ThisAddIn.Application.ActiveWindow.View.GotoSlide(codeBox.Slide.Index);
+                codeBox.Shape.Select();
+            }
+            else
+            {
+                System.Windows.Forms.DialogResult result = System.Windows.Forms.MessageBox.Show(
+                    LiveCodingLabText.PromptToRecreateCodeBox, 
+                    LiveCodingLabText.TaskPanelTitle, 
+                    System.Windows.Forms.MessageBoxButtons.YesNo);
+                if (result == System.Windows.Forms.DialogResult.Yes)
+                {
+                    codeBox.Text = codeTextBox.Text;
+                    if (codeBox.IsDiff && codeBox.DiffIndex < 0)
+                    {
+                        MessageBox.Show("Diff file is uninitialised. Please use Insert Diff feature to insert a Diff file",
+                                            "Unable to execute action");
+                        return;
+                    }
+                    else if (codeBox.IsDiff && codeBox.DiffIndex >= 0)
+                    {
+                        codeBox = ShapeUtility.InsertDiffCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, codeBox, CodeBoxFileService.ParseDiff(codeBox.Text)[0]);
+                    }
+                    else
+                    {
+                        codeBox = ShapeUtility.InsertCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, codeBox);
+                    }
+
+                    parent.SaveCodeBox();
+                    insertButton.Visibility = Visibility.Collapsed;
+                    refreshButton.Visibility = Visibility.Visible;
+                }
             }
         }
 
