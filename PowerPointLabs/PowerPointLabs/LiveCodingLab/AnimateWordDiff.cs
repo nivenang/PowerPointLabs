@@ -105,6 +105,7 @@ namespace PowerPointLabs.LiveCodingLab
                 PowerPointAutoAnimateSlide transitionSlide = AddTransitionAnimations(currentSlide, nextSlide);
 
                 transitionSlide.Name = LiveCodingLabText.AnimateWordDiffIdentifier + LiveCodingLabText.TransitionSlideIdentifier + DateTime.Now.ToString("yyyyMMddHHmmssffff");
+                CopyNextSlideShapesToTransition(transitionSlide, nextSlide);
 
                 // Create the transition text in the transition slide for Animating Word Diff
                 IEnumerable<Tuple<WordDiffType, Shape, Shape>> transitionText = CreateTransitionTextForWordDiff(transitionSlide, diffCodeBoxBefore, diffCodeBoxAfter);

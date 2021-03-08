@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using System.Windows;
 using Microsoft.Office.Core;
 using Microsoft.Office.Interop.PowerPoint;
 using PowerPointLabs.ActionFramework.Common.Extension;
@@ -63,6 +64,32 @@ namespace PowerPointLabs.LiveCodingLab
             return matchingShapeIdsToReturn;
         }
 
+        private void CopyNextSlideShapesToTransition(PowerPointSlide transitionSlide, PowerPointSlide nextSlide)
+        {
+            PowerPoint.Shapes shapes = nextSlide.Shapes;
+
+            foreach (Shape shape in shapes)
+            {
+                if (!shape.Name.Contains("CodeBox"))
+                {
+                    Shape transitionShape = transitionSlide.CopyShapeToSlide(shape);
+                    transitionSlide.DeleteShapeAnimations(transitionShape);
+                    
+                    PowerPoint.Sequence sequence = transitionSlide.TimeLine.MainSequence;
+                    
+                    // Creates disappear effects to remove lines that are similar between both codes
+                    int currentIndex = sequence.Count;
+                    sequence.AddEffect(transitionShape,
+                        PowerPoint.MsoAnimEffect.msoAnimEffectFade,
+                        PowerPoint.MsoAnimateByLevel.msoAnimateTextByFifthLevel,
+                        PowerPoint.MsoAnimTriggerType.msoAnimTriggerOnPageClick);
+                    
+                    List<PowerPoint.Effect> disappearEffects = AsList(sequence, currentIndex + 1, sequence.Count + 1);
+                    FormatDisappearEffects(disappearEffects); 
+                }
+            }
+        }
+
         private static PowerPointAutoAnimateSlide AddTransitionAnimations(PowerPointSlide currentSlide, PowerPointSlide nextSlide)
         {
             PowerPointAutoAnimateSlide addedSlide = currentSlide.CreateAutoAnimateSlide() as PowerPointAutoAnimateSlide;
@@ -119,7 +146,7 @@ namespace PowerPointLabs.LiveCodingLab
         private int[] GetMatchingShapeDetails(PowerPointSlide currentSlide, PowerPointSlide nextSlide)
         {
             Shape[] currentSlideShapesList = new Shape[currentSlide.Shapes.Count];
-            Shape[] nextSlideShapesList = new Shape[currentSlide.Shapes.Count];
+            Shape[] nextSlideShapesList = new Shape[nextSlide.Shapes.Count];
             int[] matchingShapeIDsList = new int[currentSlide.Shapes.Count];
 
             int counter = 0;

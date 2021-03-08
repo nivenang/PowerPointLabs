@@ -78,6 +78,7 @@ namespace PowerPointLabs.LiveCodingLab
                 // Creates a new animation slide between the before and after code
                 //PowerPointSlide transitionSlide = currentPresentation.AddSlide(PowerPoint.PpSlideLayout.ppLayoutOrgchart, index: currentSlide.Index + 1);
                 PowerPointAutoAnimateSlide transitionSlide = AddTransitionAnimations(currentSlide, nextSlide);
+                CopyNextSlideShapesToTransition(transitionSlide, nextSlide);
 
                 if (isBlockDiff)
                 {
