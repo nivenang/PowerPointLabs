@@ -273,6 +273,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
             foreach (CodeBoxPaneItem item in codeBoxList)
             {
+                bool hasCodeBoxSlide = true;
                 if (item.CodeBox.Slide == null)
                 {
                     continue;
@@ -287,8 +288,14 @@ namespace PowerPointLabs.LiveCodingLab.Views
                 }
                 catch (COMException)
                 {
+                    hasCodeBoxSlide = false;
                     item.refreshButton.Visibility = Visibility.Collapsed;
                     item.insertButton.Visibility = Visibility.Visible;
+                }
+
+                if (!hasCodeBoxSlide)
+                {
+                    continue;
                 }
 
                 if (item.CodeBox.Slide.Index.Equals(currentSlide.Index))
