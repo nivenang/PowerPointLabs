@@ -22,7 +22,7 @@ namespace PowerPointLabs.LiveCodingLab.Service
             if (!File.Exists(filePath))
             {
                 MessageBox.Show(LiveCodingLabText.ErrorInvalidFileName,
-                    LiveCodingLabText.ErrorHighlightDifferenceDialogTitle);
+                    LiveCodingLabText.ErrorDialogTitle);
                 return "";
             }
 

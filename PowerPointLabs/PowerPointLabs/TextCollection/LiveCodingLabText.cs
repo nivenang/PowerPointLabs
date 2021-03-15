@@ -115,6 +115,7 @@
         public const string ErrorAnimateDiffMissingCodeSnippet = "Missing code snippet. Please ensure that there is a 'before' and 'after' code snippet and that your current slide selected is on the 'before' code snippet.";
         public const string ErrorAnimateDiffWrongCodeSnippet = "Mismatched code snippets. Please ensure that the 'before' and 'after' code snippets have the same diff file.";
 
+        public const string ErrorDialogTitle = "Unable to execute action";
         public const string ErrorInvalidFileName = "The file specified does not exist.";
         public const string ErrorInvalidCodeBox = "You need to have {1} {2} on both the current slide and next slide before applying '{0}'.";
         public const string ErrorValueLessThanEqualsZero = "Please enter a value greater than 0.";

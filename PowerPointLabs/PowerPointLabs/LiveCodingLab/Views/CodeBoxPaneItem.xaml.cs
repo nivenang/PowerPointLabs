@@ -41,7 +41,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
             InitializeComponent();
             this.parent = parent;
             codeBox = new CodeBox(CodeBoxIdService.GenerateUniqueId());
-            insertCode.Source = GraphicsUtil.BitmapToImageSource(Properties.Resources.SyncLabEditButton);
+            //insertCode.Source = GraphicsUtil.BitmapToImageSource(Properties.Resources.SyncLabEditButton);
             deleteImage.Source = GraphicsUtil.BitmapToImageSource(Properties.Resources.SyncLabDeleteButton);
             isText.IsChecked = true;
             isFile.IsChecked = false;
@@ -54,7 +54,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
             InitializeComponent();
             this.parent = parent;
             this.codeBox = codeBox;
-            insertCode.Source = GraphicsUtil.BitmapToImageSource(Properties.Resources.SyncLabEditButton);
+            //insertCode.Source = GraphicsUtil.BitmapToImageSource(Properties.Resources.SyncLabEditButton);
             deleteImage.Source = GraphicsUtil.BitmapToImageSource(Properties.Resources.SyncLabDeleteButton);
             this.group = group;
             if (codeBox.IsFile)
@@ -130,6 +130,16 @@ namespace PowerPointLabs.LiveCodingLab.Views
             isFile.IsChecked = false;
             isDiff.IsChecked = true;
         }
+
+        public void SetFile()
+        {
+            codeBox.IsText = false;
+            codeBox.IsFile = true;
+            codeBox.IsDiff = false;
+            isText.IsChecked = false;
+            isFile.IsChecked = true;
+            isDiff.IsChecked = false;
+        }
         public void PopulateTextBox()
         {
             codeTextBox.Text = codeBox.Text;
@@ -182,8 +192,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
             }
 
             parent.SaveCodeBox();
-            insertButton.Visibility = Visibility.Collapsed;
-            refreshButton.Visibility = Visibility.Visible;
         }
 
         private void RefreshButton_Click(object sender, RoutedEventArgs e)
@@ -256,8 +264,61 @@ namespace PowerPointLabs.LiveCodingLab.Views
                     }
 
                     parent.SaveCodeBox();
-                    insertButton.Visibility = Visibility.Collapsed;
-                    refreshButton.Visibility = Visibility.Visible;
+                }
+            }
+        }
+
+        private void OnMouseSingleClick(object sender, MouseButtonEventArgs e)
+        {
+            parent.RefreshCode();
+            bool hasCodeBoxInSlide = true;
+            if (codeBox.Slide == null || codeBox.Shape == null)
+            {
+                hasCodeBoxInSlide = false;
+            }
+            else
+            {
+                try
+                {
+                    int slideId = codeBox.Slide.ID;
+                    int shapeId = codeBox.Shape.Id;
+                }
+                catch (COMException)
+                {
+                    hasCodeBoxInSlide = false;
+                }
+            }
+
+            if (hasCodeBoxInSlide)
+            {
+                Globals.ThisAddIn.Application.ActiveWindow.View.GotoSlide(codeBox.Slide.Index);
+                codeBox.Shape.Select();
+            }
+            else
+            {
+                System.Windows.Forms.DialogResult result = System.Windows.Forms.MessageBox.Show(
+                    LiveCodingLabText.PromptToRecreateCodeBox,
+                    LiveCodingLabText.TaskPanelTitle,
+                    System.Windows.Forms.MessageBoxButtons.YesNo);
+                if (result == System.Windows.Forms.DialogResult.Yes)
+                {
+                    codeBox.Text = codeTextBox.Text;
+                    if (codeBox.IsDiff && codeBox.DiffIndex < 0)
+                    {
+                        MessageBox.Show("Diff file is uninitialised. Please use Insert Diff feature to insert a Diff file",
+                                            "Unable to execute action");
+                        return;
+                    }
+                    else if (codeBox.IsDiff && codeBox.DiffIndex >= 0)
+                    {
+                        codeBox = ShapeUtility.InsertDiffCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, codeBox, CodeBoxFileService.ParseDiff(codeBox.Text)[0]);
+                    }
+                    else
+                    {
+                        codeBox = ShapeUtility.InsertCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, codeBox);
+                    }
+
+                    parent.SaveCodeBox();
                 }
             }
         }

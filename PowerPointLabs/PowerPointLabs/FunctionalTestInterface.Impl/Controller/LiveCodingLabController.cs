@@ -110,7 +110,7 @@ namespace PowerPointLabs.FunctionalTestInterface.Impl.Controller
             {
                 UIThreadExecutor.Execute(() =>
                 {
-                    item.insertButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+                    item.deleteButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
                 });
             }
         }
@@ -161,7 +161,7 @@ namespace PowerPointLabs.FunctionalTestInterface.Impl.Controller
 
         private CodeBoxPaneItem CreateCodeBox()
         {
-            _pane.LiveCodingLabPaneWPF.insertCodeBox.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
+            _pane.LiveCodingLabPaneWPF.fileCodeBoxButton.RaiseEvent(new RoutedEventArgs(ButtonBase.ClickEvent));
             return _pane.LiveCodingLabPaneWPF.GetCodeBoxList().First();
         }
 

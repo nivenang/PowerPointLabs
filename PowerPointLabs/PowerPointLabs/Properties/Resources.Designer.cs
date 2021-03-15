@@ -773,6 +773,16 @@ namespace PowerPointLabs.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap CreateHandouts {
+            get {
+                object obj = ResourceManager.GetObject("CreateHandouts", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap CreateTooltip {
             get {
                 object obj = ResourceManager.GetObject("CreateTooltip", resourceCulture);
@@ -1046,6 +1056,16 @@ namespace PowerPointLabs.Properties {
         public static System.Drawing.Bitmap Feedback {
             get {
                 object obj = ResourceManager.GetObject("Feedback", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap FileCodeBox {
+            get {
+                object obj = ResourceManager.GetObject("FileCodeBox", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

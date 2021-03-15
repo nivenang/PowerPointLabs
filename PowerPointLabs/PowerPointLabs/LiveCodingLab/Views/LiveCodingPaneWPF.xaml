@@ -39,67 +39,67 @@
                 <RowDefinition Height="6*"/>
                 <RowDefinition Height="115*"/>
             </Grid.RowDefinitions>
-            <GroupBox x:Name="codeBoxGroupBox" Header="Code Box" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" Height="117" Width="335" Grid.RowSpan="2">
+            <GroupBox x:Name="codeBoxGroupBox" Header="Code Box" HorizontalAlignment="Left" Margin="10,5,0,0" VerticalAlignment="Top" Height="195" Width="335" Grid.RowSpan="2">
                 <WPF:ImageButton ToolTip="Opens the settings for Code Box functions" x:Name="codeBoxSettingsButton" HorizontalAlignment="Right" Margin="0,-29,0,0" VerticalAlignment="Top" Width="20" Height="20" Click="CodeBoxSettingsButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
                     <Image Source="..\..\Resources\SettingsGear.png"/>
                 </WPF:ImageButton>
             </GroupBox>
-            <WPF:ImageButton ToolTip="Inserts a Code Box object into the slides" x:Name="insertCodeBox"  HorizontalAlignment="Left" Margin="10,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="InsertCodeBoxButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.RowSpan="2">
+            <WPF:ImageButton ToolTip="Creates a code box in the pane window from a pre-existing text box" x:Name="textCodeBoxButton" HorizontalAlignment="Left" Margin="15,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="CreateCodeBoxFromText_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.RowSpan="2">
                 <Image Source="..\..\Resources\InsertCode.png"/>
             </WPF:ImageButton>
-            <TextBlock x:Name="insertCodeBoxTextBlock" HorizontalAlignment="Left" Margin="10,36,0,0" TextWrapping="Wrap" Text="Insert Code" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
-            <WPF:ImageButton ToolTip="Retrieves updated code from sources specified in code boxes" x:Name="refreshCodeButton" HorizontalAlignment="Left" Margin="65,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="RefreshCodeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.RowSpan="2">
-                <Image Source="..\..\Resources\RefreshCode.png"/>
+            <TextBlock x:Name="textCodeBoxTextBlock" HorizontalAlignment="Left" Margin="15,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"><Run Text="Text Code Box"/></TextBlock>
+            <WPF:ImageButton ToolTip="Inserts a Code Box object from a file into the slides" x:Name="fileCodeBoxButton"  HorizontalAlignment="Left" Margin="82,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="FileCodeBoxButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.RowSpan="2">
+                <Image Source="..\..\Resources\FileCodeBox.png"/>
             </WPF:ImageButton>
-            <TextBlock x:Name="refreshCodeTextBlock" HorizontalAlignment="Left" Margin="65,36,0,0" TextWrapping="Wrap" Text="Refresh Code" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
-            <WPF:ImageButton ToolTip="Retrieves updated code from sources specified in code boxes" x:Name="refreshAllCodeButton" HorizontalAlignment="Left" Margin="120,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="RefreshAllCodeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.RowSpan="2">
-                <Image Source="..\..\Resources\RefreshAllCode.png"/>
-            </WPF:ImageButton>
-            <TextBlock x:Name="refreshAllCodeTextBlock" HorizontalAlignment="Left" Margin="120,36,0,0" TextWrapping="Wrap" Text="Refresh All Code" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
-            <WPF:ImageButton ToolTip="Groups all selected code boxes" x:Name="groupCodeBoxButton" HorizontalAlignment="Left" Margin="177,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="GroupCodeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.RowSpan="2">
-                <Image Source="..\..\Resources\GroupCode.png"/>
-            </WPF:ImageButton>
-            <TextBlock x:Name="groupCodeBoxesTextBlock" HorizontalAlignment="Left" Margin="175,36,0,0" TextWrapping="Wrap" Text="Group Code Box" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
-            <WPF:ImageButton ToolTip="Creates animations to highlight the differences and animate new lines between two code snippets based on a diff file" x:Name="insertDiffButton" HorizontalAlignment="Left" Margin="230,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="InsertDiffButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.RowSpan="2">
+            <TextBlock x:Name="fileCodeBoxTextBlock" HorizontalAlignment="Left" Margin="82,36,0,0" TextWrapping="Wrap" Text="File Code Box" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
+            <WPF:ImageButton ToolTip="Creates two Code Box objects from a diff file" x:Name="insertDiffButton" HorizontalAlignment="Left" Margin="147,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="InsertDiffButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.RowSpan="2">
                 <Image Source="..\..\Resources\InsertDiff.png"/>
             </WPF:ImageButton>
-            <TextBlock x:Name="insertDiffTextBlock" HorizontalAlignment="Left" Margin="230,36,0,0" TextWrapping="Wrap" Text="Insert Diff Files" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
-            <WPF:ImageButton ToolTip="Creates a code box in the pane window from a pre-existing text box" x:Name="createCodeBoxFromTextButton" HorizontalAlignment="Left" Margin="285,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="CreateCodeBoxFromText_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.RowSpan="2">
-                <Image Source="..\..\Resources\InsertCode.png"/>
+            <TextBlock x:Name="insertDiffTextBlock" HorizontalAlignment="Left" Margin="147,36,0,0" TextWrapping="Wrap" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"><Run Text="Diff Code Box"/></TextBlock>
+            <WPF:ImageButton ToolTip="Retrieves updated code from sources specified in code boxes" x:Name="refreshCodeButton" HorizontalAlignment="Left" Margin="212,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="RefreshCodeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.RowSpan="2">
+                <Image Source="..\..\Resources\RefreshCode.png"/>
             </WPF:ImageButton>
-            <TextBlock x:Name="createCodeBoxFromTextTextBlock" HorizontalAlignment="Left" Margin="285,36,0,0" TextWrapping="Wrap" Text="Create Code Box" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
-            <GroupBox x:Name="animationGroupBox" Header="Animation" HorizontalAlignment="Left" Margin="10,92,0,0" VerticalAlignment="Top" Height="116" Width="335" Grid.Row="1">
+            <TextBlock x:Name="refreshCodeTextBlock" HorizontalAlignment="Left" Margin="212,36,0,0" TextWrapping="Wrap" Text="Refresh Code" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
+            <WPF:ImageButton ToolTip="Retrieves updated code from sources specified in all code boxes" x:Name="refreshAllCodeButton" HorizontalAlignment="Left" Margin="280,35,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="RefreshAllCodeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.RowSpan="2">
+                <Image Source="..\..\Resources\RefreshAllCode.png"/>
+            </WPF:ImageButton>
+            <TextBlock x:Name="refreshAllCodeTextBlock" HorizontalAlignment="Left" Margin="280,36,0,0" TextWrapping="Wrap" Text="Refresh All Code" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
+            <WPF:ImageButton ToolTip="Groups all selected code boxes" x:Name="groupCodeBoxButton" HorizontalAlignment="Left" Margin="15,72,0,0" VerticalAlignment="Top" Width="60" Height="44" Click="GroupCodeButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
+                <Image Source="..\..\Resources\GroupCode.png"/>
+            </WPF:ImageButton>
+            <TextBlock x:Name="groupCodeBoxesTextBlock" HorizontalAlignment="Left" Margin="15,116,0,0" TextWrapping="Wrap" Text="Group Code Box" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
+            <GroupBox x:Name="animationGroupBox" Header="Animation" HorizontalAlignment="Left" Margin="10,161,0,0" VerticalAlignment="Top" Height="114" Width="335" Grid.Row="1">
                 <WPF:ImageButton ToolTip="Opens the settings for Animation functions" x:Name="animationSettingsButton" HorizontalAlignment="Right" Margin="0,-29,0,0" VerticalAlignment="Top" Width="20" Height="20" Click="AnimationSettingsButton_Click" Background="{x:Null}" BorderBrush="{x:Null}">
                     <Image Source="..\..\Resources\SettingsGear.png"/>
                 </WPF:ImageButton>
             </GroupBox>
-            <WPF:ImageButton ToolTip="Animates the changes block by block across two code snippets on two separate slides" x:Name="animateBlockDiffButton" HorizontalAlignment="Left" Margin="10,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="AnimateBlockDiffButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
+            <WPF:ImageButton ToolTip="Animates the changes block by block across two code snippets on two separate slides" x:Name="animateBlockDiffButton" HorizontalAlignment="Left" Margin="15,191,0,0" VerticalAlignment="Top" Width="60" Height="46" Click="AnimateBlockDiffButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
                 <Image Source="..\..\Resources\AnimateNewLines.png"/>
             </WPF:ImageButton>
-            <TextBlock x:Name="animateBlockDiffTextBlock" HorizontalAlignment="Left" Margin="10,166.5,0,0" TextWrapping="Wrap" Text="Animate Block Diff" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
-            <WPF:ImageButton ToolTip="Animates the changes line by line across two code snippets on two separate slides" x:Name="animateLineDiffButton" HorizontalAlignment="Left" Margin="65,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="AnimateLineDiffButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
+            <TextBlock x:Name="animateBlockDiffTextBlock" HorizontalAlignment="Left" Margin="15,236,0,0" TextWrapping="Wrap" Text="Animate Block Diff" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
+            <WPF:ImageButton ToolTip="Animates the changes line by line across two code snippets on two separate slides" x:Name="animateLineDiffButton" HorizontalAlignment="Left" Margin="82,191,0,0" VerticalAlignment="Top" Width="60" Height="46" Click="AnimateLineDiffButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
                 <Image Source="..\..\Resources\HighlightDifference.png"/>
             </WPF:ImageButton>
-            <TextBlock x:Name="animateLineDiffTextBlock" HorizontalAlignment="Left" Margin="65,166.5,0,0" TextWrapping="Wrap" Text="Animate Line Diff" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
-            <WPF:ImageButton ToolTip="Animates the changes word by word across two code snippets on two separate slides" x:Name="animateWordDiffButton" HorizontalAlignment="Left" Margin="120,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="AnimateWordDiffButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
+            <TextBlock x:Name="animateLineDiffTextBlock" HorizontalAlignment="Left" Margin="82,236,0,0" TextWrapping="Wrap" Text="Animate Line Diff" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
+            <WPF:ImageButton ToolTip="Animates the changes word by word across two code snippets on two separate slides" x:Name="animateWordDiffButton" HorizontalAlignment="Left" Margin="147,191,0,0" VerticalAlignment="Top" Width="60" Height="46" Click="AnimateWordDiffButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
                 <Image Source="..\..\Resources\AnimateNewLines.png"/>
             </WPF:ImageButton>
-            <TextBlock x:Name="animateWordDiffTextBlock" HorizontalAlignment="Left" Margin="120,166.5,0,0" TextWrapping="Wrap" Text="Animate Word Diff" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
-            <WPF:ImageButton ToolTip="Animates the changes character by character across two code snippets on two separate slides" x:Name="animateCharDiffButton" HorizontalAlignment="Left" Margin="175,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="AnimateCharDiffButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
+            <TextBlock x:Name="animateWordDiffTextBlock" HorizontalAlignment="Left" Margin="147,236,0,0" TextWrapping="Wrap" Text="Animate Word Diff" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
+            <WPF:ImageButton ToolTip="Animates the changes character by character across two code snippets on two separate slides" x:Name="animateCharDiffButton" HorizontalAlignment="Left" Margin="212,191,0,0" VerticalAlignment="Top" Width="60" Height="46" Click="AnimateCharDiffButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
                 <Image Source="..\..\Resources\AnimateNewLines.png"/>
             </WPF:ImageButton>
-            <TextBlock x:Name="animateCharDiffTextBlock" HorizontalAlignment="Left" Margin="175,166.5,0,0" TextWrapping="Wrap" Text="Animate Char Diff" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
-            <WPF:ImageButton ToolTip="Refreshes and recreates all previously generated animation slides" x:Name="refreshAnimationButton" HorizontalAlignment="Left" Margin="230,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="RefreshAnimationButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
+            <TextBlock x:Name="animateCharDiffTextBlock" HorizontalAlignment="Left" Margin="212,236,0,0" TextWrapping="Wrap" Text="Animate Char Diff" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
+            <WPF:ImageButton ToolTip="Refreshes and recreates all previously generated animation slides" x:Name="refreshAnimationButton" HorizontalAlignment="Left" Margin="280,191,0,0" VerticalAlignment="Top" Width="60" Height="46" Click="RefreshAnimationButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
                 <Image Source="..\..\Resources\RefreshAnimation.png"/>
             </WPF:ImageButton>
-            <TextBlock x:Name="refreshAnimationTextBlock" HorizontalAlignment="Left" Margin="230,166.5,0,0" TextWrapping="Wrap" Text="Refresh Animation" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
-            <WPF:ImageButton ToolTip="" x:Name="createCustomSlideShowButton" HorizontalAlignment="Left" Margin="285,121.5,0,0" VerticalAlignment="Top" Width="60" Height="45" Click="CreateCustomSlideShowButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
-                <Image Source="..\..\Resources\AnimateNewLines.png"/>
+            <TextBlock x:Name="refreshAnimationTextBlock" HorizontalAlignment="Left" Margin="280,237,0,0" TextWrapping="Wrap" Text="Refresh Animation" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
+            <WPF:ImageButton ToolTip="Creates a slideshow without transition slides to print as handouts." x:Name="createCustomSlideShowButton" HorizontalAlignment="Left" Margin="82,70,0,0" VerticalAlignment="Top" Width="60" Height="46" Click="CreateCustomSlideShowButton_Click" Background="{x:Null}" BorderBrush="{x:Null}" Grid.Row="1">
+                <Image Source="..\..\Resources\CreateHandouts.png"/>
             </WPF:ImageButton>
-            <TextBlock x:Name="createCustomSlideShowTextBlock" HorizontalAlignment="Left" Margin="285,166.5,0,0" TextWrapping="Wrap" Text="Create Handouts" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
+            <TextBlock x:Name="createCustomSlideShowTextBlock" HorizontalAlignment="Left" Margin="82,116,0,0" TextWrapping="Wrap" Text="Create Handouts" VerticalAlignment="Top" TextAlignment="Center" Height="32" Width="60" Grid.Row="1"/>
             <ListView Name="codeListBox"
                  ItemsSource="{Binding CodeBoxPaneItem}"
-                 Margin="10,212,5,10"
+                 Margin="10,280,5,10"
                  HorizontalAlignment="Stretch"
                  HorizontalContentAlignment="Stretch"
                  Background="{DynamicResource Theme.BackgroundBrush2}" Grid.Row="1">

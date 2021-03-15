@@ -254,8 +254,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
                 catch (COMException)
                 {
                     item.CodeBox.Shape = null;
-                    item.refreshButton.Visibility = Visibility.Collapsed;
-                    item.insertButton.Visibility = Visibility.Visible;
                 }
             }
         }
@@ -274,23 +272,24 @@ namespace PowerPointLabs.LiveCodingLab.Views
             foreach (CodeBoxPaneItem item in codeBoxList)
             {
                 bool hasCodeBoxSlide = true;
-                if (item.CodeBox.Slide == null)
+                if (item.CodeBox.Slide == null || item.CodeBox.Shape == null)
                 {
                     continue;
                 }
+                
                 try
                 {
                     if (!item.CodeBox.Slide.HasShapeWithSameName(string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, item.CodeBox.Id)))
                     {
-                        item.refreshButton.Visibility = Visibility.Collapsed;
-                        item.insertButton.Visibility = Visibility.Visible;
+                        hasCodeBoxSlide = false;
                     }
+                    int shapeId = item.CodeBox.Shape.Id;
                 }
                 catch (COMException)
                 {
                     hasCodeBoxSlide = false;
-                    item.refreshButton.Visibility = Visibility.Collapsed;
-                    item.insertButton.Visibility = Visibility.Visible;
+                    item.CodeBox.Slide = null;
+                    item.CodeBox.Shape = null;
                 }
 
                 if (!hasCodeBoxSlide)
@@ -307,7 +306,12 @@ namespace PowerPointLabs.LiveCodingLab.Views
             foreach (CodeBoxPaneItem item in codeBoxList)
             {
 
-                if (groupsToInclude.Contains(item.Group) || item.CodeBox.Slide == null || item.CodeBox.Shape == null)
+                if (groupsToInclude.Contains(item.Group) && item.CodeBox.Slide != null && item.CodeBox.Shape != null)
+                {
+                    item.codeTextBox.Text = item.CodeBox.Text;
+                    codeBoxListToDisplay.Add(item);
+                }
+                else if (item.CodeBox.Slide == null || item.CodeBox.Shape == null)
                 {
                     codeBoxListToDisplay.Add(item);
                 }
@@ -340,18 +344,75 @@ namespace PowerPointLabs.LiveCodingLab.Views
             SaveCodeBox();
         }
 
+        private void FileCodeBoxButton_Click(object sender, RoutedEventArgs e)
+        {
+            RefreshCode();
+            FileCodeBoxDialog fileCodeBoxDialog = new FileCodeBoxDialog();
+            string filePath = "";
+            string fileGroup = "";
+            if (fileCodeBoxDialog.ShowThematicDialog() == true)
+            {
+                filePath = fileCodeBoxDialog.FilePath;
+                fileGroup = fileCodeBoxDialog.FileGroup;
+            }
+            if (filePath == "")
+            {
+                return;
+            }
+
+            CodeBoxPaneItem item = AddCodeBoxToList();
+            item.SetFile();
+
+            item.CodeBox.Text = filePath;
+            item.Group = fileGroup;
+
+            ShapeUtility.InsertCodeBoxToSlide(PowerPointCurrentPresentationInfo.CurrentSlide, item.CodeBox);
+
+            SaveCodeBox();
+        }
+
         private void RefreshCodeButton_Click(object sender, RoutedEventArgs e)
         {
             RefreshCode();
-            foreach (CodeBoxPaneItem item in codeListBox.SelectedItems)
+            foreach (CodeBoxPaneItem item in codeBoxListToDisplay)
             {
-                if (item != null)
+                if (item == null)
                 {
-                    item.CodeBox.Text = item.codeTextBox.Text;
-                    if (item.CodeBox.Shape != null)
+                    continue;
+                }
+
+                try
+                {
+                    if (item.CodeBox.Slide.Index != PowerPointCurrentPresentationInfo.CurrentSlide.Index)
                     {
-                        item.CodeBox = ShapeUtility.ReplaceTextForShape(item.CodeBox);
+                        continue;
                     }
+                }
+                catch (COMException)
+                {
+                    continue;
+                }
+                catch (NullReferenceException)
+                {
+                    continue;
+                }
+
+                if (item.CodeBox.IsText && item.CodeBox.Shape != null)
+                {
+                    try
+                    {
+                        item.CodeBox.Text = item.CodeBox.Shape.TextFrame.TextRange.Text;
+                    }
+                    catch (COMException)
+                    {
+                        continue;
+                    }
+                    item.codeTextBox.Text = item.CodeBox.Text;
+                }
+
+                if (item.CodeBox.Shape != null)
+                {
+                    item.CodeBox = ShapeUtility.ReplaceTextForShape(item.CodeBox);
                 }
             }
             SaveCodeBox();
@@ -360,15 +421,29 @@ namespace PowerPointLabs.LiveCodingLab.Views
         private void RefreshAllCodeButton_Click(object sender, RoutedEventArgs e)
         {
             RefreshCode();
-            foreach (CodeBoxPaneItem item in codeListBox.Items)
+            foreach (CodeBoxPaneItem item in codeBoxList)
             {
-                if (item != null)
+                if (item == null)
                 {
-                    item.CodeBox.Text = item.codeTextBox.Text;
-                    if (item.CodeBox.Shape != null)
+                    continue;
+                }
+
+                if (item.CodeBox.IsText && item.CodeBox.Shape != null)
+                {
+                    try
                     {
-                        item.CodeBox = ShapeUtility.ReplaceTextForShape(item.CodeBox);
+                        item.CodeBox.Text = item.CodeBox.Shape.TextFrame.TextRange.Text;
                     }
+                    catch (COMException)
+                    {
+                        continue;
+                    }
+                    item.codeTextBox.Text = item.CodeBox.Text;
+                }
+
+                if (item.CodeBox.Shape != null)
+                {
+                    item.CodeBox = ShapeUtility.ReplaceTextForShape(item.CodeBox);
                 }
             }
             SaveCodeBox();
@@ -432,10 +507,18 @@ namespace PowerPointLabs.LiveCodingLab.Views
             foreach (Shape shape in shapes)
             {
                 item.Text = shape.TextFrame.TextRange.Text;
-                item.CodeBox.Shape = shape;
+
                 item.CodeBox.IsText = true;
-                item.CodeBox.ShapeName = shape.Name;
+                shape.TextFrame.AutoSize = PpAutoSize.ppAutoSizeShapeToFitText;
+                shape.TextFrame.WordWrap = MsoTriState.msoTrue;
+                shape.TextFrame.TextRange.Font.Size = LiveCodingLabSettings.codeFontSize;
+                shape.TextFrame.TextRange.Font.Name = LiveCodingLabSettings.codeFontType;
+                shape.TextFrame.TextRange.Font.Color.RGB = LiveCodingLabSettings.codeTextColor.ToArgb();
+                shape.TextEffect.Alignment = MsoTextEffectAlignment.msoTextEffectAlignmentLeft;
+                shape.Name = string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, item.CodeBox.Id);
+                item.CodeBox.Shape = shape;
                 item.CodeBox.Slide = PowerPointCurrentPresentationInfo.CurrentSlide;
+                item.CodeBox = ShapeUtility.ReplaceTextForShape(item.CodeBox);
                 break;
             }
             SaveCodeBox();

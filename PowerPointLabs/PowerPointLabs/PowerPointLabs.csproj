@@ -860,6 +860,9 @@
     <Compile Include="LiveCodingLab\Service\LiveCodingLabTextStorageService.cs" />
     <Compile Include="LiveCodingLab\Service\CodeBoxIdService.cs" />
     <Compile Include="LiveCodingLab\Utility\ShapeUtility.cs" />
+    <Compile Include="LiveCodingLab\Views\FileCodeBoxDialog.xaml.cs">
+      <DependentUpon>FileCodeBoxDialog.xaml</DependentUpon>
+    </Compile>
     <Compile Include="LiveCodingLab\Views\InsertDiffDialog.xaml.cs">
       <DependentUpon>InsertDiffDialog.xaml</DependentUpon>
     </Compile>
@@ -1711,6 +1714,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="ELearningLab\Views\AudioSettingsViews\AzureVoiceLoginPage.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="LiveCodingLab\Views\FileCodeBoxDialog.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -2729,9 +2736,6 @@
     <Resource Include="Resources\GroupCode.png" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="Resources\InsertCode.png" />
-  </ItemGroup>
-  <ItemGroup>
     <Resource Include="Resources\HighlightDifference.png" />
   </ItemGroup>
   <ItemGroup>
@@ -2748,6 +2752,17 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Resources\RefreshAnimation.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\CreateHandouts.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\InsertCode.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Resources\FileCodeBox.png" />
   </ItemGroup>
   <!-- Include the build rules for a C# project. -->
   <PropertyGroup>
