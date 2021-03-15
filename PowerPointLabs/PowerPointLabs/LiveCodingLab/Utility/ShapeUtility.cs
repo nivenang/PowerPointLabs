@@ -173,7 +173,7 @@ namespace PowerPointLabs.LiveCodingLab.Utility
             shapeInSlide.TextFrame.TextRange.Font.Name = LiveCodingLabSettings.codeFontType;
             shapeInSlide.TextFrame.TextRange.Font.Size = LiveCodingLabSettings.codeFontSize;
             shapeInSlide.TextFrame.TextRange.Font.Color.RGB = LiveCodingLabSettings.codeTextColor.ToArgb();
-            
+
             // Highlights the syntax of the updated code
             if (codeBox.IsFile)
             {
@@ -187,7 +187,10 @@ namespace PowerPointLabs.LiveCodingLab.Utility
             }
             else
             {
-                shapeInSlide.TextFrame.TextRange.Text = codeBox.Text;
+                if (!shapeInSlide.TextFrame.TextRange.Text.Equals(codeBox.Text))
+                {
+                    shapeInSlide.TextFrame.TextRange.Text = codeBox.Text;
+                }
                 codeBox.Shape = HighlightSyntax(shapeInSlide, codeBox.Slide);
             }
             codeBox.ShapeName = shapeInSlide.Name;
@@ -201,7 +204,7 @@ namespace PowerPointLabs.LiveCodingLab.Utility
         /// <param name="slide">Slide that contains the shape to be highlighted</param>
         /// <param name="filePath">filePath of the code if it exists</param>
         /// <returns>generated code box with highlighted syntax</returns>
-        private static Shape HighlightSyntax(Shape shape, PowerPointSlide slide, string filePath="")
+        public static Shape HighlightSyntax(Shape shape, PowerPointSlide slide, string filePath="")
         {
             // Break down entire code into individual lines
             Shape shapeToProcess = ConvertTextToParagraphs(shape);

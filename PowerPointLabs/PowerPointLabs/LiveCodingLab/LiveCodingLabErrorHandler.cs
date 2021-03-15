@@ -7,11 +7,15 @@ namespace PowerPointLabs.LiveCodingLab
         public const int ErrorCodeInvalidCodeBox = 0;
         public const int ErrorCodeNotSameShapes = 1;
         public const int ErrorCodeGroupShapeNotSupported = 2;
+        public const int ErrorCodeNoShapeSelectedSyntaxHighlight = 3;
+        public const int ErrorCodeNoShapeSelectedCreateText = 4;
 
         private ILiveCodingLabPane View { get; set; }
         private static LiveCodingLabErrorHandler _errorHandler;
 
         private const string ErrorMessageInvalidCodeBox = LiveCodingLabText.ErrorInvalidCodeBox;
+        private const string ErrorMessageNoShapeSelectedSyntaxHighlight = LiveCodingLabText.ErrorNoShapeSelectedSyntaxHighlight;
+        private const string ErrorMessageNoShapeSelectedCreateText = LiveCodingLabText.ErrorNoShapeSelectedCreateText;
         private const string ErrorMessageUndefined = LiveCodingLabText.ErrorUndefined;
 
         private LiveCodingLabErrorHandler(ILiveCodingLabPane view = null)
@@ -58,6 +62,10 @@ namespace PowerPointLabs.LiveCodingLab
             {
                 case ErrorCodeInvalidCodeBox:
                     return ErrorMessageInvalidCodeBox;
+                case ErrorCodeNoShapeSelectedSyntaxHighlight:
+                    return ErrorMessageNoShapeSelectedSyntaxHighlight;
+                case ErrorCodeNoShapeSelectedCreateText:
+                    return ErrorMessageNoShapeSelectedCreateText;
                 default:
                     return ErrorMessageUndefined;
             }

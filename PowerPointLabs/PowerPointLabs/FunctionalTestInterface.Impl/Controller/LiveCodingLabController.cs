@@ -61,7 +61,6 @@ namespace PowerPointLabs.FunctionalTestInterface.Impl.Controller
                 UIThreadExecutor.Execute(() =>
                 {
                     CodeBoxPaneItem item1 = CreateCodeBox();
-                    item1.isFile.RaiseEvent(new RoutedEventArgs(ToggleButton.CheckedEvent));
                     item1.codeTextBox.Text = filePath;
                     item1.Text = filePath;
                     _pane.LiveCodingLabPaneWPF.RefreshCode();

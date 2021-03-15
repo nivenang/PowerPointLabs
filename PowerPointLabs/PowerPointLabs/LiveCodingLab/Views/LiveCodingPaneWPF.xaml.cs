@@ -83,6 +83,17 @@ namespace PowerPointLabs.LiveCodingLab.Views
             liveCodingAction.Invoke(diffPath, this, diffGroupName);
         }
 
+        public void ExecuteLiveCodingAction(PowerPoint.ShapeRange shapeRange, PowerPointSlide currSlide, Action<PowerPoint.ShapeRange, PowerPointSlide> liveCodingAction)
+        {
+            this.StartNewUndoEntry();
+            liveCodingAction.Invoke(shapeRange, currSlide);
+        }
+
+        public void ExecuteLiveCodingAction(PowerPoint.ShapeRange shapeRange, CodeBoxPaneItem codeBox, Action<CodeBoxPaneItem, PowerPoint.ShapeRange> liveCodingAction)
+        {
+            this.StartNewUndoEntry();
+            liveCodingAction.Invoke(codeBox, shapeRange);
+        }
         #endregion
 
         #region Constructor
@@ -140,7 +151,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
         public void SaveCodeBox()
         {
             LiveCodingLabTextStorageService.StoreCodeBoxToSlide(codeBoxList, currentPresentation.FirstSlide);
-            ReloadCodeBoxOnSlideSelectionChanged();
+            UpdateCodeBoxOnSlideSelectionChanged();
         }
 
         public void MoveUpCodeBox(CodeBoxPaneItem item)
@@ -154,7 +165,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
                 if (codeBoxList[index] == item && index > 0)
                 {
-                    for (int i = index-1; i >= 0; i--)
+                    for (int i = index - 1; i >= 0; i--)
                     {
                         if (codeBoxList[index].Group == codeBoxList[i].Group)
                         {
@@ -239,12 +250,13 @@ namespace PowerPointLabs.LiveCodingLab.Views
             SaveCodeBox();
         }
 
-        public void UpdateCodeBoxPaneItemInsertButtonEnabledStatus(Selection selection) 
+        public void UpdateCodeBoxPaneItemOnSelectionChanged(Selection selection)
         {
             foreach (CodeBoxPaneItem item in codeBoxList)
             {
                 if (item.CodeBox.Shape == null)
                 {
+                    item.CodeBox.Slide = null;
                     continue;
                 }
                 try
@@ -254,11 +266,12 @@ namespace PowerPointLabs.LiveCodingLab.Views
                 catch (COMException)
                 {
                     item.CodeBox.Shape = null;
+                    item.CodeBox.Slide = null;
                 }
             }
         }
 
-        public void ReloadCodeBoxOnSlideSelectionChanged()
+        public void UpdateCodeBoxOnSlideSelectionChanged()
         {
             PowerPointSlide currentSlide = PowerPointCurrentPresentationInfo.CurrentSlide;
             HashSet<string> groupsToInclude = new HashSet<string>() { "Ungrouped" };
@@ -276,12 +289,13 @@ namespace PowerPointLabs.LiveCodingLab.Views
                 {
                     continue;
                 }
-                
+
                 try
                 {
                     if (!item.CodeBox.Slide.HasShapeWithSameName(string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, item.CodeBox.Id)))
                     {
                         hasCodeBoxSlide = false;
+                        item.CodeBox.Slide = null;
                     }
                     int shapeId = item.CodeBox.Shape.Id;
                 }
@@ -362,7 +376,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
             CodeBoxPaneItem item = AddCodeBoxToList();
             item.SetFile();
-
             item.CodeBox.Text = filePath;
             item.Group = fileGroup;
 
@@ -500,29 +513,25 @@ namespace PowerPointLabs.LiveCodingLab.Views
             Action<string, LiveCodingPaneWPF, string> insertDiffAction = (diffFilePath, liveCodingPane, diffGroupName) => _liveCodingLab.InsertDiff(diffFilePath, liveCodingPane, diffGroupName);
             ClickHandler(insertDiffAction, diffPath, diffGroup);
         }
-        private void CreateCodeBoxFromText_Click(object sender, RoutedEventArgs e)
+        private void InsertTextButton_Click(object sender, RoutedEventArgs e)
         {
             CodeBoxPaneItem item = AddCodeBoxToList();
             PowerPoint.ShapeRange shapes = GetSelectedShapes();
-            foreach (Shape shape in shapes)
-            {
-                item.Text = shape.TextFrame.TextRange.Text;
 
-                item.CodeBox.IsText = true;
-                shape.TextFrame.AutoSize = PpAutoSize.ppAutoSizeShapeToFitText;
-                shape.TextFrame.WordWrap = MsoTriState.msoTrue;
-                shape.TextFrame.TextRange.Font.Size = LiveCodingLabSettings.codeFontSize;
-                shape.TextFrame.TextRange.Font.Name = LiveCodingLabSettings.codeFontType;
-                shape.TextFrame.TextRange.Font.Color.RGB = LiveCodingLabSettings.codeTextColor.ToArgb();
-                shape.TextEffect.Alignment = MsoTextEffectAlignment.msoTextEffectAlignmentLeft;
-                shape.Name = string.Format(LiveCodingLabText.CodeBoxShapeNameFormat, item.CodeBox.Id);
-                item.CodeBox.Shape = shape;
-                item.CodeBox.Slide = PowerPointCurrentPresentationInfo.CurrentSlide;
-                item.CodeBox = ShapeUtility.ReplaceTextForShape(item.CodeBox);
-                break;
-            }
+            Action<CodeBoxPaneItem, PowerPoint.ShapeRange> insertTextAction = (codeBox, shapeRange) => _liveCodingLab.InsertText(codeBox, shapeRange);
+            ClickHandler(insertTextAction, item, shapes);
             SaveCodeBox();
         }
+
+        private void HighlightSyntaxButton_Click(object sender, RoutedEventArgs e)
+        {
+            PowerPoint.ShapeRange shapes = GetSelectedShapes();
+            PowerPointSlide currentSlide = PowerPointCurrentPresentationInfo.CurrentSlide;
+
+            Action<PowerPoint.ShapeRange, PowerPointSlide> highlightSyntaxAction = (shapeRange, currSlide) => _liveCodingLab.HighlightSyntax(shapeRange, currSlide);
+            ClickHandler(highlightSyntaxAction, shapes, currentSlide);
+        }
+
         private void AnimateLineDiffButton_Click(object sender, RoutedEventArgs e)
         {
             RefreshCode();
@@ -781,10 +790,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
             {
                 return null;
             }
-            else if (selection.ShapeRange.Count > 1)
-            {
-                return null;
-            }
             else
             {
                 return selection.ShapeRange;
@@ -846,6 +851,26 @@ namespace PowerPointLabs.LiveCodingLab.Views
         private void ClickHandler(Action<string, LiveCodingPaneWPF, string> liveCodingAction, string diffPath, string diffGroupName)
         {
             ExecuteLiveCodingAction(diffPath, liveCodingAction, diffGroupName);
+        }
+
+        private void ClickHandler(Action<PowerPoint.ShapeRange, PowerPointSlide> liveCodingAction, PowerPoint.ShapeRange shapeRange, PowerPointSlide currSlide)
+        {
+            if (shapeRange == null)
+            {
+                _errorHandler.ProcessErrorCode(LiveCodingLabErrorHandler.ErrorCodeNoShapeSelectedSyntaxHighlight);
+                return;
+            }
+            ExecuteLiveCodingAction(shapeRange, currSlide, liveCodingAction);
+        }
+
+        private void ClickHandler(Action<CodeBoxPaneItem, PowerPoint.ShapeRange> liveCodingAction, CodeBoxPaneItem codeBox, PowerPoint.ShapeRange shapeRange)
+        {
+            if (shapeRange == null || shapeRange.Count > 1)
+            {
+                _errorHandler.ProcessErrorCode(LiveCodingLabErrorHandler.ErrorCodeNoShapeSelectedSyntaxHighlight);
+                return;
+            }
+            ExecuteLiveCodingAction(shapeRange, codeBox, liveCodingAction);
         }
         private CodeBoxPaneItem GetCodeBoxPaneItemFromShape(Shape shape)
         {

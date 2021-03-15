@@ -118,6 +118,8 @@
         public const string ErrorDialogTitle = "Unable to execute action";
         public const string ErrorInvalidFileName = "The file specified does not exist.";
         public const string ErrorInvalidCodeBox = "You need to have {1} {2} on both the current slide and next slide before applying '{0}'.";
+        public const string ErrorNoShapeSelectedCreateText = "You need to select only ONE textbox for creating Code Box from text box.";
+        public const string ErrorNoShapeSelectedSyntaxHighlight = "You need to select at least one textbox for syntax highlighting.";
         public const string ErrorValueLessThanEqualsZero = "Please enter a value greater than 0.";
         public const string ErrorValueLessThanEqualsZeroWithShape = "Please enter a value greater than 0 (Shape {0}).";
         public const string ErrorUndefined = "Undefined error in Live Coding Lab.";

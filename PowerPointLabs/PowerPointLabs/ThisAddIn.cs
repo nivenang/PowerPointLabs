@@ -630,7 +630,7 @@ namespace PowerPointLabs
             LiveCodingLabPane taskPane = liveCodingLabPane.Control as LiveCodingLabPane;
             if (liveCodingLabPane.Visible == true)
             {
-                taskPane.LiveCodingLabPaneWPF.ReloadCodeBoxOnSlideSelectionChanged();
+                taskPane.LiveCodingLabPaneWPF.UpdateCodeBoxOnSlideSelectionChanged();
             }
         }
 

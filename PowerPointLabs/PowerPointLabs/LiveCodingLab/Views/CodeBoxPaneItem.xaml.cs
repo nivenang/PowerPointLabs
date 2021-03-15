@@ -43,9 +43,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
             codeBox = new CodeBox(CodeBoxIdService.GenerateUniqueId());
             //insertCode.Source = GraphicsUtil.BitmapToImageSource(Properties.Resources.SyncLabEditButton);
             deleteImage.Source = GraphicsUtil.BitmapToImageSource(Properties.Resources.SyncLabDeleteButton);
-            isText.IsChecked = true;
-            isFile.IsChecked = false;
-            isDiff.IsChecked = false;
             group = "Ungrouped";
         }
 
@@ -57,24 +54,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
             //insertCode.Source = GraphicsUtil.BitmapToImageSource(Properties.Resources.SyncLabEditButton);
             deleteImage.Source = GraphicsUtil.BitmapToImageSource(Properties.Resources.SyncLabDeleteButton);
             this.group = group;
-            if (codeBox.IsFile)
-            {
-                isText.IsChecked = false;
-                isFile.IsChecked = true;
-                isDiff.IsChecked = false;
-            }
-            else if (codeBox.IsText)
-            {
-                isText.IsChecked = true;
-                isFile.IsChecked = false;
-                isDiff.IsChecked = false;
-            }
-            else
-            {
-                isText.IsChecked = false;
-                isFile.IsChecked = false;
-                isDiff.IsChecked = true;
-            }
+
         }
         #endregion
 
@@ -88,6 +68,33 @@ namespace PowerPointLabs.LiveCodingLab.Views
             set
             {
                 codeBox.Text = value;
+            }
+        }
+
+        public string InputType
+        {
+            get
+            {
+                return codeBox.InputType;
+            }
+        }
+
+        public string Slide
+        {
+            get
+            {
+                if (codeBox.Slide == null)
+                {
+                    return "";
+                }
+                try
+                {
+                    return codeBox.Slide.Index.ToString();
+                }
+                catch (COMException)
+                {
+                    return "";
+                }
             }
         }
 
@@ -126,9 +133,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
             codeBox.IsText = false;
             codeBox.IsFile = false;
             codeBox.IsDiff = true;
-            isText.IsChecked = false;
-            isFile.IsChecked = false;
-            isDiff.IsChecked = true;
         }
 
         public void SetFile()
@@ -136,9 +140,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
             codeBox.IsText = false;
             codeBox.IsFile = true;
             codeBox.IsDiff = false;
-            isText.IsChecked = false;
-            isFile.IsChecked = true;
-            isDiff.IsChecked = false;
         }
         public void PopulateTextBox()
         {

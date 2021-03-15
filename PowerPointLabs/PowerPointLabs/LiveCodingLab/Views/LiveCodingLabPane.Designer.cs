@@ -13,7 +13,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
         public void UpdateOnSelectionChange(Selection sel)
         {
-            LiveCodingLabPaneWPF.UpdateCodeBoxPaneItemInsertButtonEnabledStatus(sel);
+            LiveCodingLabPaneWPF.UpdateCodeBoxPaneItemOnSelectionChanged(sel);
         }
 
         /// <summary> 

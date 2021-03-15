@@ -153,6 +153,29 @@ namespace PowerPointLabs.LiveCodingLab.Model
             }
         }
 
+        public string InputType
+        {
+            get
+            {
+                if (isFile)
+                {
+                    return "File";
+                }
+                else if (isText)
+                {
+                    return "Text";
+                }
+                else if (isDiff)
+                {
+                    return "Diff";
+                }
+                else
+                {
+                    return "";
+                }
+            }
+        }
+
         public bool IsEmpty
         {
             get
