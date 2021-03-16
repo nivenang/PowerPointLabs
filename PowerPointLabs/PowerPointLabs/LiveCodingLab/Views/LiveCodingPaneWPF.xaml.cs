@@ -267,7 +267,47 @@ namespace PowerPointLabs.LiveCodingLab.Views
                 {
                     item.CodeBox.Shape = null;
                     item.CodeBox.Slide = null;
+                    continue;
                 }
+                /*
+                if (item.InputType.Equals("Text") && !item.CodeBox.Text.Equals(item.CodeBox.Shape.TextFrame.TextRange.Text))
+                {
+                    // Refresh
+                    PowerPointSlide currentSlide = item.CodeBox.Slide;
+                    PowerPoint.Sequence sequence = currentSlide.TimeLine.MainSequence;
+                    List<PowerPoint.Effect> effects = AsList(sequence, 1, sequence.Count + 1);
+                    List<int> effectOrderToRestore = new List<int>();
+                    PowerPoint.Shape shape = item.CodeBox.Shape;
+
+                    for (int i = 0; i < effects.Count; i++)
+                    {
+                        if (!effects[i].Shape.Equals(shape))
+                        {
+                            effectOrderToRestore.Add(i + 1);
+                        }
+                    }
+                    item.CodeBox.Text = item.CodeBox.Shape.TextFrame.TextRange.Text;
+                    item.codeTextBox.Text = item.CodeBox.Text;
+                    ShapeUtility.ReplaceTextForShape(item.CodeBox);
+
+                    sequence = currentSlide.TimeLine.MainSequence;
+                    effects = AsList(sequence, 1, sequence.Count + 1);
+                    int effectOrderCounter = effectOrderToRestore.Count - 1;
+
+                    for (int j = effects.Count - 1; j > 0; j--)
+                    {
+                        if (!effects[j].Shape.Equals(item.CodeBox.Shape))
+                        {
+                            effects[j].MoveTo(effectOrderToRestore[effectOrderCounter]);
+                            effectOrderCounter--;
+                        }
+                        if (effectOrderCounter < 0)
+                        {
+                            break;
+                        }
+                    }
+                }
+                */
             }
         }
 
@@ -319,7 +359,6 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
             foreach (CodeBoxPaneItem item in codeBoxList)
             {
-
                 if (groupsToInclude.Contains(item.Group) && item.CodeBox.Slide != null && item.CodeBox.Shape != null)
                 {
                     item.codeTextBox.Text = item.CodeBox.Text;
@@ -328,6 +367,45 @@ namespace PowerPointLabs.LiveCodingLab.Views
                 else if (item.CodeBox.Slide == null || item.CodeBox.Shape == null)
                 {
                     codeBoxListToDisplay.Add(item);
+                    continue;
+                }
+
+                if (item.InputType.Equals("Text") && !item.CodeBox.Text.Equals(item.CodeBox.Shape.TextFrame.TextRange.Text))
+                {
+                    // Refresh
+                    PowerPointSlide slide = item.CodeBox.Slide;
+                    PowerPoint.Sequence sequence = slide.TimeLine.MainSequence;
+                    List<PowerPoint.Effect> effects = AsList(sequence, 1, sequence.Count + 1);
+                    List<int> effectOrderToRestore = new List<int>();
+                    PowerPoint.Shape shape = item.CodeBox.Shape;
+
+                    for (int i = 0; i < effects.Count; i++)
+                    {
+                        if (!effects[i].Shape.Equals(shape))
+                        {
+                            effectOrderToRestore.Add(i + 1);
+                        }
+                    }
+                    item.CodeBox.Text = item.CodeBox.Shape.TextFrame.TextRange.Text;
+                    item.codeTextBox.Text = item.CodeBox.Text;
+                    ShapeUtility.ReplaceTextForShape(item.CodeBox);
+
+                    sequence = slide.TimeLine.MainSequence;
+                    effects = AsList(sequence, 1, sequence.Count + 1);
+                    int effectOrderCounter = 0;
+
+                    for (int j = 0; j < effects.Count; j++)
+                    {
+                        if (!effects[j].Shape.Equals(item.CodeBox.Shape))
+                        {
+                            effects[j].MoveTo(effectOrderToRestore[effectOrderCounter]);
+                            effectOrderCounter++;
+                        }
+                        if (effectOrderCounter >= effectOrderToRestore.Count)
+                        {
+                            break;
+                        }
+                    }
                 }
             }
         }
@@ -387,13 +465,37 @@ namespace PowerPointLabs.LiveCodingLab.Views
         private void RefreshCodeButton_Click(object sender, RoutedEventArgs e)
         {
             RefreshCode();
+            PowerPointSlide currentSlide = PowerPointCurrentPresentationInfo.CurrentSlide;
+            PowerPoint.Sequence sequence = currentSlide.TimeLine.MainSequence;
+            List<PowerPoint.Effect> effects = AsList(sequence, 1, sequence.Count + 1);
+            List<int> effectOrderToRestore = new List<int>();
+
+            PowerPoint.ShapeRange shapes = GetSelectedShapes();
+            if (shapes == null || shapes.Count > 1)
+            {
+                _errorHandler.ProcessErrorCode(LiveCodingLabErrorHandler.ErrorCodeNoShapeSelectedCreateText);
+                return;
+            }
+
+            PowerPoint.Shape shape = shapes[1];
+
+            for (int i = 0; i < effects.Count; i++)
+            {
+                if (!effects[i].Shape.Equals(shape))
+                {
+                    effectOrderToRestore.Add(i + 1);
+                }
+            }
+
             foreach (CodeBoxPaneItem item in codeBoxListToDisplay)
             {
+                // Check CodeBoxPaneItem is not null
                 if (item == null)
                 {
                     continue;
                 }
 
+                // Check slide matches up
                 try
                 {
                     if (item.CodeBox.Slide.Index != PowerPointCurrentPresentationInfo.CurrentSlide.Index)
@@ -410,7 +512,14 @@ namespace PowerPointLabs.LiveCodingLab.Views
                     continue;
                 }
 
-                if (item.CodeBox.IsText && item.CodeBox.Shape != null)
+                // Check shape matches up
+                if (item.CodeBox.Shape == null || !item.CodeBox.Shape.Equals(shape))
+                {
+                    continue;
+                }
+
+                // Check if is a text code box
+                if (item.CodeBox.IsText)
                 {
                     try
                     {
@@ -426,8 +535,26 @@ namespace PowerPointLabs.LiveCodingLab.Views
                 if (item.CodeBox.Shape != null)
                 {
                     item.CodeBox = ShapeUtility.ReplaceTextForShape(item.CodeBox);
+
+                    sequence = currentSlide.TimeLine.MainSequence;
+                    effects = AsList(sequence, 1, sequence.Count + 1);
+                    int effectOrderCounter = 0;
+
+                    for (int j = 0; j < effects.Count; j++)
+                    {
+                        if (!effects[j].Shape.Equals(item.CodeBox.Shape))
+                        {
+                            effects[j].MoveTo(effectOrderToRestore[effectOrderCounter]);
+                            effectOrderCounter++;
+                        }
+                        if (effectOrderCounter >= effectOrderToRestore.Count)
+                        {
+                            break;
+                        }
+                    }
                 }
             }
+
             SaveCodeBox();
         }
 
@@ -456,7 +583,37 @@ namespace PowerPointLabs.LiveCodingLab.Views
 
                 if (item.CodeBox.Shape != null)
                 {
-                    item.CodeBox = ShapeUtility.ReplaceTextForShape(item.CodeBox);
+                    PowerPointSlide slide = item.CodeBox.Slide;
+                    PowerPoint.Sequence sequence = slide.TimeLine.MainSequence;
+                    List<PowerPoint.Effect> effects = AsList(sequence, 1, sequence.Count + 1);
+                    List<int> effectOrderToRestore = new List<int>();
+                    PowerPoint.Shape shape = item.CodeBox.Shape;
+
+                    for (int i = 0; i < effects.Count; i++)
+                    {
+                        if (!effects[i].Shape.Equals(shape))
+                        {
+                            effectOrderToRestore.Add(i + 1);
+                        }
+                    }
+                    ShapeUtility.ReplaceTextForShape(item.CodeBox);
+
+                    sequence = slide.TimeLine.MainSequence;
+                    effects = AsList(sequence, 1, sequence.Count + 1);
+                    int effectOrderCounter = 0;
+
+                    for (int j = 0; j < effects.Count; j++)
+                    {
+                        if (!effects[j].Shape.Equals(item.CodeBox.Shape))
+                        {
+                            effects[j].MoveTo(effectOrderToRestore[effectOrderCounter]);
+                            effectOrderCounter++;
+                        }
+                        if (effectOrderCounter >= effectOrderToRestore.Count)
+                        {
+                            break;
+                        }
+                    }
                 }
             }
             SaveCodeBox();
@@ -867,7 +1024,7 @@ namespace PowerPointLabs.LiveCodingLab.Views
         {
             if (shapeRange == null || shapeRange.Count > 1)
             {
-                _errorHandler.ProcessErrorCode(LiveCodingLabErrorHandler.ErrorCodeNoShapeSelectedSyntaxHighlight);
+                _errorHandler.ProcessErrorCode(LiveCodingLabErrorHandler.ErrorCodeNoShapeSelectedCreateText);
                 return;
             }
             ExecuteLiveCodingAction(shapeRange, codeBox, liveCodingAction);
