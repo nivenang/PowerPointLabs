@@ -7,7 +7,6 @@
              xmlns:local="clr-namespace:PowerPointLabs.LiveCodingLab.Views"
              mc:Ignorable="d" 
              d:DesignWidth="320"
-             MouseLeftButtonDown="OnMouseSingleClick"
              MouseDoubleClick="OnMouseDoubleClick">
     <UserControl.Resources>
         <ResourceDictionary>
@@ -92,7 +91,7 @@
             <TextBlock x:Name="codeSlideNumber"
                            Text="{Binding Path=Slide, Mode=OneWay}" Padding="1 1 1 1" TextWrapping="Wrap" FontSize="12"
                            Margin="180,36,22,7"/>
-            <Button x:Name="deleteButton" Grid.Column="2" Margin="5,0,10,25" Click="DeleteButton_Click" HorizontalAlignment="Center" MinWidth="25" MaxWidth="25" MinHeight="25" MaxHeight="25" Style="{StaticResource ImageButtonStyle}" Width="25">
+            <Button x:Name="deleteButton" Grid.Column="1" Margin="12,13,13,13" Click="DeleteButton_Click" HorizontalAlignment="Center" MinWidth="25" MaxWidth="25" MinHeight="25" MaxHeight="25" Style="{StaticResource ImageButtonStyle}" Width="25">
                 <Image x:Name="deleteImage" Source="pack://siteoforigin:,,,/Resources/SyncLabDeleteButton.png" Stretch="Fill"/>
                 <Button.ToolTip>
                     <StackPanel>
